@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 ## My Project
 
 TODO: Fill this README out!
@@ -15,3 +16,6 @@ See [CONTRIBUTING](CONTRIBUTING.md#security-issue-notifications) for more inform
 
 This project is licensed under the Apache-2.0 License.
 
+=======
+# replace this
+>>>>>>> 26304ab (Empty proje repo)
