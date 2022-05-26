@@ -14,7 +14,7 @@ const project = new awscdk.AwsCdkConstructLibrary({
   release: true,
 });
 const gitlabMain = new GitlabConfiguration(project, {
-  stages: ['build', 'deploy', 'pre-release', 'release'],
+  stages: ['build', 'pre-release', 'release'],
   default: {
     image: 'jsii/superchain:1-buster-slim',
   },
@@ -51,8 +51,8 @@ const gitlabMain = new GitlabConfiguration(project, {
       }
     },
     upload_pypi: {
-      stage: 'deploy',
-      image: 'node:latest',
+      stage: 'pre-release',
+      image: 'python:latest',
       rules: [
         {
           if: '$CI_COMMIT_TAG =~ /^v\\d+(\\.\\d+){2}$/',
