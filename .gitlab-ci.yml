@@ -23,15 +23,11 @@ build:
     - npx jsii-docgen
     - npx jsii-pacmak
     - zip -r cdknode.zip dist/js
-    - zip -r cdkjava.zip dist/java
     - zip -r cdkpython.zip dist/python
-    - zip -r cdkdotnet.zip dist/dotnet
   artifacts:
     paths:
       - cdknode.zip
-      - cdkjava.zip
       - cdkpython.zip
-      - cdkdotnet.zip
       - dist/
 upload_pypi:
   stage: deploy

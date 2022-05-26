@@ -7,11 +7,11 @@ const project = new awscdk.AwsCdkConstructLibrary({
   defaultReleaseBranch: 'main',
   name: 'cdk-enterprise-utils',
   repositoryUrl: 'git@ssh.gitlab.aws.dev:wwps-natsec/cdk/cdk-enterprise-utils.git',
-
-  // deps: [],                /* Runtime dependencies of this module. */
-  // description: undefined,  /* The description is just a string that helps people understand the purpose of the package. */
-  // devDeps: [],             /* Build dependencies for this module. */
-  // packageName: undefined,  /* The "name" in package.json. */
+  publishToPypi: {
+    distName: 'cdk-enterprise-utils',
+    module: 'cdk_enterprise_utils',
+  },
+  release: true,
 });
 const gitlabMain = new GitlabConfiguration(project, {
   stages: ['build', 'deploy', 'pre-release', 'release'],
@@ -36,16 +36,16 @@ const gitlabMain = new GitlabConfiguration(project, {
         'npx jsii-docgen',
         'npx jsii-pacmak',
         'zip -r cdknode.zip dist/js',
-        'zip -r cdkjava.zip dist/java',
+        // 'zip -r cdkjava.zip dist/java',
         'zip -r cdkpython.zip dist/python',
-        'zip -r cdkdotnet.zip dist/dotnet',
+        // 'zip -r cdkdotnet.zip dist/dotnet',
       ],
       artifacts: {
         paths: [
           'cdknode.zip',
-          'cdkjava.zip',
+          // 'cdkjava.zip',
           'cdkpython.zip',
-          'cdkdotnet.zip',
+          // 'cdkdotnet.zip',
           'dist/',
         ]
       }
