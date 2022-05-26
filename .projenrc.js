@@ -79,10 +79,13 @@ const gitlabMain = new GitlabConfiguration(project, {
       ],
       dependencies:['build'],
       script: [
-        'export NPM_SCOPE=$(node -e \'console.log(require("./package.json").name.split("/")[0])\')',
-        'npm config set $NPM_SCOPE:registry ${CI_API_V4_URL}/projects/${CI_PROJECT_ID}/packages/npm/',
-        'echo "//gitlab.aws.dev/api/v4/projects/${CI_PROJECT_ID}/packages/npm/:_authToken=${CI_JOB_TOKEN}">.npmrc',
-        'for file in dist/js/**.tgz; do npm publish --tag latest \${file}; done',
+        'cd dist',
+        'yarn install --check-files --frozen-lockfile',
+        'npx projen package:js',
+        'export NPM_DIST_TAG="latest"',
+        'export NPM_REGISTRY="gitlab.aws.dev/api/v4/projects/${CI_PROJECT_ID}/packages/npm/"',
+        'export NPM_TOKEN="${CI_JOB_TOKEN}"',
+        'npx -p jsii-release@latest jsii-release-npm',
       ],
     },
     upload_artifacts: {
