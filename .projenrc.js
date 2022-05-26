@@ -16,7 +16,7 @@ const project = new awscdk.AwsCdkConstructLibrary({
 const gitlabMain = new GitlabConfiguration(project, {
   stages: ['build', 'deploy', 'pre-release', 'release'],
   default: {
-    image: 'jsii/superchain',
+    image: 'jsii/superchain:1-buster-slim',
   },
   jobs: {
     build: {
