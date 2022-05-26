@@ -2,7 +2,7 @@ const { awscdk } = require('projen');
 const project = new awscdk.AwsCdkConstructLibrary({
   author: 'Taylor Ondrey',
   authorAddress: 'ondreyt@amazon.com',
-  cdkVersion: '2.1.0',
+  cdkVersion: '2.25.0',
   defaultReleaseBranch: 'main',
   name: 'cdk-enterprise-utils',
   repositoryUrl: 'git@ssh.gitlab.aws.dev:wwps-natsec/cdk/cdk-enterprise-utils.git',
