@@ -69,7 +69,6 @@ const gitlabMain = new GitlabConfiguration(project, {
     },
     upload_npm: {
       stage: 'pre-release',
-      image: 'node:latest',
       rules: [
         {
           if: '$CI_COMMIT_TAG =~ /^v\\d+(\\.\\d+){2}$/',
