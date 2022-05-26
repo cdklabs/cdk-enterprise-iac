@@ -80,7 +80,7 @@ const gitlabMain = new GitlabConfiguration(project, {
       script: [
         'cd dist',
         'yarn install --check-files --frozen-lockfile',
-        'npx projen package:js',
+        'npx projen package',
         'export NPM_DIST_TAG="latest"',
         'export NPM_REGISTRY="gitlab.aws.dev/api/v4/projects/${CI_PROJECT_ID}/packages/npm/"',
         'export NPM_TOKEN="${CI_JOB_TOKEN}"',
