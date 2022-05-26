@@ -11,9 +11,18 @@ const project = new awscdk.AwsCdkConstructLibrary({
     distName: 'cdk-enterprise-utils',
     module: 'cdk_enterprise_utils',
   },
+  publishToMaven: {
+    javaPackage: 'com.wwpsNatsec.awscdk',
+    mavenArtifactId: 'cdkEnterpriseUtils',
+    mavenGroupId: 'com.wwpsNatsec.awscdk',
+  },
+  publishToNuget: {
+    dotNetNamespace: 'wwpsNatsec.CDK',
+    packageId: 'cdkEnterpriseUtils',
+  },
   release: true,
 });
-const gitlabMain = new GitlabConfiguration(project, {
+new GitlabConfiguration(project, {
   stages: ['build', 'pre-release', 'release'],
   default: {
     image: 'jsii/superchain:1-buster-slim',
@@ -36,16 +45,16 @@ const gitlabMain = new GitlabConfiguration(project, {
         'npx jsii-docgen',
         'npx jsii-pacmak',
         'zip -r cdknode.zip dist/js',
-        // 'zip -r cdkjava.zip dist/java',
+        'zip -r cdkjava.zip dist/java',
         'zip -r cdkpython.zip dist/python',
-        // 'zip -r cdkdotnet.zip dist/dotnet',
+        'zip -r cdkdotnet.zip dist/dotnet',
       ],
       artifacts: {
         paths: [
           'cdknode.zip',
-          // 'cdkjava.zip',
+          'cdkjava.zip',
           'cdkpython.zip',
-          // 'cdkdotnet.zip',
+          'cdkdotnet.zip',
           'dist/',
         ]
       }
@@ -64,7 +73,6 @@ const gitlabMain = new GitlabConfiguration(project, {
       script: [
         'pip install twine',
         'TWINE_PASSWORD=${CI_JOB_TOKEN} TWINE_USERNAME=gitlab-ci-token python -m twine upload --repository-url ${CI_API_V4_URL}/projects/${CI_PROJECT_ID}/packages/pypi dist/python/*',
-
       ]
     },
     upload_npm: {
@@ -85,6 +93,22 @@ const gitlabMain = new GitlabConfiguration(project, {
         'npx -p jsii-release@latest jsii-release-npm',
       ],
     },
+    upload_nuget: {
+      stage: 'pre-release',
+      rules: [
+        {
+          if: '$CI_COMMIT_TAG =~ /^v\\d+(\\.\\d+){2}$/',
+          when: 'on_success'
+        },
+        {when: 'never'},
+      ],
+      dependencies:['build'],
+      script: [
+        'dotnet nuget add source "${CI_API_V4_URL}/projects/${CI_PROJECT_ID}/packages/nuget/index.json" --name gitlab --username gitlab-ci-token --password $CI_JOB_TOKEN --store-password-in-clear-text',
+        'dotnet nuget push "dist/dotnet/*.nupkg" --source gitlab',
+    
+      ],
+    },
     upload_artifacts: {
       stage: 'pre-release',
       image: 'curlimages/curl:latest',
@@ -98,9 +122,12 @@ const gitlabMain = new GitlabConfiguration(project, {
       dependencies: ['build'],
       script: [
         'curl --header "JOB-TOKEN: $CI_JOB_TOKEN" --upload-file cdkpython.zip "${CI_API_V4_URL}/projects/${CI_PROJECT_ID}/packages/generic/cdk-enterprise-utils/${CI_COMMIT_TAG#v}/python.zip"',
+        'curl --header "JOB-TOKEN: $CI_JOB_TOKEN" --upload-file cdknode.zip "${CI_API_V4_URL}/projects/${CI_PROJECT_ID}/packages/generic/cdk-enterprise-utils/${CI_COMMIT_TAG#v}/node.zip"',
+        'curl --header "JOB-TOKEN: $CI_JOB_TOKEN" --upload-file cdkjava.zip "${CI_API_V4_URL}/projects/${CI_PROJECT_ID}/packages/generic/cdk-enterprise-utils/${CI_COMMIT_TAG#v}/java.zip"',
+        'curl --header "JOB-TOKEN: $CI_JOB_TOKEN" --upload-file cdkdotnet.zip "${CI_API_V4_URL}/projects/${CI_PROJECT_ID}/packages/generic/cdk-enterprise-utils/${CI_COMMIT_TAG#v}/dotnet.zip"',
         'curl --header "JOB-TOKEN: $CI_JOB_TOKEN" --upload-file API.md "${CI_API_V4_URL}/projects/${CI_PROJECT_ID}/packages/generic/cdk-enterprise-utils/${CI_COMMIT_TAG#v}/API.md"',
         'curl --header "JOB-TOKEN: $CI_JOB_TOKEN" --upload-file README.md "${CI_API_V4_URL}/projects/${CI_PROJECT_ID}/packages/generic/cdk-enterprise-utils/${CI_COMMIT_TAG#v}/README.md"',
-        'curl --header "JOB-TOKEN: $CI_JOB_TOKEN" --upload-file cdknode.zip "${CI_API_V4_URL}/projects/${CI_PROJECT_ID}/packages/generic/cdk-enterprise-utils/${CI_COMMIT_TAG#v}/node.zip"'
+        
       ]
     },
     release: {
@@ -130,6 +157,16 @@ const gitlabMain = new GitlabConfiguration(project, {
             {
               name: 'cdk-enterprise-utils-${CI_COMMIT_TAG}-node',
               url: '${CI_API_V4_URL}/projects/${CI_PROJECT_ID}/packages/generic/cdk-enterprise-utils/${CI_COMMIT_TAG#v}/node.zip',
+              link_type: 'package'
+            },
+            {
+              name: 'cdk-enterprise-utils-${CI_COMMIT_TAG}-java',
+              url: '${CI_API_V4_URL}/projects/${CI_PROJECT_ID}/packages/generic/cdk-enterprise-utils/${CI_COMMIT_TAG#v}/java.zip',
+              link_type: 'package'
+            },
+            {
+              name: 'cdk-enterprise-utils-${CI_COMMIT_TAG}-dotnet',
+              url: '${CI_API_V4_URL}/projects/${CI_PROJECT_ID}/packages/generic/cdk-enterprise-utils/${CI_COMMIT_TAG#v}/dotnet.zip',
               link_type: 'package'
             },
             {

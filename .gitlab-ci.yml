@@ -22,11 +22,15 @@ build:
     - npx jsii-docgen
     - npx jsii-pacmak
     - zip -r cdknode.zip dist/js
+    - zip -r cdkjava.zip dist/java
     - zip -r cdkpython.zip dist/python
+    - zip -r cdkdotnet.zip dist/dotnet
   artifacts:
     paths:
       - cdknode.zip
+      - cdkjava.zip
       - cdkpython.zip
+      - cdkdotnet.zip
       - dist/
 upload_pypi:
   stage: pre-release
@@ -54,6 +58,17 @@ upload_npm:
     - export NPM_REGISTRY="gitlab.aws.dev/api/v4/projects/${CI_PROJECT_ID}/packages/npm/"
     - export NPM_TOKEN="${CI_JOB_TOKEN}"
     - npx -p jsii-release@latest jsii-release-npm
+upload_nuget:
+  stage: pre-release
+  rules:
+    - if: $CI_COMMIT_TAG =~ /^v\d+(\.\d+){2}$/
+      when: on_success
+    - when: never
+  dependencies:
+    - build
+  script:
+    - dotnet nuget add source "${CI_API_V4_URL}/projects/${CI_PROJECT_ID}/packages/nuget/index.json" --name gitlab --username gitlab-ci-token --password $CI_JOB_TOKEN --store-password-in-clear-text
+    - dotnet nuget push "dist/dotnet/*.nupkg" --source gitlab
 upload_artifacts:
   stage: pre-release
   image: curlimages/curl:latest
@@ -65,9 +80,11 @@ upload_artifacts:
     - build
   script:
     - 'curl --header "JOB-TOKEN: $CI_JOB_TOKEN" --upload-file cdkpython.zip "${CI_API_V4_URL}/projects/${CI_PROJECT_ID}/packages/generic/cdk-enterprise-utils/${CI_COMMIT_TAG#v}/python.zip"'
+    - 'curl --header "JOB-TOKEN: $CI_JOB_TOKEN" --upload-file cdknode.zip "${CI_API_V4_URL}/projects/${CI_PROJECT_ID}/packages/generic/cdk-enterprise-utils/${CI_COMMIT_TAG#v}/node.zip"'
+    - 'curl --header "JOB-TOKEN: $CI_JOB_TOKEN" --upload-file cdkjava.zip "${CI_API_V4_URL}/projects/${CI_PROJECT_ID}/packages/generic/cdk-enterprise-utils/${CI_COMMIT_TAG#v}/java.zip"'
+    - 'curl --header "JOB-TOKEN: $CI_JOB_TOKEN" --upload-file cdkdotnet.zip "${CI_API_V4_URL}/projects/${CI_PROJECT_ID}/packages/generic/cdk-enterprise-utils/${CI_COMMIT_TAG#v}/dotnet.zip"'
     - 'curl --header "JOB-TOKEN: $CI_JOB_TOKEN" --upload-file API.md "${CI_API_V4_URL}/projects/${CI_PROJECT_ID}/packages/generic/cdk-enterprise-utils/${CI_COMMIT_TAG#v}/API.md"'
     - 'curl --header "JOB-TOKEN: $CI_JOB_TOKEN" --upload-file README.md "${CI_API_V4_URL}/projects/${CI_PROJECT_ID}/packages/generic/cdk-enterprise-utils/${CI_COMMIT_TAG#v}/README.md"'
-    - 'curl --header "JOB-TOKEN: $CI_JOB_TOKEN" --upload-file cdknode.zip "${CI_API_V4_URL}/projects/${CI_PROJECT_ID}/packages/generic/cdk-enterprise-utils/${CI_COMMIT_TAG#v}/node.zip"'
 release:
   stage: release
   image: registry.gitlab.com/gitlab-org/release-cli:latest
@@ -92,6 +109,12 @@ release:
           link_type: package
         - name: cdk-enterprise-utils-${CI_COMMIT_TAG}-node
           url: ${CI_API_V4_URL}/projects/${CI_PROJECT_ID}/packages/generic/cdk-enterprise-utils/${CI_COMMIT_TAG#v}/node.zip
+          link_type: package
+        - name: cdk-enterprise-utils-${CI_COMMIT_TAG}-java
+          url: ${CI_API_V4_URL}/projects/${CI_PROJECT_ID}/packages/generic/cdk-enterprise-utils/${CI_COMMIT_TAG#v}/java.zip
+          link_type: package
+        - name: cdk-enterprise-utils-${CI_COMMIT_TAG}-dotnet
+          url: ${CI_API_V4_URL}/projects/${CI_PROJECT_ID}/packages/generic/cdk-enterprise-utils/${CI_COMMIT_TAG#v}/dotnet.zip
           link_type: package
         - name: README
           url: ${CI_API_V4_URL}/projects/${CI_PROJECT_ID}/packages/generic/cdk-enterprise-utils/${CI_COMMIT_TAG#v}/README.md

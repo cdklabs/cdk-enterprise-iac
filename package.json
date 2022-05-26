@@ -16,6 +16,8 @@
     "eslint": "npx projen eslint",
     "package": "npx projen package",
     "package-all": "npx projen package-all",
+    "package:dotnet": "npx projen package:dotnet",
+    "package:java": "npx projen package:java",
     "package:js": "npx projen package:js",
     "package:python": "npx projen package:python",
     "post-compile": "npx projen post-compile",
@@ -114,9 +116,20 @@
   "jsii": {
     "outdir": "dist",
     "targets": {
+      "java": {
+        "package": "com.wwpsNatsec.awscdk",
+        "maven": {
+          "groupId": "com.wwpsNatsec.awscdk",
+          "artifactId": "cdkEnterpriseUtils"
+        }
+      },
       "python": {
         "distName": "cdk-enterprise-utils",
         "module": "cdk_enterprise_utils"
+      },
+      "dotnet": {
+        "namespace": "wwpsNatsec.CDK",
+        "packageId": "cdkEnterpriseUtils"
       }
     },
     "tsc": {
