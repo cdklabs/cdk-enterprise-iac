@@ -55,7 +55,7 @@ const gitlabMain = new GitlabConfiguration(project, {
       image: 'node:latest',
       rules: [
         {
-          if: '$CI_COMMIT_TAG =~ /^v\d+(\.\d+){2}$/',
+          if: '$CI_COMMIT_TAG =~ /^v\\d+(\\.\\d+){2}$/',
           when: 'on_success'
         },
         {when: 'never'},
@@ -72,7 +72,7 @@ const gitlabMain = new GitlabConfiguration(project, {
       image: 'curlimages/curl:latest',
       rules: [
         {
-          if: '$CI_COMMIT_TAG =~ /^v\d+(\.\d+){2}$/',
+          if: '$CI_COMMIT_TAG =~ /^v\\d+(\\.\\d+){2}$/',
           when: 'on_success',
         },
         {when: 'never'},
@@ -89,7 +89,7 @@ const gitlabMain = new GitlabConfiguration(project, {
       image: 'registry.gitlab.com/gitlab-org/release-cli:latest',
       rules: [
         {
-          if: '$CI_COMMIT_TAG =~ /^v\d+(\.\d+){2}$/',
+          if: '$CI_COMMIT_TAG =~ /^v\\d+(\\.\\d+){2}$/',
           when: 'on_success',
         },
         {when: 'never'},

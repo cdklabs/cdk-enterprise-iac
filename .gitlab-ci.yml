@@ -33,7 +33,7 @@ upload_pypi:
   stage: deploy
   image: node:latest
   rules:
-    - if: $CI_COMMIT_TAG =~ /^vd+(.d+){2}$/
+    - if: $CI_COMMIT_TAG =~ /^v\d+(\.\d+){2}$/
       when: on_success
     - when: never
   dependencies:
@@ -45,7 +45,7 @@ upload_artifacts:
   stage: pre-release
   image: curlimages/curl:latest
   rules:
-    - if: $CI_COMMIT_TAG =~ /^vd+(.d+){2}$/
+    - if: $CI_COMMIT_TAG =~ /^v\d+(\.\d+){2}$/
       when: on_success
     - when: never
   dependencies:
@@ -58,7 +58,7 @@ release:
   stage: release
   image: registry.gitlab.com/gitlab-org/release-cli:latest
   rules:
-    - if: $CI_COMMIT_TAG =~ /^vd+(.d+){2}$/
+    - if: $CI_COMMIT_TAG =~ /^v\d+(\.\d+){2}$/
       when: on_success
     - when: never
   dependencies:
