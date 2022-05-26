@@ -67,6 +67,24 @@ const gitlabMain = new GitlabConfiguration(project, {
 
       ]
     },
+    upload_npm: {
+      stage: 'pre-release',
+      image: 'node:latest',
+      rules: [
+        {
+          if: '$CI_COMMIT_TAG =~ /^v\\d+(\\.\\d+){2}$/',
+          when: 'on_success'
+        },
+        {when: 'never'},
+      ],
+      dependencies:['build'],
+      script: [
+        'export NPM_SCOPE=$(node -e \'console.log(require("./package.json").name.split("/")[0])\')',
+        'npm config set $NPM_SCOPE:registry ${CI_API_V4_URL}/projects/${CI_PROJECT_ID}/packages/npm/',
+        'echo "//gitlab.aws.dev/api/v4/projects/${CI_PROJECT_ID}/packages/npm/:_authToken=${CI_JOB_TOKEN}">.npmrc',
+        'for file in dist/js/**.tgz; do npm publish --tag latest \${file}; done',
+      ],
+    },
     upload_artifacts: {
       stage: 'pre-release',
       image: 'curlimages/curl:latest',
@@ -82,6 +100,7 @@ const gitlabMain = new GitlabConfiguration(project, {
         'curl --header "JOB-TOKEN: $CI_JOB_TOKEN" --upload-file cdkpython.zip "${CI_API_V4_URL}/projects/${CI_PROJECT_ID}/packages/generic/cdk-enterprise-utils/${CI_COMMIT_TAG#v}/python.zip"',
         'curl --header "JOB-TOKEN: $CI_JOB_TOKEN" --upload-file API.md "${CI_API_V4_URL}/projects/${CI_PROJECT_ID}/packages/generic/cdk-enterprise-utils/${CI_COMMIT_TAG#v}/API.md"',
         'curl --header "JOB-TOKEN: $CI_JOB_TOKEN" --upload-file README.md "${CI_API_V4_URL}/projects/${CI_PROJECT_ID}/packages/generic/cdk-enterprise-utils/${CI_COMMIT_TAG#v}/README.md"',
+        'curl --header "JOB-TOKEN: $CI_JOB_TOKEN" --upload-file cdknode.zip "${CI_API_V4_URL}/projects/${CI_PROJECT_ID}/packages/generic/cdk-enterprise-utils/${CI_COMMIT_TAG#v}/node.zip"'
       ]
     },
     release: {
@@ -106,6 +125,11 @@ const gitlabMain = new GitlabConfiguration(project, {
             {
               name: 'cdk-enterprise-utils-${CI_COMMIT_TAG}-python',
               url: '${CI_API_V4_URL}/projects/${CI_PROJECT_ID}/packages/generic/cdk-enterprise-utils/${CI_COMMIT_TAG#v}/python.zip',
+              link_type: 'package'
+            },
+            {
+              name: 'cdk-enterprise-utils-${CI_COMMIT_TAG}-node',
+              url: '${CI_API_V4_URL}/projects/${CI_PROJECT_ID}/packages/generic/cdk-enterprise-utils/${CI_COMMIT_TAG#v}/node.zip',
               link_type: 'package'
             },
             {
