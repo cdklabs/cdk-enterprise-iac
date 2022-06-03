@@ -5,6 +5,8 @@
 
 ### AddPermissionBoundaryProps <a name="AddPermissionBoundaryProps" id="cdk-enterprise-utils.AddPermissionBoundaryProps"></a>
 
+Properties to pass to the AddPermissionBoundary.
+
 #### Initializer <a name="Initializer" id="cdk-enterprise-utils.AddPermissionBoundaryProps.Initializer"></a>
 
 ```typescript
@@ -17,12 +19,12 @@ const addPermissionBoundaryProps: AddPermissionBoundaryProps = { ... }
 
 | **Name** | **Type** | **Description** |
 | --- | --- | --- |
-| <code><a href="#cdk-enterprise-utils.AddPermissionBoundaryProps.property.account">account</a></code> | <code>string</code> | Name of Account. |
-| <code><a href="#cdk-enterprise-utils.AddPermissionBoundaryProps.property.permissionsBoundaryPolicyName">permissionsBoundaryPolicyName</a></code> | <code>string</code> | Name of Permissions Boundary to add to all IAM roles. |
-| <code><a href="#cdk-enterprise-utils.AddPermissionBoundaryProps.property.instanceProfilePrefix">instanceProfilePrefix</a></code> | <code>string</code> | The prefix appended to the name of the IAM InstanceProfiles (Default: ''). |
+| <code><a href="#cdk-enterprise-utils.AddPermissionBoundaryProps.property.account">account</a></code> | <code>string</code> | AWS Account. |
+| <code><a href="#cdk-enterprise-utils.AddPermissionBoundaryProps.property.permissionsBoundaryPolicyName">permissionsBoundaryPolicyName</a></code> | <code>string</code> | Name of Permissions Boundary Policy to add to all IAM roles. |
+| <code><a href="#cdk-enterprise-utils.AddPermissionBoundaryProps.property.instanceProfilePrefix">instanceProfilePrefix</a></code> | <code>string</code> | A prefix to prepend to the name of the IAM InstanceProfiles (Default: ''). |
 | <code><a href="#cdk-enterprise-utils.AddPermissionBoundaryProps.property.partition">partition</a></code> | <code>string</code> | Name of Partition (Default: 'aws'). |
-| <code><a href="#cdk-enterprise-utils.AddPermissionBoundaryProps.property.policyPrefix">policyPrefix</a></code> | <code>string</code> | The prefix appended to the name of the IAM Policies and ManagedPolicies (Default: ''). |
-| <code><a href="#cdk-enterprise-utils.AddPermissionBoundaryProps.property.rolePrefix">rolePrefix</a></code> | <code>string</code> | The prefix appended to the name of IAM Roles (Default: ''). |
+| <code><a href="#cdk-enterprise-utils.AddPermissionBoundaryProps.property.policyPrefix">policyPrefix</a></code> | <code>string</code> | A prefix to prepend to the name of the IAM Policies and ManagedPolicies (Default: ''). |
+| <code><a href="#cdk-enterprise-utils.AddPermissionBoundaryProps.property.rolePrefix">rolePrefix</a></code> | <code>string</code> | A prefix to prepend to the name of IAM Roles (Default: ''). |
 
 ---
 
@@ -34,7 +36,7 @@ public readonly account: string;
 
 - *Type:* string
 
-Name of Account.
+AWS Account.
 
 ---
 
@@ -46,7 +48,7 @@ public readonly permissionsBoundaryPolicyName: string;
 
 - *Type:* string
 
-Name of Permissions Boundary to add to all IAM roles.
+Name of Permissions Boundary Policy to add to all IAM roles.
 
 ---
 
@@ -58,7 +60,7 @@ public readonly instanceProfilePrefix: string;
 
 - *Type:* string
 
-The prefix appended to the name of the IAM InstanceProfiles (Default: '').
+A prefix to prepend to the name of the IAM InstanceProfiles (Default: '').
 
 ---
 
@@ -82,7 +84,7 @@ public readonly policyPrefix: string;
 
 - *Type:* string
 
-The prefix appended to the name of the IAM Policies and ManagedPolicies (Default: '').
+A prefix to prepend to the name of the IAM Policies and ManagedPolicies (Default: '').
 
 ---
 
@@ -94,7 +96,7 @@ public readonly rolePrefix: string;
 
 - *Type:* string
 
-The prefix appended to the name of IAM Roles (Default: '').
+A prefix to prepend to the name of IAM Roles (Default: '').
 
 ---
 
@@ -103,6 +105,11 @@ The prefix appended to the name of IAM Roles (Default: '').
 ### AddPermissionBoundary <a name="AddPermissionBoundary" id="cdk-enterprise-utils.AddPermissionBoundary"></a>
 
 - *Implements:* aws-cdk-lib.IAspect
+
+A patch for Adding Permissions Boundaries to all IAM roles.
+
+Additional options for adding prefixes to IAM role, policy and instance profile names
+Can account for non commercial partitions (e.g. aws-gov, aws-cn)
 
 #### Initializers <a name="Initializers" id="cdk-enterprise-utils.AddPermissionBoundary.Initializer"></a>
 

@@ -30,7 +30,7 @@ new GitlabConfiguration(project, {
   jobs: {
     build: {
       stage: 'build',
-      rules: [{when: 'on_success'}],
+      rules: [{ when: 'on_success' }],
       script: [
         'yarn install --check-files --frozen-lockfile',
         'npx projen',
@@ -56,8 +56,8 @@ new GitlabConfiguration(project, {
           'cdkpython.zip',
           'cdkdotnet.zip',
           'dist/',
-        ]
-      }
+        ],
+      },
     },
     upload_pypi: {
       stage: 'pre-release',
@@ -65,26 +65,26 @@ new GitlabConfiguration(project, {
       rules: [
         {
           if: '$CI_COMMIT_TAG =~ /^v\\d+(\\.\\d+){2}$/',
-          when: 'on_success'
+          when: 'on_success',
         },
-        {when: 'never'},
+        { when: 'never' },
       ],
-      dependencies:['build'],
+      dependencies: ['build'],
       script: [
         'pip install twine',
         'TWINE_PASSWORD=${CI_JOB_TOKEN} TWINE_USERNAME=gitlab-ci-token python -m twine upload --repository-url ${CI_API_V4_URL}/projects/${CI_PROJECT_ID}/packages/pypi dist/python/*',
-      ]
+      ],
     },
     upload_npm: {
       stage: 'pre-release',
       rules: [
         {
           if: '$CI_COMMIT_TAG =~ /^v\\d+(\\.\\d+){2}$/',
-          when: 'on_success'
+          when: 'on_success',
         },
-        {when: 'never'},
+        { when: 'never' },
       ],
-      dependencies:['build'],
+      dependencies: ['build'],
       script: [
         'yarn install --check-files --frozen-lockfile',
         'export NPM_DIST_TAG="latest"',
@@ -98,15 +98,15 @@ new GitlabConfiguration(project, {
       rules: [
         {
           if: '$CI_COMMIT_TAG =~ /^v\\d+(\\.\\d+){2}$/',
-          when: 'on_success'
+          when: 'on_success',
         },
-        {when: 'never'},
+        { when: 'never' },
       ],
-      dependencies:['build'],
+      dependencies: ['build'],
       script: [
         'dotnet nuget add source "${CI_API_V4_URL}/projects/${CI_PROJECT_ID}/packages/nuget/index.json" --name gitlab --username gitlab-ci-token --password $CI_JOB_TOKEN --store-password-in-clear-text',
         'dotnet nuget push "dist/dotnet/*.nupkg" --source gitlab',
-    
+
       ],
     },
     upload_artifacts: {
@@ -117,7 +117,7 @@ new GitlabConfiguration(project, {
           if: '$CI_COMMIT_TAG =~ /^v\\d+(\\.\\d+){2}$/',
           when: 'on_success',
         },
-        {when: 'never'},
+        { when: 'never' },
       ],
       dependencies: ['build'],
       script: [
@@ -127,8 +127,8 @@ new GitlabConfiguration(project, {
         'curl --header "JOB-TOKEN: $CI_JOB_TOKEN" --upload-file cdkdotnet.zip "${CI_API_V4_URL}/projects/${CI_PROJECT_ID}/packages/generic/cdk-enterprise-utils/${CI_COMMIT_TAG#v}/dotnet.zip"',
         'curl --header "JOB-TOKEN: $CI_JOB_TOKEN" --upload-file API.md "${CI_API_V4_URL}/projects/${CI_PROJECT_ID}/packages/generic/cdk-enterprise-utils/${CI_COMMIT_TAG#v}/API.md"',
         'curl --header "JOB-TOKEN: $CI_JOB_TOKEN" --upload-file README.md "${CI_API_V4_URL}/projects/${CI_PROJECT_ID}/packages/generic/cdk-enterprise-utils/${CI_COMMIT_TAG#v}/README.md"',
-        
-      ]
+
+      ],
     },
     release: {
       stage: 'release',
@@ -138,7 +138,7 @@ new GitlabConfiguration(project, {
           if: '$CI_COMMIT_TAG =~ /^v\\d+(\\.\\d+){2}$/',
           when: 'on_success',
         },
-        {when: 'never'},
+        { when: 'never' },
       ],
       dependencies: ['build', 'upload_artifacts'],
       script: ['echo \'running release_job for ${CI_COMMIT_TAG}\''],
@@ -152,37 +152,37 @@ new GitlabConfiguration(project, {
             {
               name: 'cdk-enterprise-utils-${CI_COMMIT_TAG}-python',
               url: '${CI_API_V4_URL}/projects/${CI_PROJECT_ID}/packages/generic/cdk-enterprise-utils/${CI_COMMIT_TAG#v}/python.zip',
-              link_type: 'package'
+              link_type: 'package',
             },
             {
               name: 'cdk-enterprise-utils-${CI_COMMIT_TAG}-node',
               url: '${CI_API_V4_URL}/projects/${CI_PROJECT_ID}/packages/generic/cdk-enterprise-utils/${CI_COMMIT_TAG#v}/node.zip',
-              link_type: 'package'
+              link_type: 'package',
             },
             {
               name: 'cdk-enterprise-utils-${CI_COMMIT_TAG}-java',
               url: '${CI_API_V4_URL}/projects/${CI_PROJECT_ID}/packages/generic/cdk-enterprise-utils/${CI_COMMIT_TAG#v}/java.zip',
-              link_type: 'package'
+              link_type: 'package',
             },
             {
               name: 'cdk-enterprise-utils-${CI_COMMIT_TAG}-dotnet',
               url: '${CI_API_V4_URL}/projects/${CI_PROJECT_ID}/packages/generic/cdk-enterprise-utils/${CI_COMMIT_TAG#v}/dotnet.zip',
-              link_type: 'package'
+              link_type: 'package',
             },
             {
               name: 'README',
               url: '${CI_API_V4_URL}/projects/${CI_PROJECT_ID}/packages/generic/cdk-enterprise-utils/${CI_COMMIT_TAG#v}/README.md',
-              link_type: 'runbook'
+              link_type: 'runbook',
             },
             {
               name: 'API',
               url: '${CI_API_V4_URL}/projects/${CI_PROJECT_ID}/packages/generic/cdk-enterprise-utils/${CI_COMMIT_TAG#v}/API.md',
-              link_type: 'runbook'
+              link_type: 'runbook',
             },
-          ]
-        }
-      }
-    }
-  }
+          ],
+        },
+      },
+    },
+  },
 });
 project.synth();

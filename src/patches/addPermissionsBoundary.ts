@@ -3,13 +3,19 @@ import { CfnInstanceProfile, CfnManagedPolicy, CfnPolicy, CfnRole } from 'aws-cd
 import { IConstruct } from 'constructs';
 import { getResourceId } from '../utils/utils';
 
+/**
+ * Properties to pass to the AddPermissionBoundary
+ *
+ * @interface AddPermissionBoundaryProps
+ *
+ */
 export interface AddPermissionBoundaryProps {
   /**
-   * Name of Permissions Boundary to add to all IAM roles
+   * Name of Permissions Boundary Policy to add to all IAM roles
    */
   readonly permissionsBoundaryPolicyName: string;
   /**
-   * Name of Account
+   * AWS Account
    */
   readonly account: string;
   /**
@@ -17,21 +23,29 @@ export interface AddPermissionBoundaryProps {
    */
   readonly partition?: string;
   /**
-   * The prefix appended to the name of IAM Roles (Default: '').
+   * A prefix to prepend to the name of IAM Roles (Default: '').
    */
   readonly rolePrefix?: string;
   /**
-   * The prefix appended to the name of the IAM Policies and ManagedPolicies (Default: '').
+   * A prefix to prepend to the name of the IAM Policies and ManagedPolicies (Default: '').
    */
   readonly policyPrefix?: string;
   /**
-   * The prefix appended to the name of the IAM InstanceProfiles (Default: '').
+   * A prefix to prepend to the name of the IAM InstanceProfiles (Default: '').
    */
   readonly instanceProfilePrefix?: string;
 
 }
 
+/**
+ * A patch for Adding Permissions Boundaries to all IAM roles
+ *
+ * Additional options for adding prefixes to IAM role, policy and instance profile names
+ * 
+ * Can account for non commercial partitions (e.g. aws-gov, aws-cn)
+ */
 export class AddPermissionBoundary implements IAspect {
+
   private _permissionsBoundaryPolicyName: string;
   private _account: string;
   private _partition: string;
