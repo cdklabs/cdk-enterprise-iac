@@ -117,9 +117,9 @@
     "outdir": "dist",
     "targets": {
       "java": {
-        "package": "com.wwpsNatsec.awscdk",
+        "package": "com.wwpsNatsec",
         "maven": {
-          "groupId": "com.wwpsNatsec.awscdk",
+          "groupId": "com.wwpsNatsec",
           "artifactId": "cdkEnterpriseUtils"
         }
       },

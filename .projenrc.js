@@ -12,9 +12,9 @@ const project = new awscdk.AwsCdkConstructLibrary({
     module: 'cdk_enterprise_utils',
   },
   publishToMaven: {
-    javaPackage: 'com.wwpsNatsec.awscdk',
+    javaPackage: 'com.wwpsNatsec',
     mavenArtifactId: 'cdkEnterpriseUtils',
-    mavenGroupId: 'com.wwpsNatsec.awscdk',
+    mavenGroupId: 'com.wwpsNatsec',
   },
   publishToNuget: {
     dotNetNamespace: 'wwpsNatsec.CDK',
