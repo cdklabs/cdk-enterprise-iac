@@ -41,7 +41,7 @@ export interface AddPermissionBoundaryProps {
  * A patch for Adding Permissions Boundaries to all IAM roles
  *
  * Additional options for adding prefixes to IAM role, policy and instance profile names
- * 
+ *
  * Can account for non commercial partitions (e.g. aws-gov, aws-cn)
  */
 export class AddPermissionBoundary implements IAspect {
