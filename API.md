@@ -100,6 +100,50 @@ A prefix to prepend to the name of IAM Roles (Default: '').
 
 ---
 
+### RemoveTagsProps <a name="RemoveTagsProps" id="cdk-enterprise-utils.RemoveTagsProps"></a>
+
+#### Initializer <a name="Initializer" id="cdk-enterprise-utils.RemoveTagsProps.Initializer"></a>
+
+```typescript
+import { RemoveTagsProps } from 'cdk-enterprise-utils'
+
+const removeTagsProps: RemoveTagsProps = { ... }
+```
+
+#### Properties <a name="Properties" id="Properties"></a>
+
+| **Name** | **Type** | **Description** |
+| --- | --- | --- |
+| <code><a href="#cdk-enterprise-utils.RemoveTagsProps.property.cloudformationResource">cloudformationResource</a></code> | <code>string</code> | Name of Cloudformation resource Type (e.g. 'AWS::Lambda::Function'). |
+| <code><a href="#cdk-enterprise-utils.RemoveTagsProps.property.tagPropertyName">tagPropertyName</a></code> | <code>string</code> | Name of the tag property to remove from the resource. |
+
+---
+
+##### `cloudformationResource`<sup>Required</sup> <a name="cloudformationResource" id="cdk-enterprise-utils.RemoveTagsProps.property.cloudformationResource"></a>
+
+```typescript
+public readonly cloudformationResource: string;
+```
+
+- *Type:* string
+
+Name of Cloudformation resource Type (e.g. 'AWS::Lambda::Function').
+
+---
+
+##### `tagPropertyName`<sup>Optional</sup> <a name="tagPropertyName" id="cdk-enterprise-utils.RemoveTagsProps.property.tagPropertyName"></a>
+
+```typescript
+public readonly tagPropertyName: string;
+```
+
+- *Type:* string
+- *Default:* Tags
+
+Name of the tag property to remove from the resource.
+
+---
+
 ## Classes <a name="Classes" id="Classes"></a>
 
 ### AddPermissionBoundary <a name="AddPermissionBoundary" id="cdk-enterprise-utils.AddPermissionBoundary"></a>
@@ -109,6 +153,7 @@ A prefix to prepend to the name of IAM Roles (Default: '').
 A patch for Adding Permissions Boundaries to all IAM roles.
 
 Additional options for adding prefixes to IAM role, policy and instance profile names
+
 Can account for non commercial partitions (e.g. aws-gov, aws-cn)
 
 #### Initializers <a name="Initializers" id="cdk-enterprise-utils.AddPermissionBoundary.Initializer"></a>
@@ -185,6 +230,74 @@ public visit(node: IConstruct): void
 All aspects can visit an IConstruct.
 
 ###### `node`<sup>Required</sup> <a name="node" id="cdk-enterprise-utils.AddPermissionBoundary.visit.parameter.node"></a>
+
+- *Type:* constructs.IConstruct
+
+---
+
+
+
+
+### RemoveTags <a name="RemoveTags" id="cdk-enterprise-utils.RemoveTags"></a>
+
+- *Implements:* aws-cdk-lib.IAspect
+
+Patch for removing tags from a specific Cloudformation Resource.
+
+In some regions, the 'Tags' property isn't supported in Cloudformation. This patch makes it easy to remove
+
+*Example*
+
+```typescript
+// Remove tags on a resource
+Aspects.of(stack).add(new RemoveTags({
+  cloudformationResource: 'AWS::EC2::EIP',
+}));
+// Remove tags without the standard 'Tags' name
+Aspects.of(stack).add(new RemoveTags({
+  cloudformationResource: 'AWS::Backup::BackupPlan',
+   tagPropertyName: 'BackupPlanTags',
+}));
+```
+
+
+#### Initializers <a name="Initializers" id="cdk-enterprise-utils.RemoveTags.Initializer"></a>
+
+```typescript
+import { RemoveTags } from 'cdk-enterprise-utils'
+
+new RemoveTags(props: RemoveTagsProps)
+```
+
+| **Name** | **Type** | **Description** |
+| --- | --- | --- |
+| <code><a href="#cdk-enterprise-utils.RemoveTags.Initializer.parameter.props">props</a></code> | <code><a href="#cdk-enterprise-utils.RemoveTagsProps">RemoveTagsProps</a></code> | *No description.* |
+
+---
+
+##### `props`<sup>Required</sup> <a name="props" id="cdk-enterprise-utils.RemoveTags.Initializer.parameter.props"></a>
+
+- *Type:* <a href="#cdk-enterprise-utils.RemoveTagsProps">RemoveTagsProps</a>
+
+---
+
+#### Methods <a name="Methods" id="Methods"></a>
+
+| **Name** | **Description** |
+| --- | --- |
+| <code><a href="#cdk-enterprise-utils.RemoveTags.visit">visit</a></code> | All aspects can visit an IConstruct. |
+
+---
+
+##### `visit` <a name="visit" id="cdk-enterprise-utils.RemoveTags.visit"></a>
+
+```typescript
+public visit(node: IConstruct): void
+```
+
+All aspects can visit an IConstruct.
+
+###### `node`<sup>Required</sup> <a name="node" id="cdk-enterprise-utils.RemoveTags.visit.parameter.node"></a>
 
 - *Type:* constructs.IConstruct
 

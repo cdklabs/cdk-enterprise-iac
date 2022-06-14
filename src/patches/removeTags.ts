@@ -15,6 +15,23 @@ export interface RemoveTagsProps {
   readonly tagPropertyName?: string;
 }
 
+
+/**
+ * Patch for removing tags from a specific Cloudformation Resource
+ *
+ * In some regions, the 'Tags' property isn't supported in Cloudformation. This patch makes it easy to remove
+ *
+ * @example
+ * // Remove tags on a resource
+ * Aspects.of(stack).add(new RemoveTags({
+ *   cloudformationResource: 'AWS::EC2::EIP',
+ * }));
+ * // Remove tags without the standard 'Tags' name
+ * Aspects.of(stack).add(new RemoveTags({
+ *   cloudformationResource: 'AWS::Backup::BackupPlan',
+ *    tagPropertyName: 'BackupPlanTags',
+ * }));
+ */
 export class RemoveTags implements IAspect {
 
   private _cloudformationResource: string;
