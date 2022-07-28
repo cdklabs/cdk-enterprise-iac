@@ -3,10 +3,11 @@ const { GitlabConfiguration } = require('projen/lib/gitlab');
 const project = new awscdk.AwsCdkConstructLibrary({
   author: 'Taylor Ondrey',
   authorAddress: 'ondreyt@amazon.com',
-  cdkVersion: '2.25.0',
+  cdkVersion: '2.33.0',
   defaultReleaseBranch: 'main',
   name: 'cdk-enterprise-utils',
   repositoryUrl: 'git@ssh.gitlab.aws.dev:wwps-natsec/cdk/cdk-enterprise-utils.git',
+  devDeps: ['eslint-plugin-security'],
   publishToPypi: {
     distName: 'cdk-enterprise-utils',
     module: 'cdk_enterprise_utils',
@@ -185,4 +186,5 @@ new GitlabConfiguration(project, {
     },
   },
 });
+project.eslint.addExtends('plugin:security/recommended');
 project.synth();

@@ -21,7 +21,7 @@
     },
     {
       "name": "aws-cdk-lib",
-      "version": "2.25.0",
+      "version": "2.33.0",
       "type": "build"
     },
     {
@@ -39,6 +39,10 @@
     },
     {
       "name": "eslint-plugin-import",
+      "type": "build"
+    },
+    {
+      "name": "eslint-plugin-security",
       "type": "build"
     },
     {
@@ -101,7 +105,7 @@
     },
     {
       "name": "aws-cdk-lib",
-      "version": "^2.25.0",
+      "version": "^2.33.0",
       "type": "peer"
     },
     {
