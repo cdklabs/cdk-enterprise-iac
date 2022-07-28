@@ -62,7 +62,7 @@ export class AddPermissionBoundary implements IAspect {
     this._policyPrefix = props.policyPrefix || '';
     this._instanceProfilePrefix = props.instanceProfilePrefix || '';
 
-    this._permissionsBoundaryPolicyArn = `arn:${this._partition}:iam:${this._account}:policy/${this._permissionsBoundaryPolicyName}`;
+    this._permissionsBoundaryPolicyArn = `arn:${this._partition}:iam::${this._account}:policy/${this._permissionsBoundaryPolicyName}`;
   }
 
   public checkAndOverride(node: CfnResource, prefix: string, length: number, cfnProp: string, cdkProp?: string): void {

@@ -26,7 +26,7 @@ describe('Permissions Boundary patch', () => {
       }));
       const template = Template.fromStack(stack);
       template.hasResourceProperties('AWS::IAM::Role', {
-        PermissionsBoundary: `arn:aws:iam:${account}:policy/${pbName}`,
+        PermissionsBoundary: `arn:aws:iam::${account}:policy/${pbName}`,
       });
     });
     test('Role Prefix is prepended and does not exceed max length', () => {
@@ -58,7 +58,7 @@ describe('Permissions Boundary patch', () => {
       }));
       const template = Template.fromStack(stack);
       template.hasResourceProperties('AWS::IAM::Role', {
-        PermissionsBoundary: `arn:${partition}:iam:${account}:policy/${pbName}`,
+        PermissionsBoundary: `arn:${partition}:iam::${account}:policy/${pbName}`,
       });
     });
   });
