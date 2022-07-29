@@ -12,14 +12,12 @@ beforeEach(() => {
 describe('Permissions Boundary patch', () => {
 
   const pbName = 'test-pb';
-  const env = {
+  let env = {
     account: '111111111111',
     region: 'us-east-1',
-  }
+  };
 
   describe('Roles', () => {
-
-
     test('Provided Permission Boundary name is added', () => {
       new Role(stack, 'testRole', {
         assumedBy: new ServicePrincipal('ec2.amazonaws.com'),
@@ -51,10 +49,7 @@ describe('Permissions Boundary patch', () => {
       });
     });
     test('Non-commercial partitions are supported', () => {
-      const env = {
-        account: '111111111111',
-        region: 'us-gov-west-1',
-      }
+      env.region = 'us-gov-west-1';
       new Role(stack, 'testRole', {
         assumedBy: new ServicePrincipal('ec2.amazonaws.com'),
       });
@@ -64,7 +59,7 @@ describe('Permissions Boundary patch', () => {
       }));
       const template = Template.fromStack(stack);
       template.hasResourceProperties('AWS::IAM::Role', {
-        PermissionsBoundary: `arn:aws-gov:iam::${env.account}:policy/${pbName}`,
+        PermissionsBoundary: `arn:aws-us-gov:iam::${env.account}:policy/${pbName}`,
       });
     });
   });
@@ -158,6 +153,33 @@ describe('Permissions Boundary patch', () => {
       const template = Template.fromStack(stack);
       template.hasResourceProperties('AWS::IAM::InstanceProfile', {
         InstanceProfileName: `${instanceProfilePrefix}${instanceProfileName}`.substring(0, 128 - 1),
+      });
+    });
+    test('Functions when no Enviornment is set', () => {
+      new Role(stack, 'testRole', {
+        assumedBy: new ServicePrincipal('ec2.amazonaws.com'),
+      });
+      Aspects.of(stack).add(new AddPermissionBoundary({
+        permissionsBoundaryPolicyName: pbName,
+      }));
+      const template = Template.fromStack(stack);
+      template.hasResourceProperties('AWS::IAM::Role', {
+        PermissionsBoundary: {
+          'Fn::Join': [
+            '',
+            [
+              'arn:',
+              {
+                Ref: 'AWS::Partition',
+              },
+              ':iam::',
+              {
+                Ref: 'AWS::AccountId',
+              },
+              `:policy/${pbName}`,
+            ],
+          ],
+        },
       });
     });
   });

@@ -17,7 +17,7 @@ export interface AddPermissionBoundaryProps {
   /**
    * CDK environment (see https://docs.aws.amazon.com/cdk/v2/guide/environments.html)
    */
-  readonly env: Environment;
+  readonly env?: Environment;
   /**
    * A prefix to prepend to the name of IAM Roles (Default: '').
    */
@@ -52,20 +52,16 @@ export class AddPermissionBoundary implements IAspect {
 
   constructor(props: AddPermissionBoundaryProps) {
     this._permissionsBoundaryPolicyName = props.permissionsBoundaryPolicyName;
-    this._account = props.env.account || Aws.ACCOUNT_ID;
-    this._region = props.env.region || Aws.REGION;
-
+    this._account = props.env?.account || Aws.ACCOUNT_ID;
+    this._region = props.env?.region || Aws.REGION;
     this._rolePrefix = props.rolePrefix || '';
     this._policyPrefix = props.policyPrefix || '';
     this._instanceProfilePrefix = props.instanceProfilePrefix || '';
 
-<<<<<<< Updated upstream
-    this._permissionsBoundaryPolicyArn = `arn:${this._partition}:iam::${this._account}:policy/${this._permissionsBoundaryPolicyName}`;
-=======
-    const region = region_info.RegionInfo.get(this._region)
+    // const region = region_info.RegionInfo.get(this._region);
+    const partition = props.env ? region_info.RegionInfo.get(this._region).partition : Aws.PARTITION;
 
-    this._permissionsBoundaryPolicyArn = `arn:${region.partition}:iam::${this._account}:policy/${this._permissionsBoundaryPolicyName}`;
->>>>>>> Stashed changes
+    this._permissionsBoundaryPolicyArn = `arn:${partition}:iam::${this._account}:policy/${this._permissionsBoundaryPolicyName}`;
   }
 
   public checkAndOverride(node: CfnResource, prefix: string, length: number, cfnProp: string, cdkProp?: string): void {
