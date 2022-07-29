@@ -1,4 +1,4 @@
-import { CfnResource, IAspect, Token } from 'aws-cdk-lib';
+import { Aws, CfnResource, Environment, IAspect, region_info, Token } from 'aws-cdk-lib';
 import { CfnInstanceProfile, CfnManagedPolicy, CfnPolicy, CfnRole } from 'aws-cdk-lib/aws-iam';
 import { IConstruct } from 'constructs';
 import { getResourceId } from '../utils/utils';
@@ -15,13 +15,9 @@ export interface AddPermissionBoundaryProps {
    */
   readonly permissionsBoundaryPolicyName: string;
   /**
-   * AWS Account
+   * CDK environment (see https://docs.aws.amazon.com/cdk/v2/guide/environments.html)
    */
-  readonly account: string;
-  /**
-   * Name of Partition (Default: 'aws')
-   */
-  readonly partition?: string;
+  readonly env: Environment;
   /**
    * A prefix to prepend to the name of IAM Roles (Default: '').
    */
@@ -48,7 +44,7 @@ export class AddPermissionBoundary implements IAspect {
 
   private _permissionsBoundaryPolicyName: string;
   private _account: string;
-  private _partition: string;
+  private _region: string;
   private _rolePrefix: string;
   private _policyPrefix: string;
   private _instanceProfilePrefix: string;
@@ -56,13 +52,20 @@ export class AddPermissionBoundary implements IAspect {
 
   constructor(props: AddPermissionBoundaryProps) {
     this._permissionsBoundaryPolicyName = props.permissionsBoundaryPolicyName;
-    this._account = props.account;
-    this._partition = props.partition || 'aws';
+    this._account = props.env.account || Aws.ACCOUNT_ID;
+    this._region = props.env.region || Aws.REGION;
+
     this._rolePrefix = props.rolePrefix || '';
     this._policyPrefix = props.policyPrefix || '';
     this._instanceProfilePrefix = props.instanceProfilePrefix || '';
 
+<<<<<<< Updated upstream
     this._permissionsBoundaryPolicyArn = `arn:${this._partition}:iam::${this._account}:policy/${this._permissionsBoundaryPolicyName}`;
+=======
+    const region = region_info.RegionInfo.get(this._region)
+
+    this._permissionsBoundaryPolicyArn = `arn:${region.partition}:iam::${this._account}:policy/${this._permissionsBoundaryPolicyName}`;
+>>>>>>> Stashed changes
   }
 
   public checkAndOverride(node: CfnResource, prefix: string, length: number, cfnProp: string, cdkProp?: string): void {

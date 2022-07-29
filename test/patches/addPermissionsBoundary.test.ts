@@ -11,8 +11,12 @@ beforeEach(() => {
 
 describe('Permissions Boundary patch', () => {
 
-  const account = 'test-pb';
-  const pbName = '111111111111';
+  const pbName = 'test-pb';
+  const env = {
+    account: '111111111111',
+    region: 'us-east-1',
+  }
+
   describe('Roles', () => {
 
 
@@ -22,11 +26,11 @@ describe('Permissions Boundary patch', () => {
       });
       Aspects.of(stack).add(new AddPermissionBoundary({
         permissionsBoundaryPolicyName: pbName,
-        account,
+        env,
       }));
       const template = Template.fromStack(stack);
       template.hasResourceProperties('AWS::IAM::Role', {
-        PermissionsBoundary: `arn:aws:iam::${account}:policy/${pbName}`,
+        PermissionsBoundary: `arn:aws:iam::${env.account}:policy/${pbName}`,
       });
     });
     test('Role Prefix is prepended and does not exceed max length', () => {
@@ -38,7 +42,7 @@ describe('Permissions Boundary patch', () => {
       });
       Aspects.of(stack).add(new AddPermissionBoundary({
         permissionsBoundaryPolicyName: pbName,
-        account,
+        env,
         rolePrefix,
       }));
       const template = Template.fromStack(stack);
@@ -47,18 +51,20 @@ describe('Permissions Boundary patch', () => {
       });
     });
     test('Non-commercial partitions are supported', () => {
-      const partition = 'aws-gov';
+      const env = {
+        account: '111111111111',
+        region: 'us-gov-west-1',
+      }
       new Role(stack, 'testRole', {
         assumedBy: new ServicePrincipal('ec2.amazonaws.com'),
       });
       Aspects.of(stack).add(new AddPermissionBoundary({
         permissionsBoundaryPolicyName: pbName,
-        account,
-        partition,
+        env,
       }));
       const template = Template.fromStack(stack);
       template.hasResourceProperties('AWS::IAM::Role', {
-        PermissionsBoundary: `arn:${partition}:iam::${account}:policy/${pbName}`,
+        PermissionsBoundary: `arn:aws-gov:iam::${env.account}:policy/${pbName}`,
       });
     });
   });
@@ -78,7 +84,7 @@ describe('Permissions Boundary patch', () => {
 
       Aspects.of(stack).add(new AddPermissionBoundary({
         permissionsBoundaryPolicyName: pbName,
-        account,
+        env,
         policyPrefix,
       }));
       const template = Template.fromStack(stack);
@@ -100,7 +106,7 @@ describe('Permissions Boundary patch', () => {
 
       Aspects.of(stack).add(new AddPermissionBoundary({
         permissionsBoundaryPolicyName: pbName,
-        account,
+        env,
         policyPrefix,
       }));
       const template = Template.fromStack(stack);
@@ -125,7 +131,7 @@ describe('Permissions Boundary patch', () => {
       );
       Aspects.of(stack).add(new AddPermissionBoundary({
         permissionsBoundaryPolicyName: pbName,
-        account,
+        env,
         policyPrefix,
       }));
       const template = Template.fromStack(stack);
@@ -146,7 +152,7 @@ describe('Permissions Boundary patch', () => {
       });
       Aspects.of(stack).add(new AddPermissionBoundary({
         permissionsBoundaryPolicyName: pbName,
-        account,
+        env,
         instanceProfilePrefix,
       }));
       const template = Template.fromStack(stack);
