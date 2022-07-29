@@ -1,4 +1,4 @@
-import { Aws, CfnResource, Environment, IAspect, region_info, Token } from 'aws-cdk-lib';
+import { Aws, CfnResource, Environment, IAspect, region_info, Stack, Token } from 'aws-cdk-lib';
 import { CfnInstanceProfile, CfnManagedPolicy, CfnPolicy, CfnRole } from 'aws-cdk-lib/aws-iam';
 import { IConstruct } from 'constructs';
 import { getResourceId } from '../utils/utils';
@@ -48,7 +48,7 @@ export class AddPermissionBoundary implements IAspect {
   private _rolePrefix: string;
   private _policyPrefix: string;
   private _instanceProfilePrefix: string;
-  private _permissionsBoundaryPolicyArn: string;
+  private _partition: string | undefined;
 
   constructor(props: AddPermissionBoundaryProps) {
     this._permissionsBoundaryPolicyName = props.permissionsBoundaryPolicyName;
@@ -57,11 +57,7 @@ export class AddPermissionBoundary implements IAspect {
     this._rolePrefix = props.rolePrefix || '';
     this._policyPrefix = props.policyPrefix || '';
     this._instanceProfilePrefix = props.instanceProfilePrefix || '';
-
-    // const region = region_info.RegionInfo.get(this._region);
-    const partition = props.env ? region_info.RegionInfo.get(this._region).partition : Aws.PARTITION;
-
-    this._permissionsBoundaryPolicyArn = `arn:${partition}:iam::${this._account}:policy/${this._permissionsBoundaryPolicyName}`;
+    this._partition = props.env ? region_info.RegionInfo.get(this._region).partition : Aws.PARTITION;
   }
 
   public checkAndOverride(node: CfnResource, prefix: string, length: number, cfnProp: string, cdkProp?: string): void {
@@ -72,8 +68,17 @@ export class AddPermissionBoundary implements IAspect {
   }
 
   public visit(node: IConstruct): void {
+    Stack.of(node).formatArn;
     if (node instanceof CfnRole) {
-      node.addPropertyOverride('PermissionsBoundary', this._permissionsBoundaryPolicyArn);
+      const permissionsBoundaryPolicyArn = Stack.of(node).formatArn({
+        service: 'iam',
+        resource: 'policy',
+        partition: this._partition,
+        region: '',
+        account: this._account,
+        resourceName: this._permissionsBoundaryPolicyName,
+      });
+      node.addPropertyOverride('PermissionsBoundary', permissionsBoundaryPolicyArn);
       this.checkAndOverride(node, this._rolePrefix, 64, 'RoleName', node.roleName);
     } else if (node instanceof CfnPolicy) {
       this.checkAndOverride(node, this._policyPrefix, 128, 'PolicyName', node.policyName);
