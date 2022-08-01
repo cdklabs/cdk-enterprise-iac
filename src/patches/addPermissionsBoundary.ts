@@ -1,4 +1,4 @@
-import { Aws, CfnResource, Environment, IAspect, region_info, Stack, Token } from 'aws-cdk-lib';
+import { CfnResource, IAspect, Stack, Token } from 'aws-cdk-lib';
 import { CfnInstanceProfile, CfnManagedPolicy, CfnPolicy, CfnRole } from 'aws-cdk-lib/aws-iam';
 import { IConstruct } from 'constructs';
 import { getResourceId } from '../utils/utils';
@@ -14,10 +14,6 @@ export interface AddPermissionBoundaryProps {
    * Name of Permissions Boundary Policy to add to all IAM roles
    */
   readonly permissionsBoundaryPolicyName: string;
-  /**
-   * CDK environment (see https://docs.aws.amazon.com/cdk/v2/guide/environments.html)
-   */
-  readonly env?: Environment;
   /**
    * A prefix to prepend to the name of IAM Roles (Default: '').
    */
@@ -43,21 +39,15 @@ export interface AddPermissionBoundaryProps {
 export class AddPermissionBoundary implements IAspect {
 
   private _permissionsBoundaryPolicyName: string;
-  private _account: string;
-  private _region: string;
   private _rolePrefix: string;
   private _policyPrefix: string;
   private _instanceProfilePrefix: string;
-  private _partition: string | undefined;
 
   constructor(props: AddPermissionBoundaryProps) {
     this._permissionsBoundaryPolicyName = props.permissionsBoundaryPolicyName;
-    this._account = props.env?.account || Aws.ACCOUNT_ID;
-    this._region = props.env?.region || Aws.REGION;
     this._rolePrefix = props.rolePrefix || '';
     this._policyPrefix = props.policyPrefix || '';
     this._instanceProfilePrefix = props.instanceProfilePrefix || '';
-    this._partition = props.env ? region_info.RegionInfo.get(this._region).partition : Aws.PARTITION;
   }
 
   public checkAndOverride(node: CfnResource, prefix: string, length: number, cfnProp: string, cdkProp?: string): void {
@@ -72,9 +62,7 @@ export class AddPermissionBoundary implements IAspect {
       const permissionsBoundaryPolicyArn = Stack.of(node).formatArn({
         service: 'iam',
         resource: 'policy',
-        partition: this._partition,
         region: '',
-        account: this._account,
         resourceName: this._permissionsBoundaryPolicyName,
       });
       node.addPropertyOverride('PermissionsBoundary', permissionsBoundaryPolicyArn);
