@@ -68,7 +68,6 @@ export class AddPermissionBoundary implements IAspect {
   }
 
   public visit(node: IConstruct): void {
-    Stack.of(node).formatArn;
     if (node instanceof CfnRole) {
       const permissionsBoundaryPolicyArn = Stack.of(node).formatArn({
         service: 'iam',
