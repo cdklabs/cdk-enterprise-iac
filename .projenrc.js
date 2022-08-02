@@ -7,11 +7,10 @@ const { GitlabConfiguration } = require('projen/lib/gitlab');
 const project = new awscdk.AwsCdkConstructLibrary({
   author: 'Taylor Ondrey',
   authorAddress: 'ondreyt@amazon.com',
-  cdkVersion: '2.33.0',
+  cdkVersion: '2.34.2',
   defaultReleaseBranch: 'main',
   name: 'cdk-enterprise-utils',
-  repositoryUrl:
-    'git@ssh.gitlab.aws.dev:wwps-natsec/cdk/cdk-enterprise-utils.git',
+  repositoryUrl: 'https://github.com/cdklabs/cdk-enterprise-utils.git',
   devDeps: ['eslint-plugin-security'],
   eslintOptions: { prettier: true },
   autoApproveOptions: {
@@ -30,18 +29,21 @@ const project = new awscdk.AwsCdkConstructLibrary({
     },
   },
   publishToPypi: {
-    distName: 'cdk-nag',
-    module: 'cdk_nag',
+    distName: 'cdk-enterprise-utils',
+    module: 'cdk_enterprise_utils',
   },
   publishToNuget: {
-    packageId: 'Cdklabs.CdkNag',
-    dotNetNamespace: 'Cdklabs.CdkNag',
+    packageId: 'Cdklabs.CdkEnterpriseUtils',
+    dotNetNamespace: 'Cdklabs.CdkEnterpriseUtils',
   },
   publishToMaven: {
     mavenGroupId: 'io.github.cdklabs',
-    javaPackage: 'io.github.cdklabs.cdknag',
-    mavenArtifactId: 'cdknag',
+    javaPackage: 'io.github.cdklabs.cdkenterpriseutils',
+    mavenArtifactId: 'cdkenterpriseutils',
     mavenEndpoint: 'https://s01.oss.sonatype.org',
+  },
+  publishToGo: {
+    moduleName: 'github.com/cdklabs/cdk-enterprise-utils',
   },
   release: true,
 });
