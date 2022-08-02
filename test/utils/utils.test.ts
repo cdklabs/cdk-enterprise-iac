@@ -1,3 +1,7 @@
+/*
+Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
+SPDX-License-Identifier: Apache-2.0
+*/
 import { getResourceId } from '../../src/utils/utils';
 
 describe('Testing utils', () => {
@@ -7,6 +11,8 @@ describe('Testing utils', () => {
   });
   test('getResourceId returns valid name and replaces illegal characters for IAM role,policy and instance profile names', () => {
     const nodePath = 'Default/TestInlinePolicy/Resource:extra:stuff';
-    expect(getResourceId(nodePath)).toBe('Default-TestInlinePolicy-Resource-extra-stuff');
+    expect(getResourceId(nodePath)).toBe(
+      'Default-TestInlinePolicy-Resource-extra-stuff'
+    );
   });
 });

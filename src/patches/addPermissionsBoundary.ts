@@ -1,5 +1,14 @@
+/*
+Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
+SPDX-License-Identifier: Apache-2.0
+*/
 import { CfnResource, IAspect, Stack, Token } from 'aws-cdk-lib';
-import { CfnInstanceProfile, CfnManagedPolicy, CfnPolicy, CfnRole } from 'aws-cdk-lib/aws-iam';
+import {
+  CfnInstanceProfile,
+  CfnManagedPolicy,
+  CfnPolicy,
+  CfnRole,
+} from 'aws-cdk-lib/aws-iam';
 import { IConstruct } from 'constructs';
 import { getResourceId } from '../utils/utils';
 
@@ -26,7 +35,6 @@ export interface AddPermissionBoundaryProps {
    * A prefix to prepend to the name of the IAM InstanceProfiles (Default: '').
    */
   readonly instanceProfilePrefix?: string;
-
 }
 
 /**
@@ -37,7 +45,6 @@ export interface AddPermissionBoundaryProps {
  * Can account for non commercial partitions (e.g. aws-gov, aws-cn)
  */
 export class AddPermissionBoundary implements IAspect {
-
   private _permissionsBoundaryPolicyName: string;
   private _rolePrefix: string;
   private _policyPrefix: string;
@@ -50,10 +57,21 @@ export class AddPermissionBoundary implements IAspect {
     this._instanceProfilePrefix = props.instanceProfilePrefix || '';
   }
 
-  public checkAndOverride(node: CfnResource, prefix: string, length: number, cfnProp: string, cdkProp?: string): void {
+  public checkAndOverride(
+    node: CfnResource,
+    prefix: string,
+    length: number,
+    cfnProp: string,
+    cdkProp?: string
+  ): void {
     if (!cdkProp?.startsWith(prefix)) {
-      const policySuffix = !Token.isUnresolved(cdkProp) ? cdkProp : getResourceId(node.node.path);
-      node.addPropertyOverride(cfnProp, `${prefix}${policySuffix}`.substring(0, length - 1));
+      const policySuffix = !Token.isUnresolved(cdkProp)
+        ? cdkProp
+        : getResourceId(node.node.path);
+      node.addPropertyOverride(
+        cfnProp,
+        `${prefix}${policySuffix}`.substring(0, length - 1)
+      );
     }
   }
 
@@ -65,14 +83,41 @@ export class AddPermissionBoundary implements IAspect {
         region: '',
         resourceName: this._permissionsBoundaryPolicyName,
       });
-      node.addPropertyOverride('PermissionsBoundary', permissionsBoundaryPolicyArn);
-      this.checkAndOverride(node, this._rolePrefix, 64, 'RoleName', node.roleName);
+      node.addPropertyOverride(
+        'PermissionsBoundary',
+        permissionsBoundaryPolicyArn
+      );
+      this.checkAndOverride(
+        node,
+        this._rolePrefix,
+        64,
+        'RoleName',
+        node.roleName
+      );
     } else if (node instanceof CfnPolicy) {
-      this.checkAndOverride(node, this._policyPrefix, 128, 'PolicyName', node.policyName);
+      this.checkAndOverride(
+        node,
+        this._policyPrefix,
+        128,
+        'PolicyName',
+        node.policyName
+      );
     } else if (node instanceof CfnManagedPolicy) {
-      this.checkAndOverride(node, this._policyPrefix, 128, 'ManagedPolicyName', node.managedPolicyName);
+      this.checkAndOverride(
+        node,
+        this._policyPrefix,
+        128,
+        'ManagedPolicyName',
+        node.managedPolicyName
+      );
     } else if (node instanceof CfnInstanceProfile) {
-      this.checkAndOverride(node, this._instanceProfilePrefix, 128, 'InstanceProfileName', node.instanceProfileName);
+      this.checkAndOverride(
+        node,
+        this._instanceProfilePrefix,
+        128,
+        'InstanceProfileName',
+        node.instanceProfileName
+      );
     }
   }
 }

@@ -1,3 +1,7 @@
+/*
+Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
+SPDX-License-Identifier: Apache-2.0
+*/
 import { CfnResource, IAspect } from 'aws-cdk-lib';
 import { IConstruct } from 'constructs';
 
@@ -14,7 +18,6 @@ export interface RemoveTagsProps {
    */
   readonly tagPropertyName?: string;
 }
-
 
 /**
  * Patch for removing tags from a specific Cloudformation Resource
@@ -33,7 +36,6 @@ export interface RemoveTagsProps {
  * }));
  */
 export class RemoveTags implements IAspect {
-
   private _cloudformationResource: string;
   private _tagPropertyName: string;
 
@@ -43,7 +45,10 @@ export class RemoveTags implements IAspect {
   }
 
   public visit(node: IConstruct): void {
-    if (CfnResource.isCfnResource(node) && node.cfnResourceType == this._cloudformationResource) {
+    if (
+      CfnResource.isCfnResource(node) &&
+      node.cfnResourceType == this._cloudformationResource
+    ) {
       node.addPropertyDeletionOverride(this._tagPropertyName);
     }
   }
