@@ -19,24 +19,10 @@ const addPermissionBoundaryProps: AddPermissionBoundaryProps = { ... }
 
 | **Name** | **Type** | **Description** |
 | --- | --- | --- |
-| <code><a href="#cdk-enterprise-utils.AddPermissionBoundaryProps.property.account">account</a></code> | <code>string</code> | AWS Account. |
 | <code><a href="#cdk-enterprise-utils.AddPermissionBoundaryProps.property.permissionsBoundaryPolicyName">permissionsBoundaryPolicyName</a></code> | <code>string</code> | Name of Permissions Boundary Policy to add to all IAM roles. |
 | <code><a href="#cdk-enterprise-utils.AddPermissionBoundaryProps.property.instanceProfilePrefix">instanceProfilePrefix</a></code> | <code>string</code> | A prefix to prepend to the name of the IAM InstanceProfiles (Default: ''). |
-| <code><a href="#cdk-enterprise-utils.AddPermissionBoundaryProps.property.partition">partition</a></code> | <code>string</code> | Name of Partition (Default: 'aws'). |
 | <code><a href="#cdk-enterprise-utils.AddPermissionBoundaryProps.property.policyPrefix">policyPrefix</a></code> | <code>string</code> | A prefix to prepend to the name of the IAM Policies and ManagedPolicies (Default: ''). |
 | <code><a href="#cdk-enterprise-utils.AddPermissionBoundaryProps.property.rolePrefix">rolePrefix</a></code> | <code>string</code> | A prefix to prepend to the name of IAM Roles (Default: ''). |
-
----
-
-##### `account`<sup>Required</sup> <a name="account" id="cdk-enterprise-utils.AddPermissionBoundaryProps.property.account"></a>
-
-```typescript
-public readonly account: string;
-```
-
-- *Type:* string
-
-AWS Account.
 
 ---
 
@@ -61,18 +47,6 @@ public readonly instanceProfilePrefix: string;
 - *Type:* string
 
 A prefix to prepend to the name of the IAM InstanceProfiles (Default: '').
-
----
-
-##### `partition`<sup>Optional</sup> <a name="partition" id="cdk-enterprise-utils.AddPermissionBoundaryProps.property.partition"></a>
-
-```typescript
-public readonly partition: string;
-```
-
-- *Type:* string
-
-Name of Partition (Default: 'aws').
 
 ---
 
