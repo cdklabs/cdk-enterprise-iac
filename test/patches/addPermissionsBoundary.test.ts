@@ -2,7 +2,7 @@
 Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
 SPDX-License-Identifier: Apache-2.0
 */
-import { Aspects, Stack } from 'aws-cdk-lib';
+import { Aspects, RemovalPolicy, Stack } from 'aws-cdk-lib';
 import { Template } from 'aws-cdk-lib/assertions';
 import {
   CfnInstanceProfile,
@@ -12,6 +12,7 @@ import {
   Role,
   ServicePrincipal,
 } from 'aws-cdk-lib/aws-iam';
+import { Bucket } from 'aws-cdk-lib/aws-s3';
 import { AddPermissionBoundary } from '../../src/patches/addPermissionsBoundary';
 
 let stack: Stack;
@@ -70,6 +71,37 @@ describe('Permissions Boundary patch', () => {
       const template = Template.fromStack(stack);
       template.hasResourceProperties('AWS::IAM::Role', {
         RoleName: `${rolePrefix}${roleName}`.substring(0, 64 - 1),
+      });
+    });
+    test('Roles without RoleName are handled', () => {
+      new Bucket(stack, 'TestBucket', {
+        autoDeleteObjects: true, // creates custom resource with role that has no RoleName
+        removalPolicy: RemovalPolicy.DESTROY,
+      });
+      Aspects.of(stack).add(
+        new AddPermissionBoundary({
+          permissionsBoundaryPolicyName: pbName,
+          rolePrefix: 'Bananas_',
+        })
+      );
+      const template = Template.fromStack(stack);
+      template.hasResourceProperties('AWS::IAM::Role', {
+        PermissionsBoundary: {
+          'Fn::Join': [
+            '',
+            [
+              'arn:',
+              {
+                Ref: 'AWS::Partition',
+              },
+              ':iam::',
+              {
+                Ref: 'AWS::AccountId',
+              },
+              `:policy/${pbName}`,
+            ],
+          ],
+        },
       });
     });
   });

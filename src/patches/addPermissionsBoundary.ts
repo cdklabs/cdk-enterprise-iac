@@ -76,6 +76,28 @@ export class AddPermissionBoundary implements IAspect {
   }
 
   public visit(node: IConstruct): void {
+    if (node instanceof CfnResource) {
+      const cfnResourceNode: CfnResource = node;
+      if (cfnResourceNode.cfnResourceType == 'AWS::IAM::Role') {
+        const permissionsBoundaryPolicyArn = Stack.of(node).formatArn({
+          service: 'iam',
+          resource: 'policy',
+          region: '',
+          resourceName: this._permissionsBoundaryPolicyName,
+        });
+        node.addPropertyOverride(
+          'PermissionsBoundary',
+          permissionsBoundaryPolicyArn
+        );
+        this.checkAndOverride(
+          node,
+          this._rolePrefix,
+          64,
+          'RoleName',
+          cfnResourceNode.logicalId
+        );
+      }
+    }
     if (node instanceof CfnRole) {
       const permissionsBoundaryPolicyArn = Stack.of(node).formatArn({
         service: 'iam',
