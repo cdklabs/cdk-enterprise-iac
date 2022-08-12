@@ -225,7 +225,7 @@ In some regions, the 'Tags' property isn't supported in Cloudformation. This pat
 ```typescript
 // Remove tags on a resource
 Aspects.of(stack).add(new RemoveTags({
-  cloudformationResource: 'AWS::EC2::EIP',
+  cloudformationResource: 'AWS::ECS::Cluster',
 }));
 // Remove tags without the standard 'Tags' name
 Aspects.of(stack).add(new RemoveTags({

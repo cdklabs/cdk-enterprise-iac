@@ -27,7 +27,7 @@ export interface RemoveTagsProps {
  * @example
  * // Remove tags on a resource
  * Aspects.of(stack).add(new RemoveTags({
- *   cloudformationResource: 'AWS::EC2::EIP',
+ *   cloudformationResource: 'AWS::ECS::Cluster',
  * }));
  * // Remove tags without the standard 'Tags' name
  * Aspects.of(stack).add(new RemoveTags({
