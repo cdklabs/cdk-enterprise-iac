@@ -9,7 +9,7 @@ const project = new awscdk.AwsCdkConstructLibrary({
   authorAddress: 'ondreyt@amazon.com',
   cdkVersion: '2.37.1',
   defaultReleaseBranch: 'main',
-  name: 'cdk-enterprise-utils',
+  name: '@cdklabs/cdk-enterprise-utils',
   repositoryUrl: 'https://github.com/cdklabs/cdk-enterprise-utils.git',
   devDeps: ['eslint-plugin-security'],
   gitignore: ['.vscode/'],
@@ -30,8 +30,8 @@ const project = new awscdk.AwsCdkConstructLibrary({
     },
   },
   publishToPypi: {
-    distName: 'cdk-enterprise-utils',
-    module: 'cdk_enterprise_utils',
+    distName: 'cdklabs.cdk-enterprise-utils',
+    module: 'cdklabs.cdk_enterprise_utils',
   },
   publishToNuget: {
     packageId: 'Cdklabs.CdkEnterpriseUtils',
@@ -42,9 +42,6 @@ const project = new awscdk.AwsCdkConstructLibrary({
     javaPackage: 'io.github.cdklabs.cdkenterpriseutils',
     mavenArtifactId: 'cdkenterpriseutils',
     mavenEndpoint: 'https://s01.oss.sonatype.org',
-  },
-  publishToGo: {
-    moduleName: 'github.com/cdklabs/cdk-enterprise-utils',
   },
   release: true,
 });
