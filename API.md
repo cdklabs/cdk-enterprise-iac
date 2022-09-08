@@ -3,14 +3,14 @@
 
 ## Structs <a name="Structs" id="Structs"></a>
 
-### AddPermissionBoundaryProps <a name="AddPermissionBoundaryProps" id="@cdklabs/cdk-enterprise-utils.AddPermissionBoundaryProps"></a>
+### AddPermissionBoundaryProps <a name="AddPermissionBoundaryProps" id="@cdklabs/cdk-enterprise-iac.AddPermissionBoundaryProps"></a>
 
 Properties to pass to the AddPermissionBoundary.
 
-#### Initializer <a name="Initializer" id="@cdklabs/cdk-enterprise-utils.AddPermissionBoundaryProps.Initializer"></a>
+#### Initializer <a name="Initializer" id="@cdklabs/cdk-enterprise-iac.AddPermissionBoundaryProps.Initializer"></a>
 
 ```typescript
-import { AddPermissionBoundaryProps } from '@cdklabs/cdk-enterprise-utils'
+import { AddPermissionBoundaryProps } from '@cdklabs/cdk-enterprise-iac'
 
 const addPermissionBoundaryProps: AddPermissionBoundaryProps = { ... }
 ```
@@ -19,14 +19,14 @@ const addPermissionBoundaryProps: AddPermissionBoundaryProps = { ... }
 
 | **Name** | **Type** | **Description** |
 | --- | --- | --- |
-| <code><a href="#@cdklabs/cdk-enterprise-utils.AddPermissionBoundaryProps.property.permissionsBoundaryPolicyName">permissionsBoundaryPolicyName</a></code> | <code>string</code> | Name of Permissions Boundary Policy to add to all IAM roles. |
-| <code><a href="#@cdklabs/cdk-enterprise-utils.AddPermissionBoundaryProps.property.instanceProfilePrefix">instanceProfilePrefix</a></code> | <code>string</code> | A prefix to prepend to the name of the IAM InstanceProfiles (Default: ''). |
-| <code><a href="#@cdklabs/cdk-enterprise-utils.AddPermissionBoundaryProps.property.policyPrefix">policyPrefix</a></code> | <code>string</code> | A prefix to prepend to the name of the IAM Policies and ManagedPolicies (Default: ''). |
-| <code><a href="#@cdklabs/cdk-enterprise-utils.AddPermissionBoundaryProps.property.rolePrefix">rolePrefix</a></code> | <code>string</code> | A prefix to prepend to the name of IAM Roles (Default: ''). |
+| <code><a href="#@cdklabs/cdk-enterprise-iac.AddPermissionBoundaryProps.property.permissionsBoundaryPolicyName">permissionsBoundaryPolicyName</a></code> | <code>string</code> | Name of Permissions Boundary Policy to add to all IAM roles. |
+| <code><a href="#@cdklabs/cdk-enterprise-iac.AddPermissionBoundaryProps.property.instanceProfilePrefix">instanceProfilePrefix</a></code> | <code>string</code> | A prefix to prepend to the name of the IAM InstanceProfiles (Default: ''). |
+| <code><a href="#@cdklabs/cdk-enterprise-iac.AddPermissionBoundaryProps.property.policyPrefix">policyPrefix</a></code> | <code>string</code> | A prefix to prepend to the name of the IAM Policies and ManagedPolicies (Default: ''). |
+| <code><a href="#@cdklabs/cdk-enterprise-iac.AddPermissionBoundaryProps.property.rolePrefix">rolePrefix</a></code> | <code>string</code> | A prefix to prepend to the name of IAM Roles (Default: ''). |
 
 ---
 
-##### `permissionsBoundaryPolicyName`<sup>Required</sup> <a name="permissionsBoundaryPolicyName" id="@cdklabs/cdk-enterprise-utils.AddPermissionBoundaryProps.property.permissionsBoundaryPolicyName"></a>
+##### `permissionsBoundaryPolicyName`<sup>Required</sup> <a name="permissionsBoundaryPolicyName" id="@cdklabs/cdk-enterprise-iac.AddPermissionBoundaryProps.property.permissionsBoundaryPolicyName"></a>
 
 ```typescript
 public readonly permissionsBoundaryPolicyName: string;
@@ -38,7 +38,7 @@ Name of Permissions Boundary Policy to add to all IAM roles.
 
 ---
 
-##### `instanceProfilePrefix`<sup>Optional</sup> <a name="instanceProfilePrefix" id="@cdklabs/cdk-enterprise-utils.AddPermissionBoundaryProps.property.instanceProfilePrefix"></a>
+##### `instanceProfilePrefix`<sup>Optional</sup> <a name="instanceProfilePrefix" id="@cdklabs/cdk-enterprise-iac.AddPermissionBoundaryProps.property.instanceProfilePrefix"></a>
 
 ```typescript
 public readonly instanceProfilePrefix: string;
@@ -50,7 +50,7 @@ A prefix to prepend to the name of the IAM InstanceProfiles (Default: '').
 
 ---
 
-##### `policyPrefix`<sup>Optional</sup> <a name="policyPrefix" id="@cdklabs/cdk-enterprise-utils.AddPermissionBoundaryProps.property.policyPrefix"></a>
+##### `policyPrefix`<sup>Optional</sup> <a name="policyPrefix" id="@cdklabs/cdk-enterprise-iac.AddPermissionBoundaryProps.property.policyPrefix"></a>
 
 ```typescript
 public readonly policyPrefix: string;
@@ -62,7 +62,7 @@ A prefix to prepend to the name of the IAM Policies and ManagedPolicies (Default
 
 ---
 
-##### `rolePrefix`<sup>Optional</sup> <a name="rolePrefix" id="@cdklabs/cdk-enterprise-utils.AddPermissionBoundaryProps.property.rolePrefix"></a>
+##### `rolePrefix`<sup>Optional</sup> <a name="rolePrefix" id="@cdklabs/cdk-enterprise-iac.AddPermissionBoundaryProps.property.rolePrefix"></a>
 
 ```typescript
 public readonly rolePrefix: string;
@@ -74,12 +74,12 @@ A prefix to prepend to the name of IAM Roles (Default: '').
 
 ---
 
-### RemoveTagsProps <a name="RemoveTagsProps" id="@cdklabs/cdk-enterprise-utils.RemoveTagsProps"></a>
+### RemoveTagsProps <a name="RemoveTagsProps" id="@cdklabs/cdk-enterprise-iac.RemoveTagsProps"></a>
 
-#### Initializer <a name="Initializer" id="@cdklabs/cdk-enterprise-utils.RemoveTagsProps.Initializer"></a>
+#### Initializer <a name="Initializer" id="@cdklabs/cdk-enterprise-iac.RemoveTagsProps.Initializer"></a>
 
 ```typescript
-import { RemoveTagsProps } from '@cdklabs/cdk-enterprise-utils'
+import { RemoveTagsProps } from '@cdklabs/cdk-enterprise-iac'
 
 const removeTagsProps: RemoveTagsProps = { ... }
 ```
@@ -88,12 +88,12 @@ const removeTagsProps: RemoveTagsProps = { ... }
 
 | **Name** | **Type** | **Description** |
 | --- | --- | --- |
-| <code><a href="#@cdklabs/cdk-enterprise-utils.RemoveTagsProps.property.cloudformationResource">cloudformationResource</a></code> | <code>string</code> | Name of Cloudformation resource Type (e.g. 'AWS::Lambda::Function'). |
-| <code><a href="#@cdklabs/cdk-enterprise-utils.RemoveTagsProps.property.tagPropertyName">tagPropertyName</a></code> | <code>string</code> | Name of the tag property to remove from the resource. |
+| <code><a href="#@cdklabs/cdk-enterprise-iac.RemoveTagsProps.property.cloudformationResource">cloudformationResource</a></code> | <code>string</code> | Name of Cloudformation resource Type (e.g. 'AWS::Lambda::Function'). |
+| <code><a href="#@cdklabs/cdk-enterprise-iac.RemoveTagsProps.property.tagPropertyName">tagPropertyName</a></code> | <code>string</code> | Name of the tag property to remove from the resource. |
 
 ---
 
-##### `cloudformationResource`<sup>Required</sup> <a name="cloudformationResource" id="@cdklabs/cdk-enterprise-utils.RemoveTagsProps.property.cloudformationResource"></a>
+##### `cloudformationResource`<sup>Required</sup> <a name="cloudformationResource" id="@cdklabs/cdk-enterprise-iac.RemoveTagsProps.property.cloudformationResource"></a>
 
 ```typescript
 public readonly cloudformationResource: string;
@@ -105,7 +105,7 @@ Name of Cloudformation resource Type (e.g. 'AWS::Lambda::Function').
 
 ---
 
-##### `tagPropertyName`<sup>Optional</sup> <a name="tagPropertyName" id="@cdklabs/cdk-enterprise-utils.RemoveTagsProps.property.tagPropertyName"></a>
+##### `tagPropertyName`<sup>Optional</sup> <a name="tagPropertyName" id="@cdklabs/cdk-enterprise-iac.RemoveTagsProps.property.tagPropertyName"></a>
 
 ```typescript
 public readonly tagPropertyName: string;
@@ -120,7 +120,7 @@ Name of the tag property to remove from the resource.
 
 ## Classes <a name="Classes" id="Classes"></a>
 
-### AddPermissionBoundary <a name="AddPermissionBoundary" id="@cdklabs/cdk-enterprise-utils.AddPermissionBoundary"></a>
+### AddPermissionBoundary <a name="AddPermissionBoundary" id="@cdklabs/cdk-enterprise-iac.AddPermissionBoundary"></a>
 
 - *Implements:* aws-cdk-lib.IAspect
 
@@ -130,23 +130,23 @@ Additional options for adding prefixes to IAM role, policy and instance profile 
 
 Can account for non commercial partitions (e.g. aws-gov, aws-cn)
 
-#### Initializers <a name="Initializers" id="@cdklabs/cdk-enterprise-utils.AddPermissionBoundary.Initializer"></a>
+#### Initializers <a name="Initializers" id="@cdklabs/cdk-enterprise-iac.AddPermissionBoundary.Initializer"></a>
 
 ```typescript
-import { AddPermissionBoundary } from '@cdklabs/cdk-enterprise-utils'
+import { AddPermissionBoundary } from '@cdklabs/cdk-enterprise-iac'
 
 new AddPermissionBoundary(props: AddPermissionBoundaryProps)
 ```
 
 | **Name** | **Type** | **Description** |
 | --- | --- | --- |
-| <code><a href="#@cdklabs/cdk-enterprise-utils.AddPermissionBoundary.Initializer.parameter.props">props</a></code> | <code><a href="#@cdklabs/cdk-enterprise-utils.AddPermissionBoundaryProps">AddPermissionBoundaryProps</a></code> | *No description.* |
+| <code><a href="#@cdklabs/cdk-enterprise-iac.AddPermissionBoundary.Initializer.parameter.props">props</a></code> | <code><a href="#@cdklabs/cdk-enterprise-iac.AddPermissionBoundaryProps">AddPermissionBoundaryProps</a></code> | *No description.* |
 
 ---
 
-##### `props`<sup>Required</sup> <a name="props" id="@cdklabs/cdk-enterprise-utils.AddPermissionBoundary.Initializer.parameter.props"></a>
+##### `props`<sup>Required</sup> <a name="props" id="@cdklabs/cdk-enterprise-iac.AddPermissionBoundary.Initializer.parameter.props"></a>
 
-- *Type:* <a href="#@cdklabs/cdk-enterprise-utils.AddPermissionBoundaryProps">AddPermissionBoundaryProps</a>
+- *Type:* <a href="#@cdklabs/cdk-enterprise-iac.AddPermissionBoundaryProps">AddPermissionBoundaryProps</a>
 
 ---
 
@@ -154,48 +154,48 @@ new AddPermissionBoundary(props: AddPermissionBoundaryProps)
 
 | **Name** | **Description** |
 | --- | --- |
-| <code><a href="#@cdklabs/cdk-enterprise-utils.AddPermissionBoundary.checkAndOverride">checkAndOverride</a></code> | *No description.* |
-| <code><a href="#@cdklabs/cdk-enterprise-utils.AddPermissionBoundary.visit">visit</a></code> | All aspects can visit an IConstruct. |
+| <code><a href="#@cdklabs/cdk-enterprise-iac.AddPermissionBoundary.checkAndOverride">checkAndOverride</a></code> | *No description.* |
+| <code><a href="#@cdklabs/cdk-enterprise-iac.AddPermissionBoundary.visit">visit</a></code> | All aspects can visit an IConstruct. |
 
 ---
 
-##### `checkAndOverride` <a name="checkAndOverride" id="@cdklabs/cdk-enterprise-utils.AddPermissionBoundary.checkAndOverride"></a>
+##### `checkAndOverride` <a name="checkAndOverride" id="@cdklabs/cdk-enterprise-iac.AddPermissionBoundary.checkAndOverride"></a>
 
 ```typescript
 public checkAndOverride(node: CfnResource, prefix: string, length: number, cfnProp: string, cdkProp?: string): void
 ```
 
-###### `node`<sup>Required</sup> <a name="node" id="@cdklabs/cdk-enterprise-utils.AddPermissionBoundary.checkAndOverride.parameter.node"></a>
+###### `node`<sup>Required</sup> <a name="node" id="@cdklabs/cdk-enterprise-iac.AddPermissionBoundary.checkAndOverride.parameter.node"></a>
 
 - *Type:* aws-cdk-lib.CfnResource
 
 ---
 
-###### `prefix`<sup>Required</sup> <a name="prefix" id="@cdklabs/cdk-enterprise-utils.AddPermissionBoundary.checkAndOverride.parameter.prefix"></a>
+###### `prefix`<sup>Required</sup> <a name="prefix" id="@cdklabs/cdk-enterprise-iac.AddPermissionBoundary.checkAndOverride.parameter.prefix"></a>
 
 - *Type:* string
 
 ---
 
-###### `length`<sup>Required</sup> <a name="length" id="@cdklabs/cdk-enterprise-utils.AddPermissionBoundary.checkAndOverride.parameter.length"></a>
+###### `length`<sup>Required</sup> <a name="length" id="@cdklabs/cdk-enterprise-iac.AddPermissionBoundary.checkAndOverride.parameter.length"></a>
 
 - *Type:* number
 
 ---
 
-###### `cfnProp`<sup>Required</sup> <a name="cfnProp" id="@cdklabs/cdk-enterprise-utils.AddPermissionBoundary.checkAndOverride.parameter.cfnProp"></a>
+###### `cfnProp`<sup>Required</sup> <a name="cfnProp" id="@cdklabs/cdk-enterprise-iac.AddPermissionBoundary.checkAndOverride.parameter.cfnProp"></a>
 
 - *Type:* string
 
 ---
 
-###### `cdkProp`<sup>Optional</sup> <a name="cdkProp" id="@cdklabs/cdk-enterprise-utils.AddPermissionBoundary.checkAndOverride.parameter.cdkProp"></a>
+###### `cdkProp`<sup>Optional</sup> <a name="cdkProp" id="@cdklabs/cdk-enterprise-iac.AddPermissionBoundary.checkAndOverride.parameter.cdkProp"></a>
 
 - *Type:* string
 
 ---
 
-##### `visit` <a name="visit" id="@cdklabs/cdk-enterprise-utils.AddPermissionBoundary.visit"></a>
+##### `visit` <a name="visit" id="@cdklabs/cdk-enterprise-iac.AddPermissionBoundary.visit"></a>
 
 ```typescript
 public visit(node: IConstruct): void
@@ -203,7 +203,7 @@ public visit(node: IConstruct): void
 
 All aspects can visit an IConstruct.
 
-###### `node`<sup>Required</sup> <a name="node" id="@cdklabs/cdk-enterprise-utils.AddPermissionBoundary.visit.parameter.node"></a>
+###### `node`<sup>Required</sup> <a name="node" id="@cdklabs/cdk-enterprise-iac.AddPermissionBoundary.visit.parameter.node"></a>
 
 - *Type:* constructs.IConstruct
 
@@ -212,7 +212,7 @@ All aspects can visit an IConstruct.
 
 
 
-### RemoveTags <a name="RemoveTags" id="@cdklabs/cdk-enterprise-utils.RemoveTags"></a>
+### RemoveTags <a name="RemoveTags" id="@cdklabs/cdk-enterprise-iac.RemoveTags"></a>
 
 - *Implements:* aws-cdk-lib.IAspect
 
@@ -235,23 +235,23 @@ Aspects.of(stack).add(new RemoveTags({
 ```
 
 
-#### Initializers <a name="Initializers" id="@cdklabs/cdk-enterprise-utils.RemoveTags.Initializer"></a>
+#### Initializers <a name="Initializers" id="@cdklabs/cdk-enterprise-iac.RemoveTags.Initializer"></a>
 
 ```typescript
-import { RemoveTags } from '@cdklabs/cdk-enterprise-utils'
+import { RemoveTags } from '@cdklabs/cdk-enterprise-iac'
 
 new RemoveTags(props: RemoveTagsProps)
 ```
 
 | **Name** | **Type** | **Description** |
 | --- | --- | --- |
-| <code><a href="#@cdklabs/cdk-enterprise-utils.RemoveTags.Initializer.parameter.props">props</a></code> | <code><a href="#@cdklabs/cdk-enterprise-utils.RemoveTagsProps">RemoveTagsProps</a></code> | *No description.* |
+| <code><a href="#@cdklabs/cdk-enterprise-iac.RemoveTags.Initializer.parameter.props">props</a></code> | <code><a href="#@cdklabs/cdk-enterprise-iac.RemoveTagsProps">RemoveTagsProps</a></code> | *No description.* |
 
 ---
 
-##### `props`<sup>Required</sup> <a name="props" id="@cdklabs/cdk-enterprise-utils.RemoveTags.Initializer.parameter.props"></a>
+##### `props`<sup>Required</sup> <a name="props" id="@cdklabs/cdk-enterprise-iac.RemoveTags.Initializer.parameter.props"></a>
 
-- *Type:* <a href="#@cdklabs/cdk-enterprise-utils.RemoveTagsProps">RemoveTagsProps</a>
+- *Type:* <a href="#@cdklabs/cdk-enterprise-iac.RemoveTagsProps">RemoveTagsProps</a>
 
 ---
 
@@ -259,11 +259,11 @@ new RemoveTags(props: RemoveTagsProps)
 
 | **Name** | **Description** |
 | --- | --- |
-| <code><a href="#@cdklabs/cdk-enterprise-utils.RemoveTags.visit">visit</a></code> | All aspects can visit an IConstruct. |
+| <code><a href="#@cdklabs/cdk-enterprise-iac.RemoveTags.visit">visit</a></code> | All aspects can visit an IConstruct. |
 
 ---
 
-##### `visit` <a name="visit" id="@cdklabs/cdk-enterprise-utils.RemoveTags.visit"></a>
+##### `visit` <a name="visit" id="@cdklabs/cdk-enterprise-iac.RemoveTags.visit"></a>
 
 ```typescript
 public visit(node: IConstruct): void
@@ -271,7 +271,7 @@ public visit(node: IConstruct): void
 
 All aspects can visit an IConstruct.
 
-###### `node`<sup>Required</sup> <a name="node" id="@cdklabs/cdk-enterprise-utils.RemoveTags.visit.parameter.node"></a>
+###### `node`<sup>Required</sup> <a name="node" id="@cdklabs/cdk-enterprise-iac.RemoveTags.visit.parameter.node"></a>
 
 - *Type:* constructs.IConstruct
 

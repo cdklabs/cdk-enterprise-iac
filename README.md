@@ -3,7 +3,7 @@ Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
 SPDX-License-Identifier: Apache-2.0
 -->
 
-# CDK Enterprise utils
+# CDK Enterprise IaC
 
 Utilites for using CDK within enterprise constraints
 
@@ -12,13 +12,13 @@ Utilites for using CDK within enterprise constraints
 Typescript
 
 ```zsh
-npm install cdk-enterprise-utils
+npm install cdk-enterprise-iac
 ```
 
 Python
 
 ```zsh
-pip install cdk-enterprise-utils
+pip install cdk-enterprise-iac
 ```
 
 ## Usage
@@ -27,7 +27,7 @@ Example for `AddPermissionBoundary` in Python project.
 
 ```python
 import aws_cdk as cdk
-from cdk_enterprise_utils import AddPermissionBoundary
+from cdk_enterprise_iac import AddPermissionBoundary
 
 from test_py.test_py_stack import TestPyStack
 

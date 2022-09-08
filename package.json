@@ -1,8 +1,8 @@
 {
-  "name": "@cdklabs/cdk-enterprise-utils",
+  "name": "@cdklabs/cdk-enterprise-iac",
   "repository": {
     "type": "git",
-    "url": "https://github.com/cdklabs/cdk-enterprise-utils.git"
+    "url": "https://github.com/cdklabs/cdk-enterprise-iac.git"
   },
   "scripts": {
     "build": "npx projen build",
@@ -121,19 +121,19 @@
     "outdir": "dist",
     "targets": {
       "java": {
-        "package": "io.github.cdklabs.cdkenterpriseutils",
+        "package": "io.github.cdklabs.cdkenterpriseiac",
         "maven": {
           "groupId": "io.github.cdklabs",
-          "artifactId": "cdkenterpriseutils"
+          "artifactId": "cdkenterpriseiac"
         }
       },
       "python": {
-        "distName": "cdklabs.cdk-enterprise-utils",
-        "module": "cdklabs.cdk_enterprise_utils"
+        "distName": "cdklabs.cdk-enterprise-iac",
+        "module": "cdklabs.cdk_enterprise_iac"
       },
       "dotnet": {
-        "namespace": "Cdklabs.CdkEnterpriseUtils",
-        "packageId": "Cdklabs.CdkEnterpriseUtils"
+        "namespace": "Cdklabs.CdkEnterpriseIac",
+        "packageId": "Cdklabs.CdkEnterpriseIac"
       }
     },
     "tsc": {
