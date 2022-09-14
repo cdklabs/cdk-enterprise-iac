@@ -28,8 +28,8 @@ Example for `AddPermissionBoundary` in Python project.
 ```python
 import aws_cdk as cdk
 from cdklabs.cdk_enterprise_iac import AddPermissionBoundary
-
 from test_py.test_py_stack import TestPyStack
+
 
 app = cdk.App()
 TestPyStack(app, "TestPyStack")
