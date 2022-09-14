@@ -12,7 +12,7 @@ Utilites for using CDK within enterprise constraints
 Typescript
 
 ```zsh
-npm install cdk-enterprise-iac
+npm install @cdklabs/cdk-enterprise-iac
 ```
 
 Python
@@ -22,6 +22,27 @@ pip install cdklabs.cdk-enterprise-iac
 ```
 
 ## Usage
+
+Example for `AddPermissionBoundary` in Typescript project.
+
+```ts
+import * as cdk from 'aws-cdk-lib';
+import { MyStack } from '../lib/my-project-stack';
+import { Aspects } from 'aws-cdk-lib';
+import { AddPermissionBoundary } from '@cdklabs/cdk-enterprise-iac';
+
+const app = new cdk.App();
+new MyStack(app, 'MyStack');
+
+Aspects.of(app).add(
+  new AddPermissionBoundary({
+    permissionsBoundaryPolicyName: 'MyPermissionBoundaryName',
+    instanceProfilePrefix: 'MY_PREFIX_', // optional, Defaults to ''
+    policyPrefix: 'MY_POLICY_PREFIX_', // optional, Defaults to ''
+    rolePrefix: 'MY_ROLE_PREFIX_', // optional, Defaults to ''
+  })
+);
+```
 
 Example for `AddPermissionBoundary` in Python project.
 
