@@ -18,7 +18,7 @@ npm install cdk-enterprise-iac
 Python
 
 ```zsh
-pip install cdk-enterprise-iac
+pip install cdklabs.cdk-enterprise-iac
 ```
 
 ## Usage
