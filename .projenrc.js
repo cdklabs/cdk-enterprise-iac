@@ -29,6 +29,7 @@ const project = new awscdk.AwsCdkConstructLibrary({
       },
     },
   },
+  npmAccess: 'public',
   publishToPypi: {
     distName: 'cdklabs.cdk-enterprise-iac',
     module: 'cdklabs.cdk_enterprise_iac',
