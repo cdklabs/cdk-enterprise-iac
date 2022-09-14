@@ -18,7 +18,7 @@ npm install cdk-enterprise-iac
 Python
 
 ```zsh
-pip install cdk-enterprise-iac
+pip install cdklabs.cdk-enterprise-iac
 ```
 
 ## Usage
@@ -27,8 +27,7 @@ Example for `AddPermissionBoundary` in Python project.
 
 ```python
 import aws_cdk as cdk
-from cdk_enterprise_iac import AddPermissionBoundary
-
+from cdklabs.cdk_enterprise_iac import AddPermissionBoundary
 from test_py.test_py_stack import TestPyStack
 
 
