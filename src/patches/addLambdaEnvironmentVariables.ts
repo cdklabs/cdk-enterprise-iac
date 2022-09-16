@@ -8,9 +8,13 @@ import { IConstruct } from 'constructs';
 
 /**
  * Add one or more environment variables to _all_ lambda functions within a scope
+ *
  * @extends IAspect
  */
-export class addLambdaEnvironmentVariables implements IAspect {
+export class AddLambdaEnvironmentVariables implements IAspect {
+  /**
+   * Key value pairs of environment variables to add to all lambda functions within the scope
+   */
   private _environmentKeyValues: { [key: string]: string };
 
   /**

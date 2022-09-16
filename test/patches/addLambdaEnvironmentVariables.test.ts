@@ -5,7 +5,7 @@ SPDX-License-Identifier: Apache-2.0
 import { Aspects, Stack } from 'aws-cdk-lib';
 import { Match, Template } from 'aws-cdk-lib/assertions';
 import { Code, Function, Runtime } from 'aws-cdk-lib/aws-lambda';
-import { addLambdaEnvironmentVariables } from '../../src/patches/addLambdaEnvironmentVariables';
+import { AddLambdaEnvironmentVariables } from '../../src/patches/addLambdaEnvironmentVariables';
 
 let stack: Stack;
 
@@ -30,7 +30,7 @@ describe('Add environment variables to all Lambda functions', () => {
     });
 
     Aspects.of(stack).add(
-      new addLambdaEnvironmentVariables({
+      new AddLambdaEnvironmentVariables({
         myNeatEnvVariable: 'value 1',
       })
     );
@@ -67,7 +67,7 @@ describe('Add environment variables to all Lambda functions', () => {
     });
 
     Aspects.of(stack).add(
-      new addLambdaEnvironmentVariables({
+      new AddLambdaEnvironmentVariables({
         myNeatEnvVariable: 'value 1',
       })
     );
