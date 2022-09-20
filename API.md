@@ -120,6 +120,59 @@ Name of the tag property to remove from the resource.
 
 ## Classes <a name="Classes" id="Classes"></a>
 
+### AddLambdaEnvironmentVariables <a name="AddLambdaEnvironmentVariables" id="@cdklabs/cdk-enterprise-iac.AddLambdaEnvironmentVariables"></a>
+
+- *Implements:* aws-cdk-lib.IAspect
+
+Add one or more environment variables to _all_ lambda functions within a scope.
+
+#### Initializers <a name="Initializers" id="@cdklabs/cdk-enterprise-iac.AddLambdaEnvironmentVariables.Initializer"></a>
+
+```typescript
+import { AddLambdaEnvironmentVariables } from '@cdklabs/cdk-enterprise-iac'
+
+new AddLambdaEnvironmentVariables(props: {[ key: string ]: string})
+```
+
+| **Name** | **Type** | **Description** |
+| --- | --- | --- |
+| <code><a href="#@cdklabs/cdk-enterprise-iac.AddLambdaEnvironmentVariables.Initializer.parameter.props">props</a></code> | <code>{[ key: string ]: string}</code> | : string} props - Key Value pair(s) for environment variables to add to all lambda functions. |
+
+---
+
+##### `props`<sup>Required</sup> <a name="props" id="@cdklabs/cdk-enterprise-iac.AddLambdaEnvironmentVariables.Initializer.parameter.props"></a>
+
+- *Type:* {[ key: string ]: string}
+
+: string} props - Key Value pair(s) for environment variables to add to all lambda functions.
+
+---
+
+#### Methods <a name="Methods" id="Methods"></a>
+
+| **Name** | **Description** |
+| --- | --- |
+| <code><a href="#@cdklabs/cdk-enterprise-iac.AddLambdaEnvironmentVariables.visit">visit</a></code> | All aspects can visit an IConstruct. |
+
+---
+
+##### `visit` <a name="visit" id="@cdklabs/cdk-enterprise-iac.AddLambdaEnvironmentVariables.visit"></a>
+
+```typescript
+public visit(node: IConstruct): void
+```
+
+All aspects can visit an IConstruct.
+
+###### `node`<sup>Required</sup> <a name="node" id="@cdklabs/cdk-enterprise-iac.AddLambdaEnvironmentVariables.visit.parameter.node"></a>
+
+- *Type:* constructs.IConstruct
+
+---
+
+
+
+
 ### AddPermissionBoundary <a name="AddPermissionBoundary" id="@cdklabs/cdk-enterprise-iac.AddPermissionBoundary"></a>
 
 - *Implements:* aws-cdk-lib.IAspect
