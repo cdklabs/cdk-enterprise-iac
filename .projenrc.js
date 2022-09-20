@@ -7,7 +7,7 @@ const { GitlabConfiguration } = require('projen/lib/gitlab');
 const project = new awscdk.AwsCdkConstructLibrary({
   author: 'Taylor Ondrey',
   authorAddress: 'ondreyt@amazon.com',
-  cdkVersion: '2.37.1',
+  cdkVersion: '2.41.0',
   defaultReleaseBranch: 'main',
   name: '@cdklabs/cdk-enterprise-iac',
   repositoryUrl: 'https://github.com/cdklabs/cdk-enterprise-iac.git',
