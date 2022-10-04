@@ -9,7 +9,7 @@ import {
   SplitVpcEvenly,
   SubnetConfig,
   SubnetTag,
-} from '../../src/constructs/populateProvidedVpc';
+} from '../../../src/constructs/populateProvidedVpc/populateProvidedVpc';
 
 let stack: Stack;
 const privateRouteTableId = 'tgw-123456abcdefg';
