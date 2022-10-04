@@ -105,7 +105,6 @@ The tree node.
 
 ---
 
-<<<<<<< HEAD
 
 ### PopulateWithConfig <a name="PopulateWithConfig" id="@cdklabs/cdk-enterprise-iac.PopulateWithConfig"></a>
 
@@ -373,8 +372,6 @@ The tree node.
 
 ---
 
-=======
->>>>>>> main
 
 ## Structs <a name="Structs" id="Structs"></a>
 
@@ -606,7 +603,6 @@ The number of tasks that will scale out on scal out alarm status.
 
 ---
 
-<<<<<<< HEAD
 ### PopulateWithConfigProps <a name="PopulateWithConfigProps" id="@cdklabs/cdk-enterprise-iac.PopulateWithConfigProps"></a>
 
 #### Initializer <a name="Initializer" id="@cdklabs/cdk-enterprise-iac.PopulateWithConfigProps.Initializer"></a>
@@ -678,8 +674,6 @@ ID of the VPC provided that needs to be populated.
 
 ---
 
-=======
->>>>>>> main
 ### RemoveTagsProps <a name="RemoveTagsProps" id="@cdklabs/cdk-enterprise-iac.RemoveTagsProps"></a>
 
 #### Initializer <a name="Initializer" id="@cdklabs/cdk-enterprise-iac.RemoveTagsProps.Initializer"></a>
