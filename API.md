@@ -62,6 +62,19 @@ new PopulateWithConfig(this, "vpcPopulater", {
 import { PopulateWithConfig } from '@cdklabs/cdk-enterprise-iac'
 
 new PopulateWithConfig(scope: Construct, id: string, props: PopulateWithConfigProps)
+### EcsIsoServiceAutoscaler <a name="EcsIsoServiceAutoscaler" id="@cdklabs/cdk-enterprise-iac.EcsIsoServiceAutoscaler"></a>
+
+Creates a EcsIsoServiceAutoscaler construct.
+
+This construct allows you to scale an ECS service in an ISO
+region where classic ECS Autoscaling may not be available.
+
+#### Initializers <a name="Initializers" id="@cdklabs/cdk-enterprise-iac.EcsIsoServiceAutoscaler.Initializer"></a>
+
+```typescript
+import { EcsIsoServiceAutoscaler } from '@cdklabs/cdk-enterprise-iac'
+
+new EcsIsoServiceAutoscaler(scope: Construct, id: string, props: EcsIsoServiceAutoscalerProps)
 ```
 
 | **Name** | **Type** | **Description** |
@@ -73,12 +86,20 @@ new PopulateWithConfig(scope: Construct, id: string, props: PopulateWithConfigPr
 ---
 
 ##### `scope`<sup>Required</sup> <a name="scope" id="@cdklabs/cdk-enterprise-iac.PopulateWithConfig.Initializer.parameter.scope"></a>
+| <code><a href="#@cdklabs/cdk-enterprise-iac.EcsIsoServiceAutoscaler.Initializer.parameter.scope">scope</a></code> | <code>constructs.Construct</code> | *No description.* |
+| <code><a href="#@cdklabs/cdk-enterprise-iac.EcsIsoServiceAutoscaler.Initializer.parameter.id">id</a></code> | <code>string</code> | *No description.* |
+| <code><a href="#@cdklabs/cdk-enterprise-iac.EcsIsoServiceAutoscaler.Initializer.parameter.props">props</a></code> | <code><a href="#@cdklabs/cdk-enterprise-iac.EcsIsoServiceAutoscalerProps">EcsIsoServiceAutoscalerProps</a></code> | *No description.* |
+
+---
+
+##### `scope`<sup>Required</sup> <a name="scope" id="@cdklabs/cdk-enterprise-iac.EcsIsoServiceAutoscaler.Initializer.parameter.scope"></a>
 
 - *Type:* constructs.Construct
 
 ---
 
 ##### `id`<sup>Required</sup> <a name="id" id="@cdklabs/cdk-enterprise-iac.PopulateWithConfig.Initializer.parameter.id"></a>
+##### `id`<sup>Required</sup> <a name="id" id="@cdklabs/cdk-enterprise-iac.EcsIsoServiceAutoscaler.Initializer.parameter.id"></a>
 
 - *Type:* string
 
@@ -87,6 +108,9 @@ new PopulateWithConfig(scope: Construct, id: string, props: PopulateWithConfigPr
 ##### `props`<sup>Required</sup> <a name="props" id="@cdklabs/cdk-enterprise-iac.PopulateWithConfig.Initializer.parameter.props"></a>
 
 - *Type:* <a href="#@cdklabs/cdk-enterprise-iac.PopulateWithConfigProps">PopulateWithConfigProps</a>
+##### `props`<sup>Required</sup> <a name="props" id="@cdklabs/cdk-enterprise-iac.EcsIsoServiceAutoscaler.Initializer.parameter.props"></a>
+
+- *Type:* <a href="#@cdklabs/cdk-enterprise-iac.EcsIsoServiceAutoscalerProps">EcsIsoServiceAutoscalerProps</a>
 
 ---
 
@@ -99,6 +123,11 @@ new PopulateWithConfig(scope: Construct, id: string, props: PopulateWithConfigPr
 ---
 
 ##### `toString` <a name="toString" id="@cdklabs/cdk-enterprise-iac.PopulateWithConfig.toString"></a>
+| <code><a href="#@cdklabs/cdk-enterprise-iac.EcsIsoServiceAutoscaler.toString">toString</a></code> | Returns a string representation of this construct. |
+
+---
+
+##### `toString` <a name="toString" id="@cdklabs/cdk-enterprise-iac.EcsIsoServiceAutoscaler.toString"></a>
 
 ```typescript
 public toString(): string
@@ -120,11 +149,22 @@ Returns a string representation of this construct.
 import { PopulateWithConfig } from '@cdklabs/cdk-enterprise-iac'
 
 PopulateWithConfig.isConstruct(x: any)
+| <code><a href="#@cdklabs/cdk-enterprise-iac.EcsIsoServiceAutoscaler.isConstruct">isConstruct</a></code> | Checks if `x` is a construct. |
+
+---
+
+##### ~~`isConstruct`~~ <a name="isConstruct" id="@cdklabs/cdk-enterprise-iac.EcsIsoServiceAutoscaler.isConstruct"></a>
+
+```typescript
+import { EcsIsoServiceAutoscaler } from '@cdklabs/cdk-enterprise-iac'
+
+EcsIsoServiceAutoscaler.isConstruct(x: any)
 ```
 
 Checks if `x` is a construct.
 
 ###### `x`<sup>Required</sup> <a name="x" id="@cdklabs/cdk-enterprise-iac.PopulateWithConfig.isConstruct.parameter.x"></a>
+###### `x`<sup>Required</sup> <a name="x" id="@cdklabs/cdk-enterprise-iac.EcsIsoServiceAutoscaler.isConstruct.parameter.x"></a>
 
 - *Type:* any
 
@@ -257,6 +297,11 @@ Any object.
 ---
 
 ##### `node`<sup>Required</sup> <a name="node" id="@cdklabs/cdk-enterprise-iac.SplitVpcEvenly.property.node"></a>
+| <code><a href="#@cdklabs/cdk-enterprise-iac.EcsIsoServiceAutoscaler.property.node">node</a></code> | <code>constructs.Node</code> | The tree node. |
+
+---
+
+##### `node`<sup>Required</sup> <a name="node" id="@cdklabs/cdk-enterprise-iac.EcsIsoServiceAutoscaler.property.node"></a>
 
 ```typescript
 public readonly node: Node;
@@ -350,6 +395,14 @@ A prefix to prepend to the name of IAM Roles (Default: '').
 import { PopulateWithConfigProps } from '@cdklabs/cdk-enterprise-iac'
 
 const populateWithConfigProps: PopulateWithConfigProps = { ... }
+### EcsIsoServiceAutoscalerProps <a name="EcsIsoServiceAutoscalerProps" id="@cdklabs/cdk-enterprise-iac.EcsIsoServiceAutoscalerProps"></a>
+
+#### Initializer <a name="Initializer" id="@cdklabs/cdk-enterprise-iac.EcsIsoServiceAutoscalerProps.Initializer"></a>
+
+```typescript
+import { EcsIsoServiceAutoscalerProps } from '@cdklabs/cdk-enterprise-iac'
+
+const ecsIsoServiceAutoscalerProps: EcsIsoServiceAutoscalerProps = { ... }
 ```
 
 #### Properties <a name="Properties" id="Properties"></a>
@@ -410,6 +463,146 @@ public readonly vpcId: string;
 - *Type:* string
 
 ID of the VPC provided that needs to be populated.
+| <code><a href="#@cdklabs/cdk-enterprise-iac.EcsIsoServiceAutoscalerProps.property.ecsCluster">ecsCluster</a></code> | <code>aws-cdk-lib.aws_ecs.Cluster</code> | The cluster the service you wish to scale resides in. |
+| <code><a href="#@cdklabs/cdk-enterprise-iac.EcsIsoServiceAutoscalerProps.property.ecsService">ecsService</a></code> | <code>aws-cdk-lib.aws_ecs.IService</code> | The ECS service you wish to scale. |
+| <code><a href="#@cdklabs/cdk-enterprise-iac.EcsIsoServiceAutoscalerProps.property.role">role</a></code> | <code>aws-cdk-lib.aws_iam.IRole</code> | The IAM role that allows the created lambda to adjust the desired count on the ECS Service . |
+| <code><a href="#@cdklabs/cdk-enterprise-iac.EcsIsoServiceAutoscalerProps.property.scaleAlarm">scaleAlarm</a></code> | <code>aws-cdk-lib.aws_cloudwatch.Alarm</code> | The Cloudwatch Alarm that will cause scaling actions to be invoked, whether it's in or not in alarm will determine scale up and down actions. |
+| <code><a href="#@cdklabs/cdk-enterprise-iac.EcsIsoServiceAutoscalerProps.property.maximumTaskCount">maximumTaskCount</a></code> | <code>number</code> | The maximum number of tasks that the service will scale out to. |
+| <code><a href="#@cdklabs/cdk-enterprise-iac.EcsIsoServiceAutoscalerProps.property.minimumTaskCount">minimumTaskCount</a></code> | <code>number</code> | The minimum number of tasks the service will have. |
+| <code><a href="#@cdklabs/cdk-enterprise-iac.EcsIsoServiceAutoscalerProps.property.scaleInCooldowwn">scaleInCooldowwn</a></code> | <code>aws-cdk-lib.Duration</code> | How long will the application wait before performing another scale in action. |
+| <code><a href="#@cdklabs/cdk-enterprise-iac.EcsIsoServiceAutoscalerProps.property.scaleInIncrement">scaleInIncrement</a></code> | <code>number</code> | The number of tasks that will scale out on scal out alarm status. |
+| <code><a href="#@cdklabs/cdk-enterprise-iac.EcsIsoServiceAutoscalerProps.property.scaleOutCooldown">scaleOutCooldown</a></code> | <code>aws-cdk-lib.Duration</code> | How long will a the application wait before performing another scale out action. |
+| <code><a href="#@cdklabs/cdk-enterprise-iac.EcsIsoServiceAutoscalerProps.property.scaleOutIncrement">scaleOutIncrement</a></code> | <code>number</code> | The number of tasks that will scale out on scal out alarm status. |
+
+---
+
+##### `ecsCluster`<sup>Required</sup> <a name="ecsCluster" id="@cdklabs/cdk-enterprise-iac.EcsIsoServiceAutoscalerProps.property.ecsCluster"></a>
+
+```typescript
+public readonly ecsCluster: Cluster;
+```
+
+- *Type:* aws-cdk-lib.aws_ecs.Cluster
+
+The cluster the service you wish to scale resides in.
+
+---
+
+##### `ecsService`<sup>Required</sup> <a name="ecsService" id="@cdklabs/cdk-enterprise-iac.EcsIsoServiceAutoscalerProps.property.ecsService"></a>
+
+```typescript
+public readonly ecsService: IService;
+```
+
+- *Type:* aws-cdk-lib.aws_ecs.IService
+
+The ECS service you wish to scale.
+
+---
+
+##### `role`<sup>Required</sup> <a name="role" id="@cdklabs/cdk-enterprise-iac.EcsIsoServiceAutoscalerProps.property.role"></a>
+
+```typescript
+public readonly role: IRole;
+```
+
+- *Type:* aws-cdk-lib.aws_iam.IRole
+
+The IAM role that allows the created lambda to adjust the desired count on the ECS Service .
+
+TODO: Make optional and add function for auto generation
+
+---
+
+##### `scaleAlarm`<sup>Required</sup> <a name="scaleAlarm" id="@cdklabs/cdk-enterprise-iac.EcsIsoServiceAutoscalerProps.property.scaleAlarm"></a>
+
+```typescript
+public readonly scaleAlarm: Alarm;
+```
+
+- *Type:* aws-cdk-lib.aws_cloudwatch.Alarm
+
+The Cloudwatch Alarm that will cause scaling actions to be invoked, whether it's in or not in alarm will determine scale up and down actions.
+
+---
+
+##### `maximumTaskCount`<sup>Optional</sup> <a name="maximumTaskCount" id="@cdklabs/cdk-enterprise-iac.EcsIsoServiceAutoscalerProps.property.maximumTaskCount"></a>
+
+```typescript
+public readonly maximumTaskCount: number;
+```
+
+- *Type:* number
+- *Default:* 10
+
+The maximum number of tasks that the service will scale out to.
+
+Note: This does not provide any protection from scaling out above the maximum allowed in your account, set this variable and manage account quotas appropriately.
+
+---
+
+##### `minimumTaskCount`<sup>Optional</sup> <a name="minimumTaskCount" id="@cdklabs/cdk-enterprise-iac.EcsIsoServiceAutoscalerProps.property.minimumTaskCount"></a>
+
+```typescript
+public readonly minimumTaskCount: number;
+```
+
+- *Type:* number
+- *Default:* 1
+
+The minimum number of tasks the service will have.
+
+---
+
+##### `scaleInCooldowwn`<sup>Optional</sup> <a name="scaleInCooldowwn" id="@cdklabs/cdk-enterprise-iac.EcsIsoServiceAutoscalerProps.property.scaleInCooldowwn"></a>
+
+```typescript
+public readonly scaleInCooldowwn: Duration;
+```
+
+- *Type:* aws-cdk-lib.Duration
+- *Default:* 60 seconds
+
+How long will the application wait before performing another scale in action.
+
+---
+
+##### `scaleInIncrement`<sup>Optional</sup> <a name="scaleInIncrement" id="@cdklabs/cdk-enterprise-iac.EcsIsoServiceAutoscalerProps.property.scaleInIncrement"></a>
+
+```typescript
+public readonly scaleInIncrement: number;
+```
+
+- *Type:* number
+- *Default:* 1
+
+The number of tasks that will scale out on scal out alarm status.
+
+---
+
+##### `scaleOutCooldown`<sup>Optional</sup> <a name="scaleOutCooldown" id="@cdklabs/cdk-enterprise-iac.EcsIsoServiceAutoscalerProps.property.scaleOutCooldown"></a>
+
+```typescript
+public readonly scaleOutCooldown: Duration;
+```
+
+- *Type:* aws-cdk-lib.Duration
+- *Default:* 60 seconds
+
+How long will a the application wait before performing another scale out action.
+
+---
+
+##### `scaleOutIncrement`<sup>Optional</sup> <a name="scaleOutIncrement" id="@cdklabs/cdk-enterprise-iac.EcsIsoServiceAutoscalerProps.property.scaleOutIncrement"></a>
+
+```typescript
+public readonly scaleOutIncrement: number;
+```
+
+- *Type:* number
+- *Default:* 1
+
+The number of tasks that will scale out on scal out alarm status.
 
 ---
 

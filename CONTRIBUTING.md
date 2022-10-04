@@ -51,7 +51,17 @@ If there isn't one already, open an issue describing what you intend to contribu
 
 GitHub provides additional document on [forking a repository](https://help.github.com/articles/fork-a-repo/). Make sure you are working against the latest source on the _main_ branch.
 
-### Step 3: Develop
+### Step 3: Setup
+
+The following tools need to be installed on your system prior to developing
+
+- [Node.js >= 14.15.0](https://nodejs.org/download/release/latest-v14.x/)
+  - We recommend using a version in [Active LTS](https://nodejs.org/en/about/releases/)
+- [Yarn >= 1.19.1, < 2](https://yarnpkg.com/lang/en/docs/install)
+- [Docker >= 19.03](https://docs.docker.com/get-docker/)
+  - the Docker daemon must also be running
+
+### Step 4: Develop
 
 This repository uses [pre-commit](https://pre-commit.com/) hooks for linting and [projen](https://github.com/projen/projen) for building and testing
 
@@ -71,7 +81,7 @@ This repository uses [pre-commit](https://pre-commit.com/) hooks for linting and
 8. Create the commit with relevant files
    - Note: you may need to update the commit if `pre-commit` changes/suggests changes to files
 
-### Step 4: Make the pull request
+### Step 5: Make the pull request
 
 Send us a [pull request](https://help.github.com/articles/creating-a-pull-request/), answering any default questions in the pull request interface. Pay attention to any automated CI failures reported in the pull request, and stay involved in the conversation.
 
