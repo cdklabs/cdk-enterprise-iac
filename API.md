@@ -466,10 +466,10 @@ const ecsIsoServiceAutoscalerProps: EcsIsoServiceAutoscalerProps = { ... }
 | <code><a href="#@cdklabs/cdk-enterprise-iac.EcsIsoServiceAutoscalerProps.property.scaleAlarm">scaleAlarm</a></code> | <code>aws-cdk-lib.aws_cloudwatch.Alarm</code> | The Cloudwatch Alarm that will cause scaling actions to be invoked, whether it's in or not in alarm will determine scale up and down actions. |
 | <code><a href="#@cdklabs/cdk-enterprise-iac.EcsIsoServiceAutoscalerProps.property.maximumTaskCount">maximumTaskCount</a></code> | <code>number</code> | The maximum number of tasks that the service will scale out to. |
 | <code><a href="#@cdklabs/cdk-enterprise-iac.EcsIsoServiceAutoscalerProps.property.minimumTaskCount">minimumTaskCount</a></code> | <code>number</code> | The minimum number of tasks the service will have. |
-| <code><a href="#@cdklabs/cdk-enterprise-iac.EcsIsoServiceAutoscalerProps.property.scaleInCooldowwn">scaleInCooldowwn</a></code> | <code>aws-cdk-lib.Duration</code> | How long will the application wait before performing another scale in action. |
-| <code><a href="#@cdklabs/cdk-enterprise-iac.EcsIsoServiceAutoscalerProps.property.scaleInIncrement">scaleInIncrement</a></code> | <code>number</code> | The number of tasks that will scale out on scal out alarm status. |
+| <code><a href="#@cdklabs/cdk-enterprise-iac.EcsIsoServiceAutoscalerProps.property.scaleInCooldown">scaleInCooldown</a></code> | <code>aws-cdk-lib.Duration</code> | How long will the application wait before performing another scale in action. |
+| <code><a href="#@cdklabs/cdk-enterprise-iac.EcsIsoServiceAutoscalerProps.property.scaleInIncrement">scaleInIncrement</a></code> | <code>number</code> | The number of tasks that will scale in on scale in alarm status. |
 | <code><a href="#@cdklabs/cdk-enterprise-iac.EcsIsoServiceAutoscalerProps.property.scaleOutCooldown">scaleOutCooldown</a></code> | <code>aws-cdk-lib.Duration</code> | How long will a the application wait before performing another scale out action. |
-| <code><a href="#@cdklabs/cdk-enterprise-iac.EcsIsoServiceAutoscalerProps.property.scaleOutIncrement">scaleOutIncrement</a></code> | <code>number</code> | The number of tasks that will scale out on scal out alarm status. |
+| <code><a href="#@cdklabs/cdk-enterprise-iac.EcsIsoServiceAutoscalerProps.property.scaleOutIncrement">scaleOutIncrement</a></code> | <code>number</code> | The number of tasks that will scale out on scale out alarm status. |
 
 ---
 
@@ -551,10 +551,10 @@ The minimum number of tasks the service will have.
 
 ---
 
-##### `scaleInCooldowwn`<sup>Optional</sup> <a name="scaleInCooldowwn" id="@cdklabs/cdk-enterprise-iac.EcsIsoServiceAutoscalerProps.property.scaleInCooldowwn"></a>
+##### `scaleInCooldown`<sup>Optional</sup> <a name="scaleInCooldown" id="@cdklabs/cdk-enterprise-iac.EcsIsoServiceAutoscalerProps.property.scaleInCooldown"></a>
 
 ```typescript
-public readonly scaleInCooldowwn: Duration;
+public readonly scaleInCooldown: Duration;
 ```
 
 - *Type:* aws-cdk-lib.Duration
@@ -573,7 +573,7 @@ public readonly scaleInIncrement: number;
 - *Type:* number
 - *Default:* 1
 
-The number of tasks that will scale out on scal out alarm status.
+The number of tasks that will scale in on scale in alarm status.
 
 ---
 
@@ -599,7 +599,7 @@ public readonly scaleOutIncrement: number;
 - *Type:* number
 - *Default:* 1
 
-The number of tasks that will scale out on scal out alarm status.
+The number of tasks that will scale out on scale out alarm status.
 
 ---
 
