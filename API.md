@@ -155,7 +155,7 @@ The tree node.
 
 ### SplitVpcEvenly <a name="SplitVpcEvenly" id="@cdklabs/cdk-enterprise-iac.SplitVpcEvenly"></a>
 
-Splits a VPC evenly between 3 AZs, and attaches a provided route table to each, and labels.
+Splits a VPC evenly between a provided number of AZs (3 if not defined), and attaches a provided route table to each, and labels.
 
 *Example*
 
