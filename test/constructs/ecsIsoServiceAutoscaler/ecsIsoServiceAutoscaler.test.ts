@@ -97,7 +97,7 @@ describe('EcsIsoServiceAutoscaler construct', () => {
       maximumTaskCount: 15,
       scaleInIncrement: 2,
       scaleOutIncrement: 2,
-      scaleInCooldowwn: Duration.seconds(120),
+      scaleInCooldown: Duration.seconds(120),
       scaleOutCooldown: Duration.seconds(120),
     });
 
