@@ -2,6 +2,8 @@
 Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
 SPDX-License-Identifier: Apache-2.0
 */
+
+import * as path from 'path';
 import { Duration } from 'aws-cdk-lib';
 import { Alarm } from 'aws-cdk-lib/aws-cloudwatch';
 import { Cluster, IService } from 'aws-cdk-lib/aws-ecs';
@@ -43,13 +45,13 @@ export interface EcsIsoServiceAutoscalerProps {
    */
   readonly scaleAlarm: Alarm;
   /**
-   * The number of tasks that will scale out on scal out alarm status
+   * The number of tasks that will scale out on scale out alarm status
    *
    * @default 1
    */
   readonly scaleOutIncrement?: number;
   /**
-   * The number of tasks that will scale out on scal out alarm status
+   * The number of tasks that will scale in on scale in alarm status
    *
    * @default 1
    */
@@ -65,7 +67,7 @@ export interface EcsIsoServiceAutoscalerProps {
    *
    * @default 60 seconds
    */
-  readonly scaleInCooldowwn?: Duration;
+  readonly scaleInCooldown?: Duration;
 }
 
 /**
@@ -91,14 +93,19 @@ export class EcsIsoServiceAutoscaler extends Construct {
       scaleOutIncrement = 1,
       scaleInIncrement = 1,
       scaleOutCooldown = Duration.seconds(60),
-      scaleInCooldowwn = Duration.seconds(60),
+      scaleInCooldown = Duration.seconds(60),
     } = props;
 
     const ecsScalingManager = new Function(
       this,
       `${id}-EcsServiceScalingManager`,
       {
-        code: Code.fromAsset('./resources/constructs/ecsIsoServiceAutoscaler/'),
+        code: Code.fromAsset(
+          path.join(
+            __dirname,
+            '../../../resources/constructs/ecsIsoServiceAutoscaler'
+          )
+        ),
         handler: 'ecs_scaling_manager.handler',
         runtime: Runtime.PYTHON_3_7,
         role: props.role,
@@ -111,7 +118,7 @@ export class EcsIsoServiceAutoscaler extends Construct {
           SCALE_OUT_INCREMENT: scaleOutIncrement.toString(),
           SCALE_OUT_COOLDOWN: scaleOutCooldown.toSeconds().toString(),
           SCALE_IN_INCREMENT: scaleInIncrement.toString(),
-          SCALE_IN_COOLDOWN: scaleInCooldowwn.toSeconds().toString(),
+          SCALE_IN_COOLDOWN: scaleInCooldown.toSeconds().toString(),
         },
       }
     );
