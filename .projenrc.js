@@ -2,7 +2,7 @@
 Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
 SPDX-License-Identifier: Apache-2.0
 */
-const { awscdk } = require('projen');
+const { awscdk, JsonPatch } = require('projen');
 const { GitlabConfiguration } = require('projen/lib/gitlab');
 const project = new awscdk.AwsCdkConstructLibrary({
   author: 'Taylor Ondrey',
@@ -58,4 +58,8 @@ project.eslint.addRules({
   ],
 });
 project.eslint.addExtends('plugin:security/recommended');
+const buildWorkflow = project.tryFindObjectFile('.github/workflows/build.yml');
+buildWorkflow.patch(
+  JsonPatch.add('/jobs/build/container/options', '--group-add 121')
+);
 project.synth();
