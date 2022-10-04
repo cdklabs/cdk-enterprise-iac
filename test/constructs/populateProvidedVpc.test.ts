@@ -185,4 +185,23 @@ describe('CDKify a provided vpc', () => {
       3
     );
   });
+  test('error is thrown if invalid number of AZs is provided', () => {
+    expect(() => {
+      new SplitVpcEvenly(stack, 'CDKifyVpc7Azs', {
+        vpcId,
+        routeTableId: privateRouteTableId,
+        vpcCidr: '172.16.0.0/24',
+        numberOfAzs: 7,
+      });
+    }).toThrowError('numberOfAzs must be between 2 and 6');
+
+    expect(() => {
+      new SplitVpcEvenly(stack, 'CDKifyVpc1Az', {
+        vpcId,
+        routeTableId: privateRouteTableId,
+        vpcCidr: '172.16.0.0/24',
+        numberOfAzs: 1,
+      });
+    }).toThrowError('numberOfAzs must be between 2 and 6');
+  });
 });

@@ -198,7 +198,7 @@ export interface SplitVpcEvenlyProps {
   readonly subnetTag?: SubnetTag;
 }
 /**
- * Splits a VPC evenly between 3 AZs, and attaches a provided route table to each, and labels
+ * Splits a VPC evenly between a provided number of AZs (3 if not defined), and attaches a provided route table to each, and labels
  *
  * @example
  * new SplitVpcEvenly(this, 'evenSplitVpc', {
@@ -234,6 +234,11 @@ export class SplitVpcEvenly extends Construct {
     this._cidrBits = props.cidrBits || '6';
     this._numberOfAzs = props.numberOfAzs || 3;
     this._subnetTag = props.subnetTag || SubnetTag.PRIVATE;
+
+    // Throw error if > 6 AZs
+    if (this._numberOfAzs < 2 || this._numberOfAzs > 6) {
+      throw new Error('numberOfAzs must be between 2 and 6');
+    }
 
     // based on number of az, create an array of az strings
     const azs: string[] = [];
