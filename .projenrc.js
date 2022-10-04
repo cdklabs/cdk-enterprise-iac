@@ -62,4 +62,10 @@ const buildWorkflow = project.tryFindObjectFile('.github/workflows/build.yml');
 buildWorkflow.patch(
   JsonPatch.add('/jobs/build/container/options', '--group-add 121')
 );
+const releaseWorkflow = project.tryFindObjectFile(
+  '.github/workflows/release.yml'
+);
+releaseWorkflow.patch(
+  JsonPatch.add('/jobs/release/container/options', '--group-add 121')
+);
 project.synth();
