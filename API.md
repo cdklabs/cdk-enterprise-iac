@@ -90,6 +90,7 @@ Any object.
 | **Name** | **Type** | **Description** |
 | --- | --- | --- |
 | <code><a href="#@cdklabs/cdk-enterprise-iac.EcsIsoServiceAutoscaler.property.node">node</a></code> | <code>constructs.Node</code> | The tree node. |
+| <code><a href="#@cdklabs/cdk-enterprise-iac.EcsIsoServiceAutoscaler.property.ecsScalingManagerFunction">ecsScalingManagerFunction</a></code> | <code>aws-cdk-lib.aws_lambda.Function</code> | *No description.* |
 
 ---
 
@@ -102,6 +103,16 @@ public readonly node: Node;
 - *Type:* constructs.Node
 
 The tree node.
+
+---
+
+##### `ecsScalingManagerFunction`<sup>Required</sup> <a name="ecsScalingManagerFunction" id="@cdklabs/cdk-enterprise-iac.EcsIsoServiceAutoscaler.property.ecsScalingManagerFunction"></a>
+
+```typescript
+public readonly ecsScalingManagerFunction: Function;
+```
+
+- *Type:* aws-cdk-lib.aws_lambda.Function
 
 ---
 
@@ -195,10 +206,10 @@ const ecsIsoServiceAutoscalerProps: EcsIsoServiceAutoscalerProps = { ... }
 | --- | --- | --- |
 | <code><a href="#@cdklabs/cdk-enterprise-iac.EcsIsoServiceAutoscalerProps.property.ecsCluster">ecsCluster</a></code> | <code>aws-cdk-lib.aws_ecs.Cluster</code> | The cluster the service you wish to scale resides in. |
 | <code><a href="#@cdklabs/cdk-enterprise-iac.EcsIsoServiceAutoscalerProps.property.ecsService">ecsService</a></code> | <code>aws-cdk-lib.aws_ecs.IService</code> | The ECS service you wish to scale. |
-| <code><a href="#@cdklabs/cdk-enterprise-iac.EcsIsoServiceAutoscalerProps.property.role">role</a></code> | <code>aws-cdk-lib.aws_iam.IRole</code> | The IAM role that allows the created lambda to adjust the desired count on the ECS Service . |
 | <code><a href="#@cdklabs/cdk-enterprise-iac.EcsIsoServiceAutoscalerProps.property.scaleAlarm">scaleAlarm</a></code> | <code>aws-cdk-lib.aws_cloudwatch.Alarm</code> | The Cloudwatch Alarm that will cause scaling actions to be invoked, whether it's in or not in alarm will determine scale up and down actions. |
 | <code><a href="#@cdklabs/cdk-enterprise-iac.EcsIsoServiceAutoscalerProps.property.maximumTaskCount">maximumTaskCount</a></code> | <code>number</code> | The maximum number of tasks that the service will scale out to. |
 | <code><a href="#@cdklabs/cdk-enterprise-iac.EcsIsoServiceAutoscalerProps.property.minimumTaskCount">minimumTaskCount</a></code> | <code>number</code> | The minimum number of tasks the service will have. |
+| <code><a href="#@cdklabs/cdk-enterprise-iac.EcsIsoServiceAutoscalerProps.property.role">role</a></code> | <code>aws-cdk-lib.aws_iam.IRole</code> | Optional IAM role to attach to the created lambda to adjust the desired count on the ECS Service. |
 | <code><a href="#@cdklabs/cdk-enterprise-iac.EcsIsoServiceAutoscalerProps.property.scaleInCooldown">scaleInCooldown</a></code> | <code>aws-cdk-lib.Duration</code> | How long will the application wait before performing another scale in action. |
 | <code><a href="#@cdklabs/cdk-enterprise-iac.EcsIsoServiceAutoscalerProps.property.scaleInIncrement">scaleInIncrement</a></code> | <code>number</code> | The number of tasks that will scale in on scale in alarm status. |
 | <code><a href="#@cdklabs/cdk-enterprise-iac.EcsIsoServiceAutoscalerProps.property.scaleOutCooldown">scaleOutCooldown</a></code> | <code>aws-cdk-lib.Duration</code> | How long will a the application wait before performing another scale out action. |
@@ -227,20 +238,6 @@ public readonly ecsService: IService;
 - *Type:* aws-cdk-lib.aws_ecs.IService
 
 The ECS service you wish to scale.
-
----
-
-##### `role`<sup>Required</sup> <a name="role" id="@cdklabs/cdk-enterprise-iac.EcsIsoServiceAutoscalerProps.property.role"></a>
-
-```typescript
-public readonly role: IRole;
-```
-
-- *Type:* aws-cdk-lib.aws_iam.IRole
-
-The IAM role that allows the created lambda to adjust the desired count on the ECS Service .
-
-TODO: Make optional and add function for auto generation
 
 ---
 
@@ -281,6 +278,49 @@ public readonly minimumTaskCount: number;
 - *Default:* 1
 
 The minimum number of tasks the service will have.
+
+---
+
+##### `role`<sup>Optional</sup> <a name="role" id="@cdklabs/cdk-enterprise-iac.EcsIsoServiceAutoscalerProps.property.role"></a>
+
+```typescript
+public readonly role: IRole;
+```
+
+- *Type:* aws-cdk-lib.aws_iam.IRole
+- *Default:* A role is created for you with least privilege IAM policy
+
+Optional IAM role to attach to the created lambda to adjust the desired count on the ECS Service.
+
+Ensure this role has appropriate privileges. Example IAM policy statements:
+And more
+```json
+{
+  "PolicyDocument": {
+    "Statement": [
+      {
+        "Action": "cloudwatch:DescribeAlarms",
+        "Effect": "Allow",
+        "Resource": "arn:${Partition}:cloudwatch:${Region}:${Account}:alarm:${AlarmName}"
+      },
+      {
+        "Action": [
+          "ecs:DescribeServices",
+          "ecs:UpdateService"
+        ],
+        "Condition": {
+          "StringEquals": {
+            "ecs:cluster": "arn:${Partition}:ecs:${Region}:${Account}:cluster/${ClusterName}"
+          }
+        },
+        "Effect": "Allow",
+        "Resource": "arn:${Partition}:ecs:${Region}:${Account}:service/${ClusterName}/${ServiceName}"
+      }
+    ],
+    "Version": "2012-10-17"
+  }
+}
+```
 
 ---
 

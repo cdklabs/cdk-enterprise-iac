@@ -4,16 +4,19 @@ SPDX-License-Identifier: Apache-2.0
 */
 import { spawnSync } from 'child_process';
 import * as path from 'path';
-import { Duration, Stack } from 'aws-cdk-lib';
+import { CfnElement, Duration, Stack } from 'aws-cdk-lib';
 import { Match, Template } from 'aws-cdk-lib/assertions';
 import { Alarm } from 'aws-cdk-lib/aws-cloudwatch';
 import {
+  CfnCluster,
+  CfnService,
   Cluster,
   ContainerImage,
   FargateService,
   FargateTaskDefinition,
 } from 'aws-cdk-lib/aws-ecs';
-import { Role, ServicePrincipal } from 'aws-cdk-lib/aws-iam';
+import { CfnRole, Role, ServicePrincipal } from 'aws-cdk-lib/aws-iam';
+import { IConstruct } from 'constructs';
 import { EcsIsoServiceAutoscaler } from '../../../src/constructs/ecsIsoServiceAutoscaler/ecsIsoServiceAutoscaler';
 
 let stack: Stack;
@@ -120,5 +123,87 @@ describe('EcsIsoServiceAutoscaler construct', () => {
       },
       1
     );
+  });
+  test('Lambda creates own role if optional role not passed, and role has least privilege', () => {
+    const autoScaler = new EcsIsoServiceAutoscaler(
+      stack,
+      'TestEcsIsoServiceAutoscaler',
+      {
+        ecsCluster: cluster,
+        ecsService: service,
+        scaleAlarm: alarm,
+      }
+    );
+
+    const autoScalerRole = autoScaler.node.findAll().find((x: IConstruct) => {
+      return x instanceof CfnRole;
+    });
+    const serviceId = service.node.findAll().find((x: IConstruct) => {
+      return x instanceof CfnService;
+    });
+
+    const clusterId = cluster.node.findAll().find((x: IConstruct) => {
+      return x instanceof CfnCluster;
+    });
+
+    const template = Template.fromStack(stack);
+
+    template.resourcePropertiesCountIs(
+      'AWS::IAM::Policy',
+      {
+        PolicyDocument: {
+          Statement: Match.arrayWith([
+            Match.objectLike({
+              Action: 'cloudwatch:DescribeAlarms',
+              Resource: {
+                'Fn::GetAtt': [
+                  stack
+                    .getLogicalId(
+                      alarm.node.findChild('Resource') as CfnElement
+                    )
+                    .toString(),
+                  'Arn',
+                ],
+              },
+            }),
+            Match.objectLike({
+              Action: ['ecs:DescribeServices', 'ecs:UpdateService'],
+              Resource: {
+                Ref: stack.getLogicalId(serviceId as CfnElement).toString(),
+              },
+              Condition: {
+                StringEquals: {
+                  'ecs:cluster': {
+                    'Fn::GetAtt': [
+                      stack.getLogicalId(clusterId as CfnElement).toString(),
+                      'Arn',
+                    ],
+                  },
+                },
+              },
+            }),
+          ]),
+        },
+        Roles: [
+          {
+            Ref: stack.getLogicalId(autoScalerRole as CfnElement).toString(),
+          },
+        ],
+      },
+      1
+    );
+  });
+  test('Autoscaler Lambda is accessible as a property', () => {
+    const autoScaler = new EcsIsoServiceAutoscaler(
+      stack,
+      'TestEcsIsoServiceAutoscaler',
+      {
+        ecsCluster: cluster,
+        ecsService: service,
+        scaleAlarm: alarm,
+      }
+    );
+
+    expect(autoScaler).toHaveProperty('ecsScalingManagerFunction');
   });
 });
