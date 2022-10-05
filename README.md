@@ -5,7 +5,7 @@ SPDX-License-Identifier: Apache-2.0
 
 # CDK Enterprise IaC
 
-Utilites for using CDK within enterprise constraints
+Utilities for using CDK within enterprise constraints
 
 ## Install
 
