@@ -4,11 +4,11 @@ SPDX-License-Identifier: Apache-2.0
 */
 import { Stack } from 'aws-cdk-lib';
 import { Match, Template } from 'aws-cdk-lib/assertions';
+import { SubnetType } from 'aws-cdk-lib/aws-ec2';
 import {
   PopulateWithConfig,
   SplitVpcEvenly,
   SubnetConfig,
-  SubnetTag,
 } from '../../../src/constructs/populateProvidedVpc/populateProvidedVpc';
 
 let stack: Stack;
@@ -25,39 +25,39 @@ describe('CDKify a provided vpc', () => {
     const subnetConfig: SubnetConfig[] = [
       {
         groupName: 'app',
-        cidrRange: '172.31.0.0/27',
+        cidrRange: '172.16.0.0/27',
         availabilityZone: 'a',
-        subnetTag: SubnetTag.PUBLIC,
+        subnetType: SubnetType.PUBLIC,
       },
       {
         groupName: 'app',
-        cidrRange: '172.31.0.32/27',
+        cidrRange: '172.16.0.32/27',
         availabilityZone: 'b',
-        subnetTag: SubnetTag.PUBLIC,
+        subnetType: SubnetType.PUBLIC,
       },
       {
         groupName: 'db',
-        cidrRange: '172.31.0.64/27',
+        cidrRange: '172.16.0.64/27',
         availabilityZone: 'a',
-        subnetTag: SubnetTag.PRIVATE,
+        subnetType: SubnetType.PRIVATE_WITH_EGRESS,
       },
       {
         groupName: 'db',
-        cidrRange: '172.31.0.96/27',
+        cidrRange: '172.16.0.96/27',
         availabilityZone: 'b',
-        subnetTag: SubnetTag.PRIVATE,
+        subnetType: SubnetType.PRIVATE_WITH_EGRESS,
       },
       {
         groupName: 'iso',
-        cidrRange: '172.31.0.128/26',
+        cidrRange: '172.16.0.128/26',
         availabilityZone: 'a',
-        subnetTag: SubnetTag.ISOLATED,
+        subnetType: SubnetType.PRIVATE_ISOLATED,
       },
       {
         groupName: 'iso',
-        cidrRange: '172.31.0.196/26',
+        cidrRange: '172.16.0.196/26',
         availabilityZone: 'b',
-        subnetTag: SubnetTag.ISOLATED,
+        subnetType: SubnetType.PRIVATE_ISOLATED,
       },
     ];
     new PopulateWithConfig(stack, 'CDKifyVpc', {
@@ -171,7 +171,7 @@ describe('CDKify a provided vpc', () => {
       vpcId,
       routeTableId: privateRouteTableId,
       vpcCidr: '172.16.0.0/24',
-      subnetTag: SubnetTag.ISOLATED,
+      subnetType: SubnetType.PRIVATE_ISOLATED,
     });
     const template = Template.fromStack(stack);
 

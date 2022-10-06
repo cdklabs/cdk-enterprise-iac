@@ -118,37 +118,37 @@ const mySubnetConfig: SubnetConfig[] = [
      groupName: 'app',
      cidrRange: '172.31.0.0/27',
      availabilityZone: 'a',
-     subnetTag: SubnetTag.PUBLIC,
+     subnetType: subnetType.PUBLIC,
    },
    {
      groupName: 'app',
      cidrRange: '172.31.0.32/27',
      availabilityZone: 'b',
-     subnetTag: SubnetTag.PUBLIC,
+     subnetType: subnetType.PUBLIC,
    },
    {
      groupName: 'db',
      cidrRange: '172.31.0.64/27',
      availabilityZone: 'a',
-     subnetTag: SubnetTag.PRIVATE,
+     subnetType: subnetType.PRIVATE_WITH_EGRESS,
    },
    {
      groupName: 'db',
      cidrRange: '172.31.0.96/27',
      availabilityZone: 'b',
-     subnetTag: SubnetTag.PRIVATE,
+     subnetType: subnetType.PRIVATE_WITH_EGRESS,
    },
    {
      groupName: 'iso',
      cidrRange: '172.31.0.128/26',
      availabilityZone: 'a',
-     subnetTag: SubnetTag.ISOLATED,
+     subnetType: subnetType.PRIVATE_ISOLATED,
    },
    {
      groupName: 'iso',
      cidrRange: '172.31.0.196/26',
      availabilityZone: 'b',
-     subnetTag: SubnetTag.ISOLATED,
+     subnetType: subnetType.PRIVATE_ISOLATED,
    },
  ];
 new PopulateWithConfig(this, "vpcPopulater", {
@@ -271,7 +271,7 @@ new SplitVpcEvenly(this, 'evenSplitVpc', {
   routeTableId: 'rt-abcdefgh123456',
   cidrBits: '10',
   numberOfAzs: 4,
-  subnetTag: SubnetTag.ISOLATED,
+  subnetType: subnetType.PRIVATE_ISOLATED,
 });
 ```
 
@@ -646,7 +646,7 @@ public readonly privateRouteTableId: string;
 
 Route table ID for a provided route table with routes to enterprise network.
 
-Both SubnetTag.PUBLIC and SubnetTag.PRIVATE will use this property
+Both subnetType.PUBLIC and subnetType.PRIVATE_WITH_EGRESS will use this property
 
 ---
 
@@ -770,7 +770,7 @@ const splitVpcEvenlyProps: SplitVpcEvenlyProps = { ... }
 | <code><a href="#@cdklabs/cdk-enterprise-iac.SplitVpcEvenlyProps.property.vpcId">vpcId</a></code> | <code>string</code> | ID of the existing VPC you're trying to populate. |
 | <code><a href="#@cdklabs/cdk-enterprise-iac.SplitVpcEvenlyProps.property.cidrBits">cidrBits</a></code> | <code>string</code> | `cidrBits` argument for the [`Fn::Cidr`](https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/intrinsic-function-reference-cidr.html) Cloudformation intrinsic function. |
 | <code><a href="#@cdklabs/cdk-enterprise-iac.SplitVpcEvenlyProps.property.numberOfAzs">numberOfAzs</a></code> | <code>number</code> | Number of AZs to evenly split into. |
-| <code><a href="#@cdklabs/cdk-enterprise-iac.SplitVpcEvenlyProps.property.subnetTag">subnetTag</a></code> | <code><a href="#@cdklabs/cdk-enterprise-iac.SubnetTag">SubnetTag</a></code> | *No description.* |
+| <code><a href="#@cdklabs/cdk-enterprise-iac.SplitVpcEvenlyProps.property.subnetType">subnetType</a></code> | <code>aws-cdk-lib.aws_ec2.SubnetType</code> | *No description.* |
 
 ---
 
@@ -836,14 +836,14 @@ Number of AZs to evenly split into.
 
 ---
 
-##### `subnetTag`<sup>Optional</sup> <a name="subnetTag" id="@cdklabs/cdk-enterprise-iac.SplitVpcEvenlyProps.property.subnetTag"></a>
+##### `subnetType`<sup>Optional</sup> <a name="subnetType" id="@cdklabs/cdk-enterprise-iac.SplitVpcEvenlyProps.property.subnetType"></a>
 
 ```typescript
-public readonly subnetTag: SubnetTag;
+public readonly subnetType: SubnetType;
 ```
 
-- *Type:* <a href="#@cdklabs/cdk-enterprise-iac.SubnetTag">SubnetTag</a>
-- *Default:* SubnetTag.PRIVATE
+- *Type:* aws-cdk-lib.aws_ec2.SubnetType
+- *Default:* subnetType.PRIVATE
 
 ---
 
@@ -864,7 +864,7 @@ const subnetConfig: SubnetConfig = { ... }
 | <code><a href="#@cdklabs/cdk-enterprise-iac.SubnetConfig.property.availabilityZone">availabilityZone</a></code> | <code>string</code> | Which availability zone the subnet should be in. |
 | <code><a href="#@cdklabs/cdk-enterprise-iac.SubnetConfig.property.cidrRange">cidrRange</a></code> | <code>string</code> | Cidr range of the subnet to create. |
 | <code><a href="#@cdklabs/cdk-enterprise-iac.SubnetConfig.property.groupName">groupName</a></code> | <code>string</code> | Logical group name of a subnet. |
-| <code><a href="#@cdklabs/cdk-enterprise-iac.SubnetConfig.property.subnetTag">subnetTag</a></code> | <code><a href="#@cdklabs/cdk-enterprise-iac.SubnetTag">SubnetTag</a></code> | What subnet tag to use. |
+| <code><a href="#@cdklabs/cdk-enterprise-iac.SubnetConfig.property.subnetType">subnetType</a></code> | <code>aws-cdk-lib.aws_ec2.SubnetType</code> | What [SubnetType](https://docs.aws.amazon.com/cdk/api/v2/docs/aws-cdk-lib.aws_ec2.SubnetType.html) to use. |
 
 ---
 
@@ -911,15 +911,23 @@ db
 ```
 
 
-##### `subnetTag`<sup>Required</sup> <a name="subnetTag" id="@cdklabs/cdk-enterprise-iac.SubnetConfig.property.subnetTag"></a>
+##### `subnetType`<sup>Required</sup> <a name="subnetType" id="@cdklabs/cdk-enterprise-iac.SubnetConfig.property.subnetType"></a>
 
 ```typescript
-public readonly subnetTag: SubnetTag;
+public readonly subnetType: SubnetType;
 ```
 
-- *Type:* <a href="#@cdklabs/cdk-enterprise-iac.SubnetTag">SubnetTag</a>
+- *Type:* aws-cdk-lib.aws_ec2.SubnetType
 
-What subnet tag to use.
+What [SubnetType](https://docs.aws.amazon.com/cdk/api/v2/docs/aws-cdk-lib.aws_ec2.SubnetType.html) to use.
+
+This will govern the `aws-cdk:subnet-type` tag on the subnet
+
+SubnetType | `aws-cdk:subnet-type` tag value
+--- | ---
+`PRIVATE_ISOLATED` | 'Isolated'
+`PRIVATE_WITH_EGRESS` | 'Private'
+`PUBLIC` | 'Public'
 
 ---
 
@@ -1238,40 +1246,4 @@ All aspects can visit an IConstruct.
 
 
 
-
-## Enums <a name="Enums" id="Enums"></a>
-
-### SubnetTag <a name="SubnetTag" id="@cdklabs/cdk-enterprise-iac.SubnetTag"></a>
-
-The tag value for `aws-cdk:subnet-type` which will be applied to a subnet.
-
-#### Members <a name="Members" id="Members"></a>
-
-| **Name** | **Description** |
-| --- | --- |
-| <code><a href="#@cdklabs/cdk-enterprise-iac.SubnetTag.PRIVATE">PRIVATE</a></code> | {"Name": "aws-cdk:subnet-type", "Value": "Private"} tag on a subnet. |
-| <code><a href="#@cdklabs/cdk-enterprise-iac.SubnetTag.PUBLIC">PUBLIC</a></code> | {"Name": "aws-cdk:subnet-type", "Value": "Public"} tag on a subnet. |
-| <code><a href="#@cdklabs/cdk-enterprise-iac.SubnetTag.ISOLATED">ISOLATED</a></code> | {"Name": "aws-cdk:subnet-type", "Value": "Isolated"} tag on a subnet. |
-
----
-
-##### `PRIVATE` <a name="PRIVATE" id="@cdklabs/cdk-enterprise-iac.SubnetTag.PRIVATE"></a>
-
-{"Name": "aws-cdk:subnet-type", "Value": "Private"} tag on a subnet.
-
----
-
-
-##### `PUBLIC` <a name="PUBLIC" id="@cdklabs/cdk-enterprise-iac.SubnetTag.PUBLIC"></a>
-
-{"Name": "aws-cdk:subnet-type", "Value": "Public"} tag on a subnet.
-
----
-
-
-##### `ISOLATED` <a name="ISOLATED" id="@cdklabs/cdk-enterprise-iac.SubnetTag.ISOLATED"></a>
-
-{"Name": "aws-cdk:subnet-type", "Value": "Isolated"} tag on a subnet.
-
----
 

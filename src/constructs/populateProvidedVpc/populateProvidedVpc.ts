@@ -3,26 +3,12 @@ Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
 SPDX-License-Identifier: Apache-2.0
 */
 import { Fn, Stack, Tags } from 'aws-cdk-lib';
-import { CfnSubnet, CfnSubnetRouteTableAssociation } from 'aws-cdk-lib/aws-ec2';
+import {
+  CfnSubnet,
+  CfnSubnetRouteTableAssociation,
+  SubnetType,
+} from 'aws-cdk-lib/aws-ec2';
 import { Construct } from 'constructs';
-
-/**
- * The tag value for `aws-cdk:subnet-type` which will be applied to a subnet
- */
-export enum SubnetTag {
-  /**
-   * {"Name": "aws-cdk:subnet-type", "Value": "Private"} tag on a subnet
-   */
-  PRIVATE = 'Private',
-  /**
-   * {"Name": "aws-cdk:subnet-type", "Value": "Public"} tag on a subnet
-   */
-  PUBLIC = 'Public',
-  /**
-   * {"Name": "aws-cdk:subnet-type", "Value": "Isolated"} tag on a subnet
-   */
-  ISOLATED = 'Isolated',
-}
 
 export interface SubnetConfig {
   /**
@@ -41,9 +27,17 @@ export interface SubnetConfig {
    */
   readonly cidrRange: string;
   /**
-   * What subnet tag to use
+   * What [SubnetType](https://docs.aws.amazon.com/cdk/api/v2/docs/aws-cdk-lib.aws_ec2.SubnetType.html) to use
+   *
+   * This will govern the `aws-cdk:subnet-type` tag on the subnet
+   *
+   * SubnetType | `aws-cdk:subnet-type` tag value
+   * --- | ---
+   * `PRIVATE_ISOLATED` | 'Isolated'
+   * `PRIVATE_WITH_EGRESS` | 'Private'
+   * `PUBLIC` | 'Public'
    */
-  readonly subnetTag: SubnetTag;
+  readonly subnetType: SubnetType;
 }
 
 export interface PopulateWithConfigProps {
@@ -54,7 +48,7 @@ export interface PopulateWithConfigProps {
   /**
    * Route table ID for a provided route table with routes to enterprise network
    *
-   * Both SubnetTag.PUBLIC and SubnetTag.PRIVATE will use this property
+   * Both subnetType.PUBLIC and subnetType.PRIVATE_WITH_EGRESS will use this property
    */
   readonly privateRouteTableId: string;
   /**
@@ -76,37 +70,37 @@ export interface PopulateWithConfigProps {
         groupName: 'app',
         cidrRange: '172.31.0.0/27',
         availabilityZone: 'a',
-        subnetTag: SubnetTag.PUBLIC,
+        subnetType: subnetType.PUBLIC,
       },
       {
         groupName: 'app',
         cidrRange: '172.31.0.32/27',
         availabilityZone: 'b',
-        subnetTag: SubnetTag.PUBLIC,
+        subnetType: subnetType.PUBLIC,
       },
       {
         groupName: 'db',
         cidrRange: '172.31.0.64/27',
         availabilityZone: 'a',
-        subnetTag: SubnetTag.PRIVATE,
+        subnetType: subnetType.PRIVATE_WITH_EGRESS,
       },
       {
         groupName: 'db',
         cidrRange: '172.31.0.96/27',
         availabilityZone: 'b',
-        subnetTag: SubnetTag.PRIVATE,
+        subnetType: subnetType.PRIVATE_WITH_EGRESS,
       },
       {
         groupName: 'iso',
         cidrRange: '172.31.0.128/26',
         availabilityZone: 'a',
-        subnetTag: SubnetTag.ISOLATED,
+        subnetType: subnetType.PRIVATE_ISOLATED,
       },
       {
         groupName: 'iso',
         cidrRange: '172.31.0.196/26',
         availabilityZone: 'b',
-        subnetTag: SubnetTag.ISOLATED,
+        subnetType: subnetType.PRIVATE_ISOLATED,
       },
     ];
  * new PopulateWithConfig(this, "vpcPopulater", {
@@ -145,7 +139,7 @@ export class PopulateWithConfig extends Construct {
             cidrBlock: subnet.cidrRange,
           }
         );
-        Tags.of(sub).add('aws-cdk:subnet-type', subnet.subnetTag);
+        Tags.of(sub).add('aws-cdk:subnet-type', subnet.subnetType);
         Tags.of(sub).add(
           'Name',
           `subnet-${subnet.groupName}-${subnet.availabilityZone}`
@@ -156,7 +150,7 @@ export class PopulateWithConfig extends Construct {
           `SubnetReAssoc${subnet.groupName}-${subnet.availabilityZone}`,
           {
             routeTableId:
-              subnet.subnetTag == 'Isolated'
+              subnet.subnetType == 'Isolated'
                 ? this._privateRouteTableId
                 : this._localRouteTableId,
             subnetId: sub.ref,
@@ -193,9 +187,9 @@ export interface SplitVpcEvenlyProps {
    */
   readonly numberOfAzs?: number;
   /**
-   * @default SubnetTag.PRIVATE
+   * @default subnetType.PRIVATE
    */
-  readonly subnetTag?: SubnetTag;
+  readonly subnetType?: SubnetType;
 }
 /**
  * Splits a VPC evenly between a provided number of AZs (3 if not defined), and attaches a provided route table to each, and labels
@@ -214,7 +208,7 @@ export interface SplitVpcEvenlyProps {
  *   routeTableId: 'rt-abcdefgh123456',
  *   cidrBits: '10',
  *   numberOfAzs: 4,
- *   subnetTag: SubnetTag.ISOLATED,
+ *   subnetType: subnetType.PRIVATE_ISOLATED,
  * });
  */
 export class SplitVpcEvenly extends Construct {
@@ -223,7 +217,7 @@ export class SplitVpcEvenly extends Construct {
   private readonly _routeTableId: string;
   private readonly _cidrBits?: string;
   private readonly _numberOfAzs?: number;
-  private readonly _subnetTag?: SubnetTag;
+  private readonly _subnetType?: SubnetType;
 
   constructor(scope: Construct, id: string, props: SplitVpcEvenlyProps) {
     super(scope, id);
@@ -233,7 +227,7 @@ export class SplitVpcEvenly extends Construct {
     this._routeTableId = props.routeTableId;
     this._cidrBits = props.cidrBits || '6';
     this._numberOfAzs = props.numberOfAzs || 3;
-    this._subnetTag = props.subnetTag || SubnetTag.PRIVATE;
+    this._subnetType = props.subnetType || SubnetType.PRIVATE_WITH_EGRESS;
 
     // Throw error if > 6 AZs
     if (this._numberOfAzs < 2 || this._numberOfAzs > 6) {
@@ -255,7 +249,7 @@ export class SplitVpcEvenly extends Construct {
           Fn.cidr(this._vpcCidr, this._numberOfAzs!, this._cidrBits)
         ),
       });
-      Tags.of(sub).add('aws-cdk:subnet-type', this._subnetTag!);
+      Tags.of(sub).add('aws-cdk:subnet-type', this._subnetType!);
       Tags.of(sub).add('Name', `subnet-${val}`);
 
       new CfnSubnetRouteTableAssociation(this, `SubnetRtAssoc${val}`, {
