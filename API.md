@@ -293,7 +293,6 @@ public readonly role: IRole;
 Optional IAM role to attach to the created lambda to adjust the desired count on the ECS Service.
 
 Ensure this role has appropriate privileges. Example IAM policy statements:
-And more
 ```json
 {
   "PolicyDocument": {
