@@ -9,16 +9,45 @@ import { Alarm } from 'aws-cdk-lib/aws-cloudwatch';
 import { Cluster, IService } from 'aws-cdk-lib/aws-ecs';
 import { Rule, Schedule } from 'aws-cdk-lib/aws-events';
 import { LambdaFunction } from 'aws-cdk-lib/aws-events-targets';
-import { IRole } from 'aws-cdk-lib/aws-iam';
+import { Effect, IRole, PolicyStatement } from 'aws-cdk-lib/aws-iam';
 import { Code, Function, Runtime } from 'aws-cdk-lib/aws-lambda';
 import { Construct } from 'constructs';
 
 export interface EcsIsoServiceAutoscalerProps {
   /**
-   * The IAM role that allows the created lambda to adjust the desired count on the ECS Service .
-   * TODO: Make optional and add function for auto generation
+   * Optional IAM role to attach to the created lambda to adjust the desired count on the ECS Service
+   *
+   * Ensure this role has appropriate privileges. Example IAM policy statements:
+   * ```json
+   * {
+   *  "PolicyDocument": {
+   *    "Statement": [
+   *      {
+   *        "Action": "cloudwatch:DescribeAlarms",
+   *        "Effect": "Allow",
+   *        "Resource": "arn:${Partition}:cloudwatch:${Region}:${Account}:alarm:${AlarmName}"
+   *      },
+   *      {
+   *        "Action": [
+   *          "ecs:DescribeServices",
+   *          "ecs:UpdateService"
+   *        ],
+   *        "Condition": {
+   *          "StringEquals": {
+   *            "ecs:cluster": "arn:${Partition}:ecs:${Region}:${Account}:cluster/${ClusterName}"
+   *          }
+   *        },
+   *        "Effect": "Allow",
+   *        "Resource": "arn:${Partition}:ecs:${Region}:${Account}:service/${ClusterName}/${ServiceName}"
+   *      }
+   *    ],
+   *    "Version": "2012-10-17"
+   *  }
+   *}
+   * ```
+   * @default A role is created for you with least privilege IAM policy
    */
-  readonly role: IRole;
+  readonly role?: IRole;
   /**
    * The cluster the service you wish to scale resides in.
    */
@@ -80,6 +109,8 @@ export interface EcsIsoServiceAutoscalerProps {
  */
 
 export class EcsIsoServiceAutoscaler extends Construct {
+  public readonly ecsScalingManagerFunction: Function;
+
   constructor(
     scope: Construct,
     id: string,
@@ -96,7 +127,7 @@ export class EcsIsoServiceAutoscaler extends Construct {
       scaleInCooldown = Duration.seconds(60),
     } = props;
 
-    const ecsScalingManager = new Function(
+    this.ecsScalingManagerFunction = new Function(
       this,
       `${id}-EcsServiceScalingManager`,
       {
@@ -108,7 +139,7 @@ export class EcsIsoServiceAutoscaler extends Construct {
         ),
         handler: 'ecs_scaling_manager.handler',
         runtime: Runtime.PYTHON_3_7,
-        role: props.role,
+        role: props.role || undefined,
         environment: {
           ECS_CLUSTER_NAME: props.ecsCluster.clusterName,
           ECS_SERVICE_NAME: props.ecsService.serviceName,
@@ -127,7 +158,31 @@ export class EcsIsoServiceAutoscaler extends Construct {
       description: `Kicks off Lambda to adjust ECS scaling for service: ${props.ecsService.serviceName}`,
       enabled: true,
       schedule: Schedule.rate(Duration.minutes(1)),
-      targets: [new LambdaFunction(ecsScalingManager)],
+      targets: [new LambdaFunction(this.ecsScalingManagerFunction)],
     });
+
+    if (!props.role) {
+      // Set permissions for ecsScalingManagerFunction role
+      this.ecsScalingManagerFunction.addToRolePolicy(
+        new PolicyStatement({
+          actions: ['cloudwatch:DescribeAlarms'],
+          effect: Effect.ALLOW,
+          resources: [props.scaleAlarm.alarmArn],
+        })
+      );
+
+      this.ecsScalingManagerFunction.addToRolePolicy(
+        new PolicyStatement({
+          actions: ['ecs:DescribeServices', 'ecs:UpdateService'],
+          effect: Effect.ALLOW,
+          resources: [props.ecsService.serviceArn],
+          conditions: {
+            StringEquals: {
+              'ecs:cluster': props.ecsCluster.clusterArn,
+            },
+          },
+        })
+      );
+    }
   }
 }
