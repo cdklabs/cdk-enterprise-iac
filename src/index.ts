@@ -7,4 +7,5 @@ export * from './patches/removeTags';
 export * from './patches/addLambdaEnvironmentVariables';
 export * from './patches/removePublicAccessBlockConfiguration';
 export * from './patches/setApiGatewayEndpointConfiguration';
+export * from './constructs/populateProvidedVpc/populateProvidedVpc';
 export * from './constructs/ecsIsoServiceAutoscaler/ecsIsoServiceAutoscaler';
