@@ -4,6 +4,7 @@ SPDX-License-Identifier: Apache-2.0
 */
 import { Aspects, CfnElement, SecretValue, Stack } from 'aws-cdk-lib';
 import { Match, Template } from 'aws-cdk-lib/assertions';
+import { AutoScalingGroup, Signals } from 'aws-cdk-lib/aws-autoscaling';
 import {
   CloudFormationInit,
   InitPackage,
@@ -24,7 +25,7 @@ beforeEach(() => {
   stack = new Stack();
 });
 
-describe('Adding cfn-init proxy values', () => {
+describe('Adding cfn-init proxy values to EC2 instance', () => {
   test('http proxy with no password needed', () => {
     const vpc = new Vpc(stack, 'TestVpc');
     new Instance(stack, 'TestInstance', {
@@ -129,6 +130,40 @@ describe('Adding cfn-init proxy values', () => {
                   ]),
                 ],
               },
+            ]),
+          },
+        },
+      },
+    });
+  });
+});
+
+describe('Adding cfn-init proxy values to EC2 launch config', () => {
+  test('http proxy with no password needed', () => {
+    const vpc = new Vpc(stack, 'TestVpc');
+    new AutoScalingGroup(stack, 'TestAutoscalingGroup', {
+      vpc,
+      machineImage: MachineImage.latestAmazonLinux(),
+      instanceType: InstanceType.of(InstanceClass.MEMORY5, InstanceSize.LARGE),
+      init: CloudFormationInit.fromElements(InitPackage.yum('python3')),
+      signals: Signals.waitForAll(),
+    });
+    Aspects.of(stack).add(
+      new addCfnInitProxy({
+        proxyHost: 'example.com',
+        proxyPort: 8080,
+      })
+    );
+    const template = Template.fromStack(stack);
+    template.hasResourceProperties('AWS::AutoScaling::LaunchConfiguration', {
+      UserData: {
+        'Fn::Base64': {
+          'Fn::Join': {
+            '1': Match.arrayWith([
+              ' --http-proxy http://',
+              'example.com:8080',
+              ' --http-proxy http://',
+              'example.com:8080',
             ]),
           },
         },
