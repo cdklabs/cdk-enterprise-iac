@@ -31,13 +31,14 @@ export class addCfnInitProxy implements IAspect {
   private readonly proxyType?: ProxyType;
   private readonly proxyCredentials?: ISecret;
   private readonly initResourceTypes: string[];
+  private readonly proxyValue: string[];
 
   constructor(props: AddCfnInitProxyProps) {
     this.proxyHost = props.proxyHost;
     this.proxyPort = props.proxyPort;
     this.proxyType = props.proxyType || ProxyType.HTTP;
     this.proxyCredentials = props.proxyCredentials || undefined;
-
+    this.proxyValue = this.determineProxyValue();
     this.initResourceTypes = [
       'AWS::AutoScaling::LaunchConfiguration',
       'AWS::EC2::Instance',
@@ -59,19 +60,52 @@ export class addCfnInitProxy implements IAspect {
         const launchConfigNode = node as CfnLaunchConfiguration;
         userData = Stack.of(node).resolve(launchConfigNode.userData);
       }
-      console.log(userData);
+
       const commandList: string[] = userData['Fn::Base64']['Fn::Join'][1];
 
-      const found = commandList.filter((x) => RegExp('--resource').test(x));
-      console.log(found);
-      for (let index = 0; index < found.length; index++) {
-        const element = found[index];
-        commandList.indexOf(element);
+      const resourceIndexes = this.indexOfList('--resource', commandList);
+
+      for (
+        let i = 0, j = 0;
+        i < resourceIndexes.length;
+        i++, j += this.proxyValue.length
+      ) {
+        const lineIdx = resourceIndexes[i] + j;
+        commandList.splice(lineIdx, 0, ...this.proxyValue);
       }
-      console.log(`need to add ${this.proxyHost}`);
-      console.log(`need to add ${this.proxyPort}`);
-      console.log(`need to add ${this.proxyType}`);
-      console.log(`need to add ${this.proxyCredentials}`);
+      node.addPropertyOverride('UserData.Fn::Base64.Fn::Join.1', commandList);
     }
+  }
+
+  private determineProxyValue(): string[] {
+    const result = [];
+    if (this.proxyType == ProxyType.HTTP) {
+      result.push(' --http-proxy http://');
+    } else {
+      result.push(' --https-proxy https://');
+    }
+
+    if (this.proxyCredentials) {
+      result.push(
+        `${this.proxyCredentials.secretValueFromJson(
+          'username'
+        )}:${this.proxyCredentials.secretValueFromJson('password')}@`
+      );
+    }
+    result.push(`${this.proxyHost}:${this.proxyPort}`);
+
+    return result;
+  }
+
+  private indexOfList(needle: string, haystack: string[]): number[] {
+    const result = [];
+    for (let idx = 0; idx < haystack.length; idx++) {
+      const command: any = haystack[idx];
+      if (command instanceof Object) continue;
+      if (command.indexOf(needle) >= 0) {
+        result.push(idx);
+      }
+    }
+    return result;
   }
 }
