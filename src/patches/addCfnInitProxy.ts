@@ -45,7 +45,11 @@ export interface AddCfnInitProxyProps {
   readonly proxyType?: ProxyType;
   /**
    * JSON secret containing `user` and `password` properties to use if your proxy requires credentials
-   * `http://user:password@host:port` could contain sensitive data, so using a secret
+   * `http://user:password@host:port` could contain sensitive data, so using a Secret.
+   *
+   * Note that while the `user` and `password` won't be visible in the cloudformation tempalte
+   * they **will** be in plain text inside your `UserData`
+   *
    * @example
    * const secret = new Secret(stack, 'TestSecret', {
       secretObjectValue: {

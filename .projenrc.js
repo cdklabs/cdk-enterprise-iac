@@ -75,7 +75,11 @@ releaseWorkflow.patch(
 const integConfig = new JsonFile(project, 'test/integ/tsconfig.json', {
   obj: {
     extends: '../../tsconfig.dev.json',
-    include: ['./**/integ.*.test.ts'],
+    include: ['./**/integ.*.ts'],
   },
 });
+project.setScript(
+  'integ',
+  'npx tsc -p test/integ && npx integ-runner --update-on-failed'
+);
 project.synth();

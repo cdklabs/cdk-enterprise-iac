@@ -29,7 +29,8 @@
     "unbump": "npx projen unbump",
     "upgrade": "npx projen upgrade",
     "watch": "npx projen watch",
-    "projen": "npx projen"
+    "projen": "npx projen",
+    "integ": "npx tsc -p test/integ && npx integ-runner --update-on-failed"
   },
   "author": {
     "name": "Taylor Ondrey",
