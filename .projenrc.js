@@ -2,8 +2,7 @@
 Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
 SPDX-License-Identifier: Apache-2.0
 */
-const { awscdk, JsonPatch } = require('projen');
-const { GitlabConfiguration } = require('projen/lib/gitlab');
+const { awscdk, JsonPatch, JsonFile } = require('projen');
 const project = new awscdk.AwsCdkConstructLibrary({
   author: 'Taylor Ondrey',
   authorAddress: 'ondreyt@amazon.com',
@@ -11,8 +10,12 @@ const project = new awscdk.AwsCdkConstructLibrary({
   defaultReleaseBranch: 'main',
   name: '@cdklabs/cdk-enterprise-iac',
   repositoryUrl: 'https://github.com/cdklabs/cdk-enterprise-iac.git',
-  devDeps: ['eslint-plugin-security'],
-  gitignore: ['.vscode/'],
+  devDeps: [
+    'eslint-plugin-security',
+    '@aws-cdk/integ-tests-alpha@2.41.0-alpha.0',
+    '@aws-cdk/integ-runner@^2',
+  ],
+  gitignore: ['.vscode/', '*.d.ts', '*.generated.ts', '*.js', '*.js.map'],
   eslintOptions: { prettier: true },
   autoApproveOptions: {
     allowedUsernames: ['cdklabs-automation'],
@@ -46,6 +49,7 @@ const project = new awscdk.AwsCdkConstructLibrary({
   },
   release: true,
 });
+
 project.package.addField('prettier', {
   singleQuote: true,
   semi: true,
@@ -68,4 +72,10 @@ const releaseWorkflow = project.tryFindObjectFile(
 releaseWorkflow.patch(
   JsonPatch.add('/jobs/release/container/options', '--group-add 121')
 );
+const integConfig = new JsonFile(project, 'test/integ/tsconfig.json', {
+  obj: {
+    extends: '../../tsconfig.dev.json',
+    include: ['./**/integ.*.test.ts'],
+  },
+});
 project.synth();

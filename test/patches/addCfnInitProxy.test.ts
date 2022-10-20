@@ -17,7 +17,7 @@ import {
 } from 'aws-cdk-lib/aws-ec2';
 import { CfnSecret, Secret } from 'aws-cdk-lib/aws-secretsmanager';
 import { IConstruct } from 'constructs';
-import { addCfnInitProxy, ProxyType } from '../../src/patches/addCfnInitProxy';
+import { AddCfnInitProxy, ProxyType } from '../../src/patches/addCfnInitProxy';
 
 let stack: Stack;
 
@@ -35,7 +35,7 @@ describe('Adding cfn-init proxy values to EC2 instance', () => {
       init: CloudFormationInit.fromElements(InitPackage.yum('python3')),
     });
     Aspects.of(stack).add(
-      new addCfnInitProxy({
+      new AddCfnInitProxy({
         proxyHost: 'example.com',
         proxyPort: 8080,
       })
@@ -44,14 +44,15 @@ describe('Adding cfn-init proxy values to EC2 instance', () => {
     template.hasResourceProperties('AWS::EC2::Instance', {
       UserData: {
         'Fn::Base64': {
-          'Fn::Join': {
-            '1': Match.arrayWith([
+          'Fn::Join': [
+            '',
+            Match.arrayWith([
               ' --http-proxy http://',
               'example.com:8080',
               ' --http-proxy http://',
               'example.com:8080',
             ]),
-          },
+          ],
         },
       },
     });
@@ -65,7 +66,7 @@ describe('Adding cfn-init proxy values to EC2 instance', () => {
       init: CloudFormationInit.fromElements(InitPackage.yum('python3')),
     });
     Aspects.of(stack).add(
-      new addCfnInitProxy({
+      new AddCfnInitProxy({
         proxyHost: 'example.com',
         proxyPort: 8080,
         proxyType: ProxyType.HTTPS,
@@ -75,14 +76,15 @@ describe('Adding cfn-init proxy values to EC2 instance', () => {
     template.hasResourceProperties('AWS::EC2::Instance', {
       UserData: {
         'Fn::Base64': {
-          'Fn::Join': {
-            '1': Match.arrayWith([
+          'Fn::Join': [
+            '',
+            Match.arrayWith([
               ' --https-proxy https://',
               'example.com:8080',
               ' --https-proxy https://',
               'example.com:8080',
             ]),
-          },
+          ],
         },
       },
     });
@@ -102,7 +104,7 @@ describe('Adding cfn-init proxy values to EC2 instance', () => {
       },
     });
     Aspects.of(stack).add(
-      new addCfnInitProxy({
+      new AddCfnInitProxy({
         proxyHost: 'example.com',
         proxyPort: 8080,
         proxyCredentials: secret,
@@ -115,8 +117,9 @@ describe('Adding cfn-init proxy values to EC2 instance', () => {
     template.hasResourceProperties('AWS::EC2::Instance', {
       UserData: {
         'Fn::Base64': {
-          'Fn::Join': {
-            '1': Match.arrayWith([
+          'Fn::Join': [
+            '',
+            Match.arrayWith([
               ' --http-proxy http://',
               {
                 'Fn::Join': [
@@ -124,14 +127,14 @@ describe('Adding cfn-init proxy values to EC2 instance', () => {
                   Match.arrayEquals([
                     '{{resolve:secretsmanager:',
                     { Ref: stack.getLogicalId(secretConstruct as CfnElement) },
-                    ':SecretString:username::}}:{{resolve:secretsmanager:',
+                    ':SecretString:user::}}:{{resolve:secretsmanager:',
                     { Ref: stack.getLogicalId(secretConstruct as CfnElement) },
                     ':SecretString:password::}}@',
                   ]),
                 ],
               },
             ]),
-          },
+          ],
         },
       },
     });
@@ -149,7 +152,7 @@ describe('Adding cfn-init proxy values to EC2 launch config', () => {
       signals: Signals.waitForAll(),
     });
     Aspects.of(stack).add(
-      new addCfnInitProxy({
+      new AddCfnInitProxy({
         proxyHost: 'example.com',
         proxyPort: 8080,
       })
@@ -158,14 +161,15 @@ describe('Adding cfn-init proxy values to EC2 launch config', () => {
     template.hasResourceProperties('AWS::AutoScaling::LaunchConfiguration', {
       UserData: {
         'Fn::Base64': {
-          'Fn::Join': {
-            '1': Match.arrayWith([
+          'Fn::Join': [
+            '',
+            Match.arrayWith([
               ' --http-proxy http://',
               'example.com:8080',
               ' --http-proxy http://',
               'example.com:8080',
             ]),
-          },
+          ],
         },
       },
     });
