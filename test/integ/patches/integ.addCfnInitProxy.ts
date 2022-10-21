@@ -3,7 +3,7 @@ Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
 SPDX-License-Identifier: Apache-2.0
 */
 import { IntegTest } from '@aws-cdk/integ-tests-alpha';
-import { App, Aspects, SecretValue, Stack } from 'aws-cdk-lib';
+import { App, Aspects, Duration, SecretValue, Stack } from 'aws-cdk-lib';
 import {
   CloudFormationInit,
   InitPackage,
@@ -25,6 +25,10 @@ new Instance(stack, 'TestInstance', {
   instanceType: InstanceType.of(InstanceClass.MEMORY5, InstanceSize.LARGE),
   vpc,
   init: CloudFormationInit.fromElements(InitPackage.yum('python3')),
+  initOptions: {
+    timeout: Duration.minutes(2),
+    ignoreFailures: true, // Ignoring due to fake proxy not being real
+  },
 });
 const secret = new Secret(stack, 'TestSecret', {
   secretObjectValue: {

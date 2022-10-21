@@ -36,6 +36,9 @@ jspm_packages/
 *.generated.ts
 *.js
 *.js.map
+!**/*.integ.snapshot/**/asset.*/*.js
+!**/*.integ.snapshot/**/asset.*/*.d.ts
+!**/*.integ.snapshot/**/asset.*/**
 !/.projenrc.js
 /test-reports/
 junit.xml

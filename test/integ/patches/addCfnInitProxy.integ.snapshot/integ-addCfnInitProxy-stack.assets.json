@@ -1,0 +1,19 @@
+{
+  "version": "21.0.0",
+  "files": {
+    "324bfdd585065ac3d5b6a59f8e430eaf2b7d6591773ffc2832e83705134e7a04": {
+      "source": {
+        "path": "integ-addCfnInitProxy-stack.template.json",
+        "packaging": "file"
+      },
+      "destinations": {
+        "current_account-current_region": {
+          "bucketName": "cdk-hnb659fds-assets-${AWS::AccountId}-${AWS::Region}",
+          "objectKey": "324bfdd585065ac3d5b6a59f8e430eaf2b7d6591773ffc2832e83705134e7a04.json",
+          "assumeRoleArn": "arn:${AWS::Partition}:iam::${AWS::AccountId}:role/cdk-hnb659fds-file-publishing-role-${AWS::AccountId}-${AWS::Region}"
+        }
+      }
+    }
+  },
+  "dockerImages": {}
+}

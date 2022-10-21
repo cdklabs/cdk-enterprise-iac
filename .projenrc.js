@@ -15,7 +15,16 @@ const project = new awscdk.AwsCdkConstructLibrary({
     '@aws-cdk/integ-tests-alpha@2.41.0-alpha.0',
     '@aws-cdk/integ-runner@^2',
   ],
-  gitignore: ['.vscode/', '*.d.ts', '*.generated.ts', '*.js', '*.js.map'],
+  gitignore: [
+    '.vscode/',
+    '*.d.ts',
+    '*.generated.ts',
+    '*.js',
+    '*.js.map',
+    '!**/*.integ.snapshot/**/asset.*/*.js',
+    '!**/*.integ.snapshot/**/asset.*/*.d.ts',
+    '!**/*.integ.snapshot/**/asset.*/**',
+  ],
   eslintOptions: { prettier: true },
   autoApproveOptions: {
     allowedUsernames: ['cdklabs-automation'],
