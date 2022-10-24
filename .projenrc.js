@@ -24,6 +24,7 @@ const project = new awscdk.AwsCdkConstructLibrary({
     '!**/*.integ.snapshot/**/asset.*/*.js',
     '!**/*.integ.snapshot/**/asset.*/*.d.ts',
     '!**/*.integ.snapshot/**/asset.*/**',
+    '*.bak',
   ],
   eslintOptions: { prettier: true },
   autoApproveOptions: {
