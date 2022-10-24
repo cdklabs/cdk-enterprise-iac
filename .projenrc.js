@@ -12,7 +12,7 @@ const project = new awscdk.AwsCdkConstructLibrary({
   name: '@cdklabs/cdk-enterprise-iac',
   repositoryUrl: 'https://github.com/cdklabs/cdk-enterprise-iac.git',
   devDeps: ['eslint-plugin-security'],
-  gitignore: ['.vscode/'],
+  gitignore: ['.vscode/', '*.bak'],
   eslintOptions: { prettier: true },
   autoApproveOptions: {
     allowedUsernames: ['cdklabs-automation'],
