@@ -11,11 +11,11 @@
     "@jridgewell/trace-mapping" "^0.3.9"
 
 "@aws-cdk/integ-runner@^2":
-  version "2.46.0"
-  resolved "https://registry.yarnpkg.com/@aws-cdk/integ-runner/-/integ-runner-2.46.0.tgz#5a5f003c6bfe9c833a622fc7df04599b32ddaf93"
-  integrity sha512-rP19nepVSzPsidg1IBU1Ml8OFdeGchGxavVCtUp6YkeB/OaRVMiZJXjM9OeDBaZO7SbyJXs+pt6tGrR5ZgxS1g==
+  version "2.47.0"
+  resolved "https://registry.yarnpkg.com/@aws-cdk/integ-runner/-/integ-runner-2.47.0.tgz#175c68362448b192f086a3be6a1a7b0305669b35"
+  integrity sha512-BMeEXVmSrX2euD/ShLYZnl68RGq1IPijWICMZS7QKC2CzY12p/V0r9DO+8aNjJTmsMYr0T7yBZsNY5mDbLHmYg==
   dependencies:
-    aws-cdk "2.46.0"
+    aws-cdk "2.47.0"
 
 "@aws-cdk/integ-tests-alpha@2.41.0-alpha.0":
   version "2.41.0-alpha.0"
@@ -1276,10 +1276,10 @@ aws-cdk-lib@2.41.0:
     semver "^7.3.7"
     yaml "1.10.2"
 
-aws-cdk@2.46.0:
-  version "2.46.0"
-  resolved "https://registry.yarnpkg.com/aws-cdk/-/aws-cdk-2.46.0.tgz#7b66df07e77f5bc696669b54853a2a8435ee101d"
-  integrity sha512-5pacxA1zMMxxyJKhTGk22/64lV3Nb4dZMY8RW4KfzZWQz8TnsIipd0Ks37rowQd7O2+VFkITvl86Socjewr5VQ==
+aws-cdk@2.47.0:
+  version "2.47.0"
+  resolved "https://registry.yarnpkg.com/aws-cdk/-/aws-cdk-2.47.0.tgz#8bf6b46856cea1c67bca0a0bb4a069d48bc090c0"
+  integrity sha512-v0S98ddAQ6bbe3uc7UvoxcQGebeIxZBv9tqvfj1f6IpauWpodApgX7s0yJtGbRWIX120Z8eaO8m/M+BeGrpRDQ==
   optionalDependencies:
     fsevents "2.3.2"
 
