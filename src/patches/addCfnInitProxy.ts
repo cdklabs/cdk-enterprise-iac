@@ -47,7 +47,7 @@ export interface AddCfnInitProxyProps {
    * JSON secret containing `user` and `password` properties to use if your proxy requires credentials
    * `http://user:password@host:port` could contain sensitive data, so using a Secret.
    *
-   * Note that while the `user` and `password` won't be visible in the cloudformation tempalte
+   * Note that while the `user` and `password` won't be visible in the cloudformation template
    * they **will** be in plain text inside your `UserData`
    *
    * @example
