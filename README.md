@@ -570,7 +570,6 @@ Proxy Type.
 ProxyType.HTTPS
 ```
 
-
 ### AddPermissionBoundaryProps <a name="AddPermissionBoundaryProps" id="@cdklabs/cdk-enterprise-iac.AddPermissionBoundaryProps"></a>
 
 Properties to pass to the AddPermissionBoundary.
@@ -1157,6 +1156,7 @@ SubnetType | `aws-cdk:subnet-type` tag value
 
 ## Classes <a name="Classes" id="Classes"></a>
 
+
 ### AddCfnInitProxy <a name="AddCfnInitProxy" id="@cdklabs/cdk-enterprise-iac.AddCfnInitProxy"></a>
 
 - *Implements:* aws-cdk-lib.IAspect
@@ -1204,9 +1204,6 @@ All aspects can visit an IConstruct.
 - *Type:* constructs.IConstruct
 
 ---
-
-
-
 
 ### AddLambdaEnvironmentVariables <a name="AddLambdaEnvironmentVariables" id="@cdklabs/cdk-enterprise-iac.AddLambdaEnvironmentVariables"></a>
 
@@ -1517,10 +1514,6 @@ All aspects can visit an IConstruct.
 - *Type:* constructs.IConstruct
 
 ---
-
-
-
-
 
 ## Enums <a name="Enums" id="Enums"></a>
 
