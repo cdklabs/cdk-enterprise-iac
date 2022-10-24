@@ -32,6 +32,13 @@ jspm_packages/
 .yarn-integrity
 .cache
 .vscode/
+*.d.ts
+*.generated.ts
+*.js
+*.js.map
+!**/*.integ.snapshot/**/asset.*/*.js
+!**/*.integ.snapshot/**/asset.*/*.d.ts
+!**/*.integ.snapshot/**/asset.*/**
 *.bak
 !/.projenrc.js
 /test-reports/
@@ -53,3 +60,4 @@ junit.xml
 .jsii
 tsconfig.json
 !/API.md
+!/test/integ/tsconfig.json

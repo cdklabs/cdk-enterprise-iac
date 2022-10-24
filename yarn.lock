@@ -10,6 +10,18 @@
     "@jridgewell/gen-mapping" "^0.1.0"
     "@jridgewell/trace-mapping" "^0.3.9"
 
+"@aws-cdk/integ-runner@^2":
+  version "2.47.0"
+  resolved "https://registry.yarnpkg.com/@aws-cdk/integ-runner/-/integ-runner-2.47.0.tgz#175c68362448b192f086a3be6a1a7b0305669b35"
+  integrity sha512-BMeEXVmSrX2euD/ShLYZnl68RGq1IPijWICMZS7QKC2CzY12p/V0r9DO+8aNjJTmsMYr0T7yBZsNY5mDbLHmYg==
+  dependencies:
+    aws-cdk "2.47.0"
+
+"@aws-cdk/integ-tests-alpha@2.41.0-alpha.0":
+  version "2.41.0-alpha.0"
+  resolved "https://registry.yarnpkg.com/@aws-cdk/integ-tests-alpha/-/integ-tests-alpha-2.41.0-alpha.0.tgz#86d01538c4aa19dadc9a8517235dd7ae4137f1ed"
+  integrity sha512-z3b2Mg2H3CabB7DnsAv3IvPjP3KSByqbw7m75V8sWRwrmR0Z7vaK208RnmtkO0eik+C6Zb578zMc07eFQ9gbBA==
+
 "@babel/code-frame@^7.0.0", "@babel/code-frame@^7.12.13", "@babel/code-frame@^7.18.6":
   version "7.18.6"
   resolved "https://registry.yarnpkg.com/@babel/code-frame/-/code-frame-7.18.6.tgz#3b25d38c89600baa2dcc219edfa88a74eb2c427a"
@@ -1263,6 +1275,13 @@ aws-cdk-lib@2.41.0:
     punycode "^2.1.1"
     semver "^7.3.7"
     yaml "1.10.2"
+
+aws-cdk@2.47.0:
+  version "2.47.0"
+  resolved "https://registry.yarnpkg.com/aws-cdk/-/aws-cdk-2.47.0.tgz#8bf6b46856cea1c67bca0a0bb4a069d48bc090c0"
+  integrity sha512-v0S98ddAQ6bbe3uc7UvoxcQGebeIxZBv9tqvfj1f6IpauWpodApgX7s0yJtGbRWIX120Z8eaO8m/M+BeGrpRDQ==
+  optionalDependencies:
+    fsevents "2.3.2"
 
 babel-jest@^27.5.1:
   version "27.5.1"
@@ -2679,7 +2698,7 @@ fs.realpath@^1.0.0:
   resolved "https://registry.yarnpkg.com/fs.realpath/-/fs.realpath-1.0.0.tgz#1504ad2523158caa40db4a2787cb01411994ea4f"
   integrity sha512-OO0pH2lK6a0hZnAdau5ItzHPI6pUlvI7jMVnxUQRtw4owF2wk8lOSabtGDCTP4Ggrg2MbGnWO9X8K1t4+fGMDw==
 
-fsevents@^2.3.2:
+fsevents@2.3.2, fsevents@^2.3.2:
   version "2.3.2"
   resolved "https://registry.yarnpkg.com/fsevents/-/fsevents-2.3.2.tgz#8a526f78b8fdf4623b709e0b975c52c24c02fd1a"
   integrity sha512-xiqMQR4xAeHTuB9uWm+fFRcIOgKBMiOBP+eXiyT7jsgVCq1bkVygt00oASowB7EdtpOHaaPgKt812P9ab+DDKA==

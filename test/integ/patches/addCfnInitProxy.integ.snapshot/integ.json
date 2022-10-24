@@ -1,0 +1,15 @@
+{
+  "version": "21.0.0",
+  "testCases": {
+    "IntegTest/DefaultTest": {
+      "stacks": [
+        "integ-addCfnInitProxy-stack"
+      ],
+      "regions": [
+        "us-east-1"
+      ],
+      "assertionStack": "IntegTest/DefaultTest/DeployAssert",
+      "assertionStackName": "IntegTestDefaultTestDeployAssertE3E7D2A4"
+    }
+  }
+}

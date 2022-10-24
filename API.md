@@ -386,6 +386,114 @@ The tree node.
 
 ## Structs <a name="Structs" id="Structs"></a>
 
+### AddCfnInitProxyProps <a name="AddCfnInitProxyProps" id="@cdklabs/cdk-enterprise-iac.AddCfnInitProxyProps"></a>
+
+Properties for the proxy server to use with cfn helper commands.
+
+#### Initializer <a name="Initializer" id="@cdklabs/cdk-enterprise-iac.AddCfnInitProxyProps.Initializer"></a>
+
+```typescript
+import { AddCfnInitProxyProps } from '@cdklabs/cdk-enterprise-iac'
+
+const addCfnInitProxyProps: AddCfnInitProxyProps = { ... }
+```
+
+#### Properties <a name="Properties" id="Properties"></a>
+
+| **Name** | **Type** | **Description** |
+| --- | --- | --- |
+| <code><a href="#@cdklabs/cdk-enterprise-iac.AddCfnInitProxyProps.property.proxyHost">proxyHost</a></code> | <code>string</code> | host of your proxy. |
+| <code><a href="#@cdklabs/cdk-enterprise-iac.AddCfnInitProxyProps.property.proxyPort">proxyPort</a></code> | <code>number</code> | proxy port. |
+| <code><a href="#@cdklabs/cdk-enterprise-iac.AddCfnInitProxyProps.property.proxyCredentials">proxyCredentials</a></code> | <code>aws-cdk-lib.aws_secretsmanager.ISecret</code> | JSON secret containing `user` and `password` properties to use if your proxy requires credentials `http://user:password@host:port` could contain sensitive data, so using a Secret. |
+| <code><a href="#@cdklabs/cdk-enterprise-iac.AddCfnInitProxyProps.property.proxyType">proxyType</a></code> | <code><a href="#@cdklabs/cdk-enterprise-iac.ProxyType">ProxyType</a></code> | Proxy Type. |
+
+---
+
+##### `proxyHost`<sup>Required</sup> <a name="proxyHost" id="@cdklabs/cdk-enterprise-iac.AddCfnInitProxyProps.property.proxyHost"></a>
+
+```typescript
+public readonly proxyHost: string;
+```
+
+- *Type:* string
+
+host of your proxy.
+
+---
+
+*Example*
+
+```typescript
+example.com
+```
+
+
+##### `proxyPort`<sup>Required</sup> <a name="proxyPort" id="@cdklabs/cdk-enterprise-iac.AddCfnInitProxyProps.property.proxyPort"></a>
+
+```typescript
+public readonly proxyPort: number;
+```
+
+- *Type:* number
+
+proxy port.
+
+---
+
+*Example*
+
+```typescript
+8080
+```
+
+
+##### `proxyCredentials`<sup>Optional</sup> <a name="proxyCredentials" id="@cdklabs/cdk-enterprise-iac.AddCfnInitProxyProps.property.proxyCredentials"></a>
+
+```typescript
+public readonly proxyCredentials: ISecret;
+```
+
+- *Type:* aws-cdk-lib.aws_secretsmanager.ISecret
+
+JSON secret containing `user` and `password` properties to use if your proxy requires credentials `http://user:password@host:port` could contain sensitive data, so using a Secret.
+
+Note that while the `user` and `password` won't be visible in the cloudformation template
+they **will** be in plain text inside your `UserData`
+
+---
+
+*Example*
+
+```typescript
+const secret = new Secret(stack, 'TestSecret', {
+ secretObjectValue: {
+   user: SecretValue,
+   password: SecretValue,
+ },
+});
+```
+
+
+##### `proxyType`<sup>Optional</sup> <a name="proxyType" id="@cdklabs/cdk-enterprise-iac.AddCfnInitProxyProps.property.proxyType"></a>
+
+```typescript
+public readonly proxyType: ProxyType;
+```
+
+- *Type:* <a href="#@cdklabs/cdk-enterprise-iac.ProxyType">ProxyType</a>
+- *Default:* ProxyType.HTTP
+
+Proxy Type.
+
+---
+
+*Example*
+
+```typescript
+ProxyType.HTTPS
+```
+
+
 ### AddPermissionBoundaryProps <a name="AddPermissionBoundaryProps" id="@cdklabs/cdk-enterprise-iac.AddPermissionBoundaryProps"></a>
 
 Properties to pass to the AddPermissionBoundary.
@@ -972,6 +1080,57 @@ SubnetType | `aws-cdk:subnet-type` tag value
 
 ## Classes <a name="Classes" id="Classes"></a>
 
+### AddCfnInitProxy <a name="AddCfnInitProxy" id="@cdklabs/cdk-enterprise-iac.AddCfnInitProxy"></a>
+
+- *Implements:* aws-cdk-lib.IAspect
+
+Add proxy configuration to Cloudformation helper functions.
+
+#### Initializers <a name="Initializers" id="@cdklabs/cdk-enterprise-iac.AddCfnInitProxy.Initializer"></a>
+
+```typescript
+import { AddCfnInitProxy } from '@cdklabs/cdk-enterprise-iac'
+
+new AddCfnInitProxy(props: AddCfnInitProxyProps)
+```
+
+| **Name** | **Type** | **Description** |
+| --- | --- | --- |
+| <code><a href="#@cdklabs/cdk-enterprise-iac.AddCfnInitProxy.Initializer.parameter.props">props</a></code> | <code><a href="#@cdklabs/cdk-enterprise-iac.AddCfnInitProxyProps">AddCfnInitProxyProps</a></code> | *No description.* |
+
+---
+
+##### `props`<sup>Required</sup> <a name="props" id="@cdklabs/cdk-enterprise-iac.AddCfnInitProxy.Initializer.parameter.props"></a>
+
+- *Type:* <a href="#@cdklabs/cdk-enterprise-iac.AddCfnInitProxyProps">AddCfnInitProxyProps</a>
+
+---
+
+#### Methods <a name="Methods" id="Methods"></a>
+
+| **Name** | **Description** |
+| --- | --- |
+| <code><a href="#@cdklabs/cdk-enterprise-iac.AddCfnInitProxy.visit">visit</a></code> | All aspects can visit an IConstruct. |
+
+---
+
+##### `visit` <a name="visit" id="@cdklabs/cdk-enterprise-iac.AddCfnInitProxy.visit"></a>
+
+```typescript
+public visit(node: IConstruct): void
+```
+
+All aspects can visit an IConstruct.
+
+###### `node`<sup>Required</sup> <a name="node" id="@cdklabs/cdk-enterprise-iac.AddCfnInitProxy.visit.parameter.node"></a>
+
+- *Type:* constructs.IConstruct
+
+---
+
+
+
+
 ### AddLambdaEnvironmentVariables <a name="AddLambdaEnvironmentVariables" id="@cdklabs/cdk-enterprise-iac.AddLambdaEnvironmentVariables"></a>
 
 - *Implements:* aws-cdk-lib.IAspect
@@ -1285,4 +1444,32 @@ All aspects can visit an IConstruct.
 
 
 
+
+## Enums <a name="Enums" id="Enums"></a>
+
+### ProxyType <a name="ProxyType" id="@cdklabs/cdk-enterprise-iac.ProxyType"></a>
+
+Whether an http-proxy or https-proxy.
+
+#### Members <a name="Members" id="Members"></a>
+
+| **Name** | **Description** |
+| --- | --- |
+| <code><a href="#@cdklabs/cdk-enterprise-iac.ProxyType.HTTP">HTTP</a></code> | --http-proxy. |
+| <code><a href="#@cdklabs/cdk-enterprise-iac.ProxyType.HTTPS">HTTPS</a></code> | --https-proxy. |
+
+---
+
+##### `HTTP` <a name="HTTP" id="@cdklabs/cdk-enterprise-iac.ProxyType.HTTP"></a>
+
+-http-proxy.
+
+---
+
+
+##### `HTTPS` <a name="HTTPS" id="@cdklabs/cdk-enterprise-iac.ProxyType.HTTPS"></a>
+
+-https-proxy.
+
+---
 
