@@ -23,7 +23,8 @@ repos:
               ^.projen/|
               ^.mergify.yml|
               ^.*.json |
-              ^API.md 
+              ^API.md |
+              ^README.md
           )
   - repo: https://github.com/dontirun/text-prepender
     rev: v0.1.0
@@ -37,3 +38,11 @@ repos:
               ^.*.json |
               ^API.md 
           )
+  - repo: local
+    hooks:
+      - id: append-api-to-readme
+        name: append-api-to-readme
+        entry: scripts/append-api-docs-to-readme.sh
+        language: script
+        pass_filenames: false
+        files: API.md
