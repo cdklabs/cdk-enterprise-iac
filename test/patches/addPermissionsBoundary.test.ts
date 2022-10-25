@@ -104,6 +104,22 @@ describe('Permissions Boundary patch', () => {
         },
       });
     });
+    test('Roles with spaces in id are supported', () => {
+      const idWithSpaces: string = 'A Role With Spaces In name';
+      new Role(stack, idWithSpaces, {
+        assumedBy: new ServicePrincipal('ec2.amazonaws.com'),
+      });
+      Aspects.of(stack).add(
+        new AddPermissionBoundary({
+          permissionsBoundaryPolicyName: pbName,
+          rolePrefix: 'Bananas_',
+        })
+      );
+      const template = Template.fromStack(stack);
+      template.hasResourceProperties('AWS::IAM::Role', {
+        RoleName: `Bananas_Default-${idWithSpaces.replace(/\s/g, '')}-Resource`,
+      });
+    });
   });
   describe('Policies', () => {
     const policyPrefix = 'POLICY_PREFIX_';
