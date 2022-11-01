@@ -206,7 +206,7 @@ This works fine, but some teams may prefer a looser coupling between the extract
 
 ##### `SSM_PARAMETER`
 
-In this method, the extracted stack generates Parameters in AWS Systems Manager Parameter Store, and modifies the CDK application to use [dynamic references](https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/dynamic-references.html) to inject the [ssm parameter](https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/dynamic-references.html#dynamic-references-ssm) created in the extracted stack.
+In this method, the extracted stack generates Parameters in AWS Systems Manager Parameter Store, and modifies the CDK application to look up the generated parameter using [`aws_ssm.StringParameter.valueFromLookup()`](https://docs.aws.amazon.com/cdk/api/v2/docs/aws-cdk-lib.aws_ssm.StringParameter.html#static-valuewbrfromwbrlookupscope-parametername) at synthesis time.
 
 Example on using this method:
 
