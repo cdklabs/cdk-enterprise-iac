@@ -2,12 +2,12 @@
 Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
 SPDX-License-Identifier: Apache-2.0
 */
-import { App, Aspects, CfnElement, Duration, Stack } from 'aws-cdk-lib';
+import { App, Aspects, Aws, CfnElement, Duration, Stack } from 'aws-cdk-lib';
 import { Match, Template } from 'aws-cdk-lib/assertions';
 import { ApiKey, CfnApiKey } from 'aws-cdk-lib/aws-apigateway';
 import { UserPool } from 'aws-cdk-lib/aws-cognito';
 import { AttributeType, CfnTable, Table } from 'aws-cdk-lib/aws-dynamodb';
-import { InstanceType } from 'aws-cdk-lib/aws-ec2';
+import { InstanceType, Vpc } from 'aws-cdk-lib/aws-ec2';
 import {
   CfnCluster,
   CfnTaskDefinition,
@@ -23,6 +23,8 @@ import {
   Domain,
   EngineVersion,
 } from 'aws-cdk-lib/aws-opensearchservice';
+import { DatabaseInstance, DatabaseInstanceEngine } from 'aws-cdk-lib/aws-rds';
+
 import { Bucket, CfnBucket } from 'aws-cdk-lib/aws-s3';
 import { CfnTopic, Topic } from 'aws-cdk-lib/aws-sns';
 import { CfnQueue, Queue } from 'aws-cdk-lib/aws-sqs';
@@ -560,7 +562,7 @@ describe('toPartial scenarios', () => {
     });
   });
 
-  test('opensearch/elasticsearch CfnDomain', () => {
+  test('opensearch CfnDomain', () => {
     const role = new Role(stack, 'testRole', {
       assumedBy: new ServicePrincipal('es.amazonaws.com'),
     });
@@ -620,7 +622,6 @@ describe('toPartial scenarios', () => {
       },
     });
   });
-
   test('ecs CfnTaskDefinition', () => {
     const role = new Role(stack, 'testRole', {
       assumedBy: new ServicePrincipal('lambda.amazonaws.com'),
@@ -709,6 +710,59 @@ describe('toPartial scenarios', () => {
                   ':',
                   { Ref: 'AWS::AccountId' },
                   `:cluster/${appStackName}-${clusterLogicalID}*`,
+                ],
+              ],
+            },
+          }),
+        ]),
+      },
+    });
+  });
+
+  test('additional transforms', () => {
+    const vpc = new Vpc(stack, 'TestVpc');
+    const db = new DatabaseInstance(stack, 'TestDb', {
+      vpc,
+      engine: DatabaseInstanceEngine.POSTGRES,
+    });
+    const func = new Function(stack, 'TestLambda', {
+      code: Code.fromInline(`def handler(event, context)\n    print(event)`),
+      handler: 'index.handler',
+      runtime: Runtime.PYTHON_3_9,
+    });
+    db.secret?.grantRead(func);
+
+    const synthedApp = app.synth();
+    Aspects.of(app).add(
+      new ResourceExtractor({
+        extractDestinationStack: extractedStack,
+        stackArtifacts: synthedApp.stacks,
+        valueShareMethod: ResourceExtractorShareMethod.CFN_OUTPUT,
+        resourceTypesToExtract: ['AWS::IAM::Role', 'AWS::IAM::Policy'],
+        additionalTransforms: {
+          'AWS::SecretsManager::SecretTargetAttachment': `arn:${Aws.PARTITION}:secretsmanager:${Aws.REGION}:${Aws.ACCOUNT_ID}:secret:some-expected-value*`,
+        },
+      })
+    );
+    app.synth({ force: true });
+
+    const extractedTemplate = Template.fromStack(extractedStack);
+
+    extractedTemplate.hasResourceProperties('AWS::IAM::Policy', {
+      PolicyDocument: {
+        Statement: Match.arrayWith([
+          Match.objectLike({
+            Resource: {
+              'Fn::Join': [
+                '',
+                [
+                  'arn:',
+                  { Ref: 'AWS::Partition' },
+                  ':secretsmanager:',
+                  { Ref: 'AWS::Region' },
+                  ':',
+                  { Ref: 'AWS::AccountId' },
+                  ':secret:some-expected-value*',
                 ],
               ],
             },

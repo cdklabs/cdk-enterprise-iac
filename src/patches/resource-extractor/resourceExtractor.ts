@@ -66,8 +66,8 @@ export interface ResourceExtractorProps {
     const stack = new Stack(app, 'MyStack');
     extractedStack = new Stack(app, 'ExtractedStack');
     const synthedApp = app.synth();
-    Aspects.of(app).add(
-    new ResourceExtractor({
+
+    Aspects.of(app).add(new ResourceExtractor({
       extractDestinationStack: extractedStack,
       stackArtifacts: synthedApp.stacks,
       valueShareMethod: ResourceExtractorShareMethod.CFN_OUTPUT,
