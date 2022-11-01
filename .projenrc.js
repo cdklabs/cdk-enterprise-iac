@@ -15,6 +15,8 @@ const project = new awscdk.AwsCdkConstructLibrary({
     '@aws-cdk/integ-tests-alpha@2.41.0-alpha.0',
     '@aws-cdk/integ-runner@^2',
   ],
+  deps: ['aws-sdk@^2.1230.0'],
+  bundledDeps: ['aws-sdk'],
   gitignore: [
     '.vscode/',
     '*.d.ts',

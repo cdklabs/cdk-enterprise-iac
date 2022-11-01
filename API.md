@@ -865,6 +865,88 @@ Name of the tag property to remove from the resource.
 
 ---
 
+### ResourceExtractorProps <a name="ResourceExtractorProps" id="@cdklabs/cdk-enterprise-iac.ResourceExtractorProps"></a>
+
+#### Initializer <a name="Initializer" id="@cdklabs/cdk-enterprise-iac.ResourceExtractorProps.Initializer"></a>
+
+```typescript
+import { ResourceExtractorProps } from '@cdklabs/cdk-enterprise-iac'
+
+const resourceExtractorProps: ResourceExtractorProps = { ... }
+```
+
+#### Properties <a name="Properties" id="Properties"></a>
+
+| **Name** | **Type** | **Description** |
+| --- | --- | --- |
+| <code><a href="#@cdklabs/cdk-enterprise-iac.ResourceExtractorProps.property.extractDestinationStack">extractDestinationStack</a></code> | <code>aws-cdk-lib.Stack</code> | Stack to move found extracted resources into. |
+| <code><a href="#@cdklabs/cdk-enterprise-iac.ResourceExtractorProps.property.resourceTypesToExtract">resourceTypesToExtract</a></code> | <code>string[]</code> | List of resource types to extract, ex: `AWS::IAM::Role`. |
+| <code><a href="#@cdklabs/cdk-enterprise-iac.ResourceExtractorProps.property.stackArtifacts">stackArtifacts</a></code> | <code>aws-cdk-lib.cx_api.CloudFormationStackArtifact[]</code> | Synthed stack artifacts from your CDK app. |
+| <code><a href="#@cdklabs/cdk-enterprise-iac.ResourceExtractorProps.property.additionalTransforms">additionalTransforms</a></code> | <code>{[ key: string ]: string}</code> | Additional resource transformations. |
+| <code><a href="#@cdklabs/cdk-enterprise-iac.ResourceExtractorProps.property.valueShareMethod">valueShareMethod</a></code> | <code><a href="#@cdklabs/cdk-enterprise-iac.ResourceExtractorShareMethod">ResourceExtractorShareMethod</a></code> | The sharing method to use when passing exported resources from the "Extracted Stack" into the original stack(s). |
+
+---
+
+##### `extractDestinationStack`<sup>Required</sup> <a name="extractDestinationStack" id="@cdklabs/cdk-enterprise-iac.ResourceExtractorProps.property.extractDestinationStack"></a>
+
+```typescript
+public readonly extractDestinationStack: Stack;
+```
+
+- *Type:* aws-cdk-lib.Stack
+
+Stack to move found extracted resources into.
+
+---
+
+##### `resourceTypesToExtract`<sup>Required</sup> <a name="resourceTypesToExtract" id="@cdklabs/cdk-enterprise-iac.ResourceExtractorProps.property.resourceTypesToExtract"></a>
+
+```typescript
+public readonly resourceTypesToExtract: string[];
+```
+
+- *Type:* string[]
+
+List of resource types to extract, ex: `AWS::IAM::Role`.
+
+---
+
+##### `stackArtifacts`<sup>Required</sup> <a name="stackArtifacts" id="@cdklabs/cdk-enterprise-iac.ResourceExtractorProps.property.stackArtifacts"></a>
+
+```typescript
+public readonly stackArtifacts: CloudFormationStackArtifact[];
+```
+
+- *Type:* aws-cdk-lib.cx_api.CloudFormationStackArtifact[]
+
+Synthed stack artifacts from your CDK app.
+
+---
+
+##### `additionalTransforms`<sup>Optional</sup> <a name="additionalTransforms" id="@cdklabs/cdk-enterprise-iac.ResourceExtractorProps.property.additionalTransforms"></a>
+
+```typescript
+public readonly additionalTransforms: {[ key: string ]: string};
+```
+
+- *Type:* {[ key: string ]: string}
+
+Additional resource transformations.
+
+---
+
+##### `valueShareMethod`<sup>Optional</sup> <a name="valueShareMethod" id="@cdklabs/cdk-enterprise-iac.ResourceExtractorProps.property.valueShareMethod"></a>
+
+```typescript
+public readonly valueShareMethod: ResourceExtractorShareMethod;
+```
+
+- *Type:* <a href="#@cdklabs/cdk-enterprise-iac.ResourceExtractorShareMethod">ResourceExtractorShareMethod</a>
+
+The sharing method to use when passing exported resources from the "Extracted Stack" into the original stack(s).
+
+---
+
 ### SetApiGatewayEndpointConfigurationProps <a name="SetApiGatewayEndpointConfigurationProps" id="@cdklabs/cdk-enterprise-iac.SetApiGatewayEndpointConfigurationProps"></a>
 
 #### Initializer <a name="Initializer" id="@cdklabs/cdk-enterprise-iac.SetApiGatewayEndpointConfigurationProps.Initializer"></a>
@@ -1390,6 +1472,80 @@ All aspects can visit an IConstruct.
 
 
 
+### ResourceExtractor <a name="ResourceExtractor" id="@cdklabs/cdk-enterprise-iac.ResourceExtractor"></a>
+
+- *Implements:* aws-cdk-lib.IAspect
+
+This Aspect takes a CDK application, all synthesized CloudFormationStackArtifact, a value share method, and a list of Cloudformation resources that should be pulled out of the main CDK application, which should be synthesized to a cloudformation template that an external team (e.g. security team) to deploy, and adjusting the CDK application to reference pre-created resources already pulled out.
+
+*Example*
+
+```typescript
+ const app = App()
+ const stack = new Stack(app, 'MyStack');
+ extractedStack = new Stack(app, 'ExtractedStack');
+ const synthedApp = app.synth();
+ Aspects.of(app).add(
+ new ResourceExtractor({
+   extractDestinationStack: extractedStack,
+   stackArtifacts: synthedApp.stacks,
+   valueShareMethod: ResourceExtractorShareMethod.CFN_OUTPUT,
+   resourceTypesToExtract: [
+     'AWS::IAM::Role',
+     'AWS::IAM::Policy',
+     'AWS::IAM::ManagedPolicy',
+     'AWS::IAM::InstanceProfile',
+   ],
+ });
+ app.synth({ force: true });
+```
+
+
+#### Initializers <a name="Initializers" id="@cdklabs/cdk-enterprise-iac.ResourceExtractor.Initializer"></a>
+
+```typescript
+import { ResourceExtractor } from '@cdklabs/cdk-enterprise-iac'
+
+new ResourceExtractor(props: ResourceExtractorProps)
+```
+
+| **Name** | **Type** | **Description** |
+| --- | --- | --- |
+| <code><a href="#@cdklabs/cdk-enterprise-iac.ResourceExtractor.Initializer.parameter.props">props</a></code> | <code><a href="#@cdklabs/cdk-enterprise-iac.ResourceExtractorProps">ResourceExtractorProps</a></code> | *No description.* |
+
+---
+
+##### `props`<sup>Required</sup> <a name="props" id="@cdklabs/cdk-enterprise-iac.ResourceExtractor.Initializer.parameter.props"></a>
+
+- *Type:* <a href="#@cdklabs/cdk-enterprise-iac.ResourceExtractorProps">ResourceExtractorProps</a>
+
+---
+
+#### Methods <a name="Methods" id="Methods"></a>
+
+| **Name** | **Description** |
+| --- | --- |
+| <code><a href="#@cdklabs/cdk-enterprise-iac.ResourceExtractor.visit">visit</a></code> | Entrypoint. |
+
+---
+
+##### `visit` <a name="visit" id="@cdklabs/cdk-enterprise-iac.ResourceExtractor.visit"></a>
+
+```typescript
+public visit(node: IConstruct): void
+```
+
+Entrypoint.
+
+###### `node`<sup>Required</sup> <a name="node" id="@cdklabs/cdk-enterprise-iac.ResourceExtractor.visit.parameter.node"></a>
+
+- *Type:* constructs.IConstruct
+
+---
+
+
+
+
 ### SetApiGatewayEndpointConfiguration <a name="SetApiGatewayEndpointConfiguration" id="@cdklabs/cdk-enterprise-iac.SetApiGatewayEndpointConfiguration"></a>
 
 - *Implements:* aws-cdk-lib.IAspect
@@ -1470,6 +1626,56 @@ Whether an http-proxy or https-proxy.
 ##### `HTTPS` <a name="HTTPS" id="@cdklabs/cdk-enterprise-iac.ProxyType.HTTPS"></a>
 
 -https-proxy.
+
+---
+
+
+### ResourceExtractorShareMethod <a name="ResourceExtractorShareMethod" id="@cdklabs/cdk-enterprise-iac.ResourceExtractorShareMethod"></a>
+
+The available value sharing methods to pass values from the extracted stack onto the original stack(s).
+
+#### Members <a name="Members" id="Members"></a>
+
+| **Name** | **Description** |
+| --- | --- |
+| <code><a href="#@cdklabs/cdk-enterprise-iac.ResourceExtractorShareMethod.CFN_OUTPUT">CFN_OUTPUT</a></code> | *No description.* |
+| <code><a href="#@cdklabs/cdk-enterprise-iac.ResourceExtractorShareMethod.SSM_PARAMETER">SSM_PARAMETER</a></code> | *No description.* |
+| <code><a href="#@cdklabs/cdk-enterprise-iac.ResourceExtractorShareMethod.API_LOOKUP">API_LOOKUP</a></code> | *No description.* |
+
+---
+
+##### `CFN_OUTPUT` <a name="CFN_OUTPUT" id="@cdklabs/cdk-enterprise-iac.ResourceExtractorShareMethod.CFN_OUTPUT"></a>
+
+---
+
+
+##### `SSM_PARAMETER` <a name="SSM_PARAMETER" id="@cdklabs/cdk-enterprise-iac.ResourceExtractorShareMethod.SSM_PARAMETER"></a>
+
+---
+
+
+##### `API_LOOKUP` <a name="API_LOOKUP" id="@cdklabs/cdk-enterprise-iac.ResourceExtractorShareMethod.API_LOOKUP"></a>
+
+---
+
+
+### ResourceTransform <a name="ResourceTransform" id="@cdklabs/cdk-enterprise-iac.ResourceTransform"></a>
+
+#### Members <a name="Members" id="Members"></a>
+
+| **Name** | **Description** |
+| --- | --- |
+| <code><a href="#@cdklabs/cdk-enterprise-iac.ResourceTransform.STACK_NAME">STACK_NAME</a></code> | *No description.* |
+| <code><a href="#@cdklabs/cdk-enterprise-iac.ResourceTransform.LOGICAL_ID">LOGICAL_ID</a></code> | *No description.* |
+
+---
+
+##### `STACK_NAME` <a name="STACK_NAME" id="@cdklabs/cdk-enterprise-iac.ResourceTransform.STACK_NAME"></a>
+
+---
+
+
+##### `LOGICAL_ID` <a name="LOGICAL_ID" id="@cdklabs/cdk-enterprise-iac.ResourceTransform.LOGICAL_ID"></a>
 
 ---
 
