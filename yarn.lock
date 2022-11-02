@@ -4056,7 +4056,8 @@ jsii-diff@^1.70.0:
     log4js "^6.7.0"
     yargs "^16.2.0"
 
-jsii-docgen@^7.0.135:
+
+jsii-docgen@^7.0.136:
   version "7.0.136"
   resolved "https://registry.yarnpkg.com/jsii-docgen/-/jsii-docgen-7.0.136.tgz#eaf0e45fad1a9140ac7da5ca8646c74e4794fbd4"
   integrity sha512-wxBzEj/3tJWF7wmZdNXET0OwMtp1vDaOnTzdHztHfMi94vSJnBpJmloWZ8j2bGiZVyiv1YqVr9sMXfvXNvOIOw==
@@ -5173,10 +5174,11 @@ progress@^2.0.3:
   resolved "https://registry.yarnpkg.com/progress/-/progress-2.0.3.tgz#7e8cf8d8f5b8f239c1bc68beb4eb78567d572ef8"
   integrity sha512-7PiHtLll5LdnKIMw100I+8xJXR5gW2QwWYkT6iJva0bXitZKa/XMrSbdmg3r2Xnaidz9Qumd0VPaMrZlF9V9sA==
 
-projen@^0.65.6:
-  version "0.65.7"
-  resolved "https://registry.yarnpkg.com/projen/-/projen-0.65.7.tgz#ece7b98de3b4f760f54fde7911257330ca0c05d3"
-  integrity sha512-OJtfdWESLJbTf1MHCbEiw3am1rbs/laotcBHjpKgeRxDKH5cD0s87/8FBZUbSuDUvvFCsCIh4H+YRbABCWXIPw==
+
+projen@^0.65.8:
+  version "0.65.8"
+  resolved "https://registry.yarnpkg.com/projen/-/projen-0.65.8.tgz#b436dfee700742ae188559296bee95d41a445cb5"
+  integrity sha512-wY072Qy+aaUOXJXPljgVlnrcyNRg9shjvwMfiqGHCGJJj6yaozBs91sFp7pq7bF3WTItdJptUzGvVZ7CqnE20Q==
   dependencies:
     "@iarna/toml" "^2.2.5"
     case "^1.6.3"
@@ -6006,9 +6008,9 @@ tapable@^2.2.0:
   integrity sha512-GNzQvQTOIP6RyTfE2Qxb8ZVlNmw0n88vp1szwWRimP02mnTsx3Wtn5qRdqY9w2XduFNUgvOwhNnQsjwCp+kqaQ==
 
 tar@^6.1.11, tar@^6.1.2:
-  version "6.1.11"
-  resolved "https://registry.yarnpkg.com/tar/-/tar-6.1.11.tgz#6760a38f003afa1b2ffd0ffe9e9abbd0eab3d621"
-  integrity sha512-an/KZQzQUkZCkuoAA64hM92X0Urb6VpRhAFllDzz44U2mcD5scmT3zBc4VgVpkugF580+DQn8eAFSyoQt0tznA==
+  version "6.1.12"
+  resolved "https://registry.yarnpkg.com/tar/-/tar-6.1.12.tgz#3b742fb05669b55671fb769ab67a7791ea1a62e6"
+  integrity sha512-jU4TdemS31uABHd+Lt5WEYJuzn+TJTCBLljvIAHZOz6M9Os5pJ4dD+vRFLxPa/n3T0iEFzpi+0x1UfuDZYbRMw==
   dependencies:
     chownr "^2.0.0"
     fs-minipass "^2.0.0"
