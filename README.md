@@ -29,7 +29,7 @@ A few examples of these tools below
 
 ### Resource extraction
 
-:warning: Resource extraction is in an experimental phase. Test and validate before using in production. Please open any issues found [here](https://github.com/cdklabs/cdk-enterprise-iac/)issues
+:warning: Resource extraction is in an experimental phase. Test and validate before using in production. Please open any issues found [here](https://github.com/cdklabs/cdk-enterprise-iac/)
 
 In many enterprises, there are separate teams with different IAM permissions than developers deploying CDK applications.
 
@@ -232,7 +232,7 @@ Aspects.of(app).add(
 
 ##### `API_LOOKUP`
 
-The `API_LOOKUP` sharing method is similar to `CFN_OUTPUT`, but rather than modifying the CDK application to use [Fn::ImportValue](https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/intrinsic-function-reference-importvalue.html), the `Outputs` section of the Extracted stack is looked up using the nodejs SDK, and modifies the CDK application to use the resolved value of the Output
+The `API_LOOKUP` sharing method is a work in progress, and not yet supported
 
 #### Resource Partials
 
