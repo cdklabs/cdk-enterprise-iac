@@ -23,6 +23,273 @@ pip install cdklabs.cdk-enterprise-iac
 
 ## Usage
 
+There are many tools available, all detailed in [`API.md`](./API.md).
+
+A few examples of these tools below
+
+### Resource extraction
+
+:warning: Resource extraction is in an experimental phase. Test and validate before using in production. Please open any issues found [here](https://github.com/cdklabs/cdk-enterprise-iac/)issues
+
+In many enterprises, there are separate teams with different IAM permissions than developers deploying CDK applications.
+
+For example there might be a networking team with permissions to deploy `AWS::EC2::SecurityGroup` and `AWS::EC2::EIP`, or a security team with permissions to deploy `AWS::IAM::Role` and `AWS::IAM::Policy`, but the developers deploying the CDK don't have those permissions
+
+When a developer doesn't have permissions to deploy necessary resources in their CDK application, writing good code becomes difficult to manage when a cdk deploy will quickly error due to not being able to deploy something like an `AWS::IAM::Role` which is foundational to any project deployed into AWS.
+
+Using the `ResourceExtractor` Aspect, developers can write their CDK code as though they had sufficient IAM permissions, but extract those resources into a separate stack for an external team to deploy on their behalf.
+
+Take the following example stack
+
+```ts
+import { App, Aspects, RemovalPolicy, Stack } from 'aws-cdk-lib';
+import { Code, Function, Runtime } from 'aws-cdk-lib/aws-lambda';
+import { Bucket } from 'aws-cdk-lib/aws-s3';
+
+const app = new App();
+const appStack = new Stack(app, 'MyAppStack');
+
+const func = new Function(appStack, 'TestLambda', {
+  code: Code.fromAsset(path.join(__dirname, 'lambda-handler')),
+  handler: 'index.handler',
+  runtime: Runtime.PYTHON_3_9,
+});
+const bucket = new Bucket(appStack, 'TestBucket', {
+  autoDeleteObjects: true,
+  removalPolicy: RemovalPolicy.DESTROY,
+});
+bucket.grantReadWrite(func);
+
+app.synth()
+```
+
+The synthesized Cloudformation would include _all_ AWS resources required, including resources a developer might not have permissions to deploy
+
+The above example would include the following snippet in the synthesized Cloudformation
+
+```yaml
+TestLambdaServiceRoleC28C2D9C:
+  Type: 'AWS::IAM::Role'
+  Properties:
+    AssumeRolePolicyDocument:
+      Statement:
+        - Action: 'sts:AssumeRole'
+          Effect: Allow
+          Principal:
+            Service: lambda.amazonaws.com
+      Version: 2012-10-17
+    # excluding remaining properties
+  TestLambda2F70C45E:
+    Type: 'AWS::Lambda::Function'
+    Properties:
+      Role: !GetAtt
+        - TestLambdaServiceRoleC28C2D9C
+        - Arn
+      # excluding remaining properties
+```
+
+While including `bucket.grantReadWrite(func)` in the CDK application ensures an IAM role with least privilege IAM policies for the application, the creation of IAM resources such as Roles and Policies may be restricted to a security team, resulting in the synthesized Cloudformation template not being deployable by a developer.
+
+Using the `ResourceExtractor`, we can pull out an arbitrary list of Cloudformation resources that a developer _doesn't_ have permissions to provision, and create a separate stack that can be sent to a security team.
+
+```ts
+import { App, Aspects, RemovalPolicy, Stack } from 'aws-cdk-lib';
+import { Code, Function, Runtime } from 'aws-cdk-lib/aws-lambda';
+import { Bucket } from 'aws-cdk-lib/aws-s3';
+// Import ResourceExtractor
+import { ResourceExtractor } from '@cdklabs/cdk-enterprise-iac';
+
+const app = new App();
+const appStack = new Stack(app, 'MyAppStack');
+// Set up a destination stack to extract resources to
+const extractedStack = new Stack(app, 'ExtractedStack');
+
+const func = new Function(appStack, 'TestLambda', {
+  code: Code.fromAsset(path.join(__dirname, 'lambda-handler')),
+  handler: 'index.handler',
+  runtime: Runtime.PYTHON_3_9,
+});
+const bucket = new Bucket(appStack, 'TestBucket', {
+  autoDeleteObjects: true,
+  removalPolicy: RemovalPolicy.DESTROY,
+});
+bucket.grantReadWrite(func);
+
+// Capture the output of app.synth()
+const synthedApp = app.synth();
+// Apply the ResourceExtractor Aspect
+Aspects.of(app).add(
+  new ResourceExtractor({
+    // synthesized stacks to examine
+    stackArtifacts: synthedApp.stacks,
+    // Array of Cloudformation resources to extract
+    resourceTypesToExtract: [
+      'AWS::IAM::Role',
+      'AWS::IAM::Policy',
+      'AWS::IAM::ManagedPolicy',
+      'AWS::IAM::InstanceProfile',
+    ],
+    // Destination stack for extracted resources
+    extractDestinationStack: extractedStack,
+  })
+);
+// Resynthing since ResourceExtractor has modified the app
+app.synth({ force: true });
+```
+
+In the example above, _all_ resources are created in the `appStack`, and an empty `extractedStack` is also created.
+
+We apply the `ResourceExtractor` Aspect, specifying the Cloudformation resource types the developer is unable to deploy due to insufficient IAM permissions.
+
+Now when we list stacks in the CDK project, we can see an added stack
+
+```zsh
+$ cdk ls
+MyAppStack
+ExtractedStack
+```
+
+Taking a look at these synthesized stacks, in the `ExtractedStack` we'll find:
+
+```yaml
+Resources:
+  TestLambdaServiceRoleC28C2D9C:
+    Type: 'AWS::IAM::Role'
+    Properties:
+      AssumeRolePolicyDocument:
+        Statement:
+          - Action: 'sts:AssumeRole'
+            Effect: Allow
+            Principal:
+              Service: lambda.amazonaws.com
+        Version: 2012-10-17
+      # excluding remaining properties
+Outputs:
+  ExportAppStackTestLambdaServiceRoleC28C2D9C:
+    Value:
+      'Fn::GetAtt':
+        - TestLambdaServiceRoleC28C2D9C
+        - Arn
+    Export:
+      Name: 'AppStack:TestLambdaServiceRoleC28C2D9C'  # Exported name
+```
+
+And inside the synthesized `MyAppStack` template:
+
+```yaml
+Resources:
+  TestLambda2F70C45E:
+    Type: 'AWS::Lambda::Function'
+    Properties:
+      Role: !ImportValue 'AppStack:TestLambdaServiceRoleC28C2D9C'  # Using ImportValue instrinsic function to use pre-created IAM role
+      # excluding remaining properties
+```
+
+In this scenario, a developer is able to provide an external security team with sufficient IAM privileges to deploy the `ExtractedStack`.
+
+Once deployed, a developer can run `cdk deploy MyAppStack` without errors due to insufficient IAM privileges
+
+
+#### Value Sharing methods
+
+When resources are extracted from a stack, there must be a method to reference the resources that have been extracted.
+
+There are three methods (see `ResourceExtractorShareMethod` enum)
+
+- `CFN_OUTPUT`
+- `SSM_PARAMETER`
+- `API_LOOKUP`
+
+##### `CFN_OUTPUT`
+
+The default sharing method is `CFN_OUTPUT`, which uses Cloudformation Export/Import to Export values in the extracted stack (see [Outputs](https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/outputs-section-structure.html)), and use the [Fn::ImportValue](https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/intrinsic-function-reference-importvalue.html) intrinsic function to reference those values.
+
+This works fine, but some teams may prefer a looser coupling between the extracted stack deployed by an external team and the rest of the CDK infrastructure.
+
+##### `SSM_PARAMETER`
+
+In this method, the extracted stack generates Parameters in AWS Systems Manager Parameter Store, and modifies the CDK application to look up the generated parameter using [`aws_ssm.StringParameter.valueFromLookup()`](https://docs.aws.amazon.com/cdk/api/v2/docs/aws-cdk-lib.aws_ssm.StringParameter.html#static-valuewbrfromwbrlookupscope-parametername) at synthesis time.
+
+Example on using this method:
+
+```ts
+import { ResourceExtractor, ResourceExtractorShareMethod } from '@cdklabs/cdk-enterprise-iac';
+
+Aspects.of(app).add(
+  new ResourceExtractor({
+    stackArtifacts: synthedApp.stacks,
+    resourceTypesToExtract: [
+      'AWS::IAM::Role',
+      'AWS::IAM::Policy',
+      'AWS::IAM::ManagedPolicy',
+      'AWS::IAM::InstanceProfile',
+    ],
+    extractDestinationStack: extractedStack,
+    valueShareMethod: ResourceExtractorShareMethod.SSM_PARAMETER,  // Specify SSM_PARAMETER Method
+  });
+);
+```
+
+##### `API_LOOKUP`
+
+The `API_LOOKUP` sharing method is similar to `CFN_OUTPUT`, but rather than modifying the CDK application to use [Fn::ImportValue](https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/intrinsic-function-reference-importvalue.html), the `Outputs` section of the Extracted stack is looked up using the nodejs SDK, and modifies the CDK application to use the resolved value of the Output
+
+#### Resource Partials
+
+Some resources that get extracted might reference resources that aren't yet created.
+
+In our example CDK application we include the line
+
+```ts
+bucket.grantReadWrite(func);
+```
+
+This creates an `AWS::IAM::Policy` that includes the necessary Actions scoped down to the S3 bucket.
+
+When the `AWS::IAM::Policy` is extracted, it's unable to use `Ref` or `Fn::GetAtt` to reference the S3 bucket since the S3 bucket wasn't extracted.
+
+In this case we substitute the reference with a "partial ARN" that makes a best effort to scope the resources in the IAM policy statement to the ARN of the yet-to-be created S3 bucket.
+
+There are multiple resource types supported out of the box (found in [`createDefaultTransforms`](src/patches/resource-extractor/resourceTransformer.ts)). In the event you have a resource not yet supported, you'll receive a `MissingTransformError`. In this case you can either open an [issue](https://github.com/cdklabs/cdk-enterprise-iac/issues) with the resource in question, or you can include the `additionalTransforms` property.
+
+Consider the following:
+
+```ts
+const vpc = new Vpc(stack, 'TestVpc');
+const db = new DatabaseInstance(stack, 'TestDb', {
+  vpc,
+  engine: DatabaseInstanceEngine.POSTGRES,
+})
+const func = new Function(stack, 'TestLambda', {
+  code: Code.fromAsset(path.join(__dirname, 'lambda-handler')),
+  handler: 'index.handler',
+  runtime: Runtime.PYTHON_3_9,
+});
+db.secret?.grantRead(func)
+
+const synthedApp = app.synth();
+Aspects.of(app).add(
+  new ResourceExtractor({
+    extractDestinationStack: extractedStack,
+    stackArtifacts: synthedApp.stacks,
+    valueShareMethod: ResourceExtractorShareMethod.CFN_OUTPUT,
+    resourceTypesToExtract: ['AWS::IAM::Role', 'AWS::IAM::Policy'],
+    additionalTransforms: {
+      'AWS::SecretsManager::SecretTargetAttachment': `arn:${Aws.PARTITION}:secretsmanager:${Aws.REGION}:${Aws.ACCOUNT_ID}:secret:some-expected-value*`,
+    },
+  });
+);
+app.synth({ force: true });
+```
+
+In this case, there is a `AWS::SecretsManager::SecretTargetAttachment` generated to complete the final link between a Secrets Manager secret and the associated database by adding the database connection information to the secret JSON, which returns the ARN of the generated secret.
+
+In the context of extracting the IAM policy, we want to tell the `ResourceExtractor` how to handle the resource section of the IAM policy statement so that it is scoped down sufficiently.
+
+In this case rather than using a `Ref: LogicalIdForTheSecretTargetAttachment` we construct the ARN we want to use.
+
+### Adding permissions boundaries to all generated IAM roles
+
 Example for `AddPermissionBoundary` in Typescript project.
 
 ```ts
@@ -534,7 +801,7 @@ public readonly proxyCredentials: ISecret;
 
 JSON secret containing `user` and `password` properties to use if your proxy requires credentials `http://user:password@host:port` could contain sensitive data, so using a Secret.
 
-Note that while the `user` and `password` won't be visible in the cloudformation tempalte
+Note that while the `user` and `password` won't be visible in the cloudformation template
 they **will** be in plain text inside your `UserData`
 
 ---
@@ -569,6 +836,7 @@ Proxy Type.
 ```typescript
 ProxyType.HTTPS
 ```
+
 
 ### AddPermissionBoundaryProps <a name="AddPermissionBoundaryProps" id="@cdklabs/cdk-enterprise-iac.AddPermissionBoundaryProps"></a>
 
@@ -941,6 +1209,88 @@ Name of the tag property to remove from the resource.
 
 ---
 
+### ResourceExtractorProps <a name="ResourceExtractorProps" id="@cdklabs/cdk-enterprise-iac.ResourceExtractorProps"></a>
+
+#### Initializer <a name="Initializer" id="@cdklabs/cdk-enterprise-iac.ResourceExtractorProps.Initializer"></a>
+
+```typescript
+import { ResourceExtractorProps } from '@cdklabs/cdk-enterprise-iac'
+
+const resourceExtractorProps: ResourceExtractorProps = { ... }
+```
+
+#### Properties <a name="Properties" id="Properties"></a>
+
+| **Name** | **Type** | **Description** |
+| --- | --- | --- |
+| <code><a href="#@cdklabs/cdk-enterprise-iac.ResourceExtractorProps.property.extractDestinationStack">extractDestinationStack</a></code> | <code>aws-cdk-lib.Stack</code> | Stack to move found extracted resources into. |
+| <code><a href="#@cdklabs/cdk-enterprise-iac.ResourceExtractorProps.property.resourceTypesToExtract">resourceTypesToExtract</a></code> | <code>string[]</code> | List of resource types to extract, ex: `AWS::IAM::Role`. |
+| <code><a href="#@cdklabs/cdk-enterprise-iac.ResourceExtractorProps.property.stackArtifacts">stackArtifacts</a></code> | <code>aws-cdk-lib.cx_api.CloudFormationStackArtifact[]</code> | Synthed stack artifacts from your CDK app. |
+| <code><a href="#@cdklabs/cdk-enterprise-iac.ResourceExtractorProps.property.additionalTransforms">additionalTransforms</a></code> | <code>{[ key: string ]: string}</code> | Additional resource transformations. |
+| <code><a href="#@cdklabs/cdk-enterprise-iac.ResourceExtractorProps.property.valueShareMethod">valueShareMethod</a></code> | <code><a href="#@cdklabs/cdk-enterprise-iac.ResourceExtractorShareMethod">ResourceExtractorShareMethod</a></code> | The sharing method to use when passing exported resources from the "Extracted Stack" into the original stack(s). |
+
+---
+
+##### `extractDestinationStack`<sup>Required</sup> <a name="extractDestinationStack" id="@cdklabs/cdk-enterprise-iac.ResourceExtractorProps.property.extractDestinationStack"></a>
+
+```typescript
+public readonly extractDestinationStack: Stack;
+```
+
+- *Type:* aws-cdk-lib.Stack
+
+Stack to move found extracted resources into.
+
+---
+
+##### `resourceTypesToExtract`<sup>Required</sup> <a name="resourceTypesToExtract" id="@cdklabs/cdk-enterprise-iac.ResourceExtractorProps.property.resourceTypesToExtract"></a>
+
+```typescript
+public readonly resourceTypesToExtract: string[];
+```
+
+- *Type:* string[]
+
+List of resource types to extract, ex: `AWS::IAM::Role`.
+
+---
+
+##### `stackArtifacts`<sup>Required</sup> <a name="stackArtifacts" id="@cdklabs/cdk-enterprise-iac.ResourceExtractorProps.property.stackArtifacts"></a>
+
+```typescript
+public readonly stackArtifacts: CloudFormationStackArtifact[];
+```
+
+- *Type:* aws-cdk-lib.cx_api.CloudFormationStackArtifact[]
+
+Synthed stack artifacts from your CDK app.
+
+---
+
+##### `additionalTransforms`<sup>Optional</sup> <a name="additionalTransforms" id="@cdklabs/cdk-enterprise-iac.ResourceExtractorProps.property.additionalTransforms"></a>
+
+```typescript
+public readonly additionalTransforms: {[ key: string ]: string};
+```
+
+- *Type:* {[ key: string ]: string}
+
+Additional resource transformations.
+
+---
+
+##### `valueShareMethod`<sup>Optional</sup> <a name="valueShareMethod" id="@cdklabs/cdk-enterprise-iac.ResourceExtractorProps.property.valueShareMethod"></a>
+
+```typescript
+public readonly valueShareMethod: ResourceExtractorShareMethod;
+```
+
+- *Type:* <a href="#@cdklabs/cdk-enterprise-iac.ResourceExtractorShareMethod">ResourceExtractorShareMethod</a>
+
+The sharing method to use when passing exported resources from the "Extracted Stack" into the original stack(s).
+
+---
+
 ### SetApiGatewayEndpointConfigurationProps <a name="SetApiGatewayEndpointConfigurationProps" id="@cdklabs/cdk-enterprise-iac.SetApiGatewayEndpointConfigurationProps"></a>
 
 #### Initializer <a name="Initializer" id="@cdklabs/cdk-enterprise-iac.SetApiGatewayEndpointConfigurationProps.Initializer"></a>
@@ -1156,7 +1506,6 @@ SubnetType | `aws-cdk:subnet-type` tag value
 
 ## Classes <a name="Classes" id="Classes"></a>
 
-
 ### AddCfnInitProxy <a name="AddCfnInitProxy" id="@cdklabs/cdk-enterprise-iac.AddCfnInitProxy"></a>
 
 - *Implements:* aws-cdk-lib.IAspect
@@ -1204,6 +1553,9 @@ All aspects can visit an IConstruct.
 - *Type:* constructs.IConstruct
 
 ---
+
+
+
 
 ### AddLambdaEnvironmentVariables <a name="AddLambdaEnvironmentVariables" id="@cdklabs/cdk-enterprise-iac.AddLambdaEnvironmentVariables"></a>
 
@@ -1464,6 +1816,79 @@ All aspects can visit an IConstruct.
 
 
 
+### ResourceExtractor <a name="ResourceExtractor" id="@cdklabs/cdk-enterprise-iac.ResourceExtractor"></a>
+
+- *Implements:* aws-cdk-lib.IAspect
+
+This Aspect takes a CDK application, all synthesized CloudFormationStackArtifact, a value share method, and a list of Cloudformation resources that should be pulled out of the main CDK application, which should be synthesized to a cloudformation template that an external team (e.g. security team) to deploy, and adjusting the CDK application to reference pre-created resources already pulled out.
+
+*Example*
+
+```typescript
+ const app = App()
+ const stack = new Stack(app, 'MyStack');
+ extractedStack = new Stack(app, 'ExtractedStack');
+ const synthedApp = app.synth();
+ Aspects.of(app).add(new ResourceExtractor({
+   extractDestinationStack: extractedStack,
+   stackArtifacts: synthedApp.stacks,
+   valueShareMethod: ResourceExtractorShareMethod.CFN_OUTPUT,
+   resourceTypesToExtract: [
+     'AWS::IAM::Role',
+     'AWS::IAM::Policy',
+     'AWS::IAM::ManagedPolicy',
+     'AWS::IAM::InstanceProfile',
+   ],
+ });
+ app.synth({ force: true });
+```
+
+
+#### Initializers <a name="Initializers" id="@cdklabs/cdk-enterprise-iac.ResourceExtractor.Initializer"></a>
+
+```typescript
+import { ResourceExtractor } from '@cdklabs/cdk-enterprise-iac'
+
+new ResourceExtractor(props: ResourceExtractorProps)
+```
+
+| **Name** | **Type** | **Description** |
+| --- | --- | --- |
+| <code><a href="#@cdklabs/cdk-enterprise-iac.ResourceExtractor.Initializer.parameter.props">props</a></code> | <code><a href="#@cdklabs/cdk-enterprise-iac.ResourceExtractorProps">ResourceExtractorProps</a></code> | *No description.* |
+
+---
+
+##### `props`<sup>Required</sup> <a name="props" id="@cdklabs/cdk-enterprise-iac.ResourceExtractor.Initializer.parameter.props"></a>
+
+- *Type:* <a href="#@cdklabs/cdk-enterprise-iac.ResourceExtractorProps">ResourceExtractorProps</a>
+
+---
+
+#### Methods <a name="Methods" id="Methods"></a>
+
+| **Name** | **Description** |
+| --- | --- |
+| <code><a href="#@cdklabs/cdk-enterprise-iac.ResourceExtractor.visit">visit</a></code> | Entrypoint. |
+
+---
+
+##### `visit` <a name="visit" id="@cdklabs/cdk-enterprise-iac.ResourceExtractor.visit"></a>
+
+```typescript
+public visit(node: IConstruct): void
+```
+
+Entrypoint.
+
+###### `node`<sup>Required</sup> <a name="node" id="@cdklabs/cdk-enterprise-iac.ResourceExtractor.visit.parameter.node"></a>
+
+- *Type:* constructs.IConstruct
+
+---
+
+
+
+
 ### SetApiGatewayEndpointConfiguration <a name="SetApiGatewayEndpointConfiguration" id="@cdklabs/cdk-enterprise-iac.SetApiGatewayEndpointConfiguration"></a>
 
 - *Implements:* aws-cdk-lib.IAspect
@@ -1515,6 +1940,10 @@ All aspects can visit an IConstruct.
 
 ---
 
+
+
+
+
 ## Enums <a name="Enums" id="Enums"></a>
 
 ### ProxyType <a name="ProxyType" id="@cdklabs/cdk-enterprise-iac.ProxyType"></a>
@@ -1540,6 +1969,56 @@ Whether an http-proxy or https-proxy.
 ##### `HTTPS` <a name="HTTPS" id="@cdklabs/cdk-enterprise-iac.ProxyType.HTTPS"></a>
 
 -https-proxy.
+
+---
+
+
+### ResourceExtractorShareMethod <a name="ResourceExtractorShareMethod" id="@cdklabs/cdk-enterprise-iac.ResourceExtractorShareMethod"></a>
+
+The available value sharing methods to pass values from the extracted stack onto the original stack(s).
+
+#### Members <a name="Members" id="Members"></a>
+
+| **Name** | **Description** |
+| --- | --- |
+| <code><a href="#@cdklabs/cdk-enterprise-iac.ResourceExtractorShareMethod.CFN_OUTPUT">CFN_OUTPUT</a></code> | *No description.* |
+| <code><a href="#@cdklabs/cdk-enterprise-iac.ResourceExtractorShareMethod.SSM_PARAMETER">SSM_PARAMETER</a></code> | *No description.* |
+| <code><a href="#@cdklabs/cdk-enterprise-iac.ResourceExtractorShareMethod.API_LOOKUP">API_LOOKUP</a></code> | *No description.* |
+
+---
+
+##### `CFN_OUTPUT` <a name="CFN_OUTPUT" id="@cdklabs/cdk-enterprise-iac.ResourceExtractorShareMethod.CFN_OUTPUT"></a>
+
+---
+
+
+##### `SSM_PARAMETER` <a name="SSM_PARAMETER" id="@cdklabs/cdk-enterprise-iac.ResourceExtractorShareMethod.SSM_PARAMETER"></a>
+
+---
+
+
+##### `API_LOOKUP` <a name="API_LOOKUP" id="@cdklabs/cdk-enterprise-iac.ResourceExtractorShareMethod.API_LOOKUP"></a>
+
+---
+
+
+### ResourceTransform <a name="ResourceTransform" id="@cdklabs/cdk-enterprise-iac.ResourceTransform"></a>
+
+#### Members <a name="Members" id="Members"></a>
+
+| **Name** | **Description** |
+| --- | --- |
+| <code><a href="#@cdklabs/cdk-enterprise-iac.ResourceTransform.STACK_NAME">STACK_NAME</a></code> | *No description.* |
+| <code><a href="#@cdklabs/cdk-enterprise-iac.ResourceTransform.LOGICAL_ID">LOGICAL_ID</a></code> | *No description.* |
+
+---
+
+##### `STACK_NAME` <a name="STACK_NAME" id="@cdklabs/cdk-enterprise-iac.ResourceTransform.STACK_NAME"></a>
+
+---
+
+
+##### `LOGICAL_ID` <a name="LOGICAL_ID" id="@cdklabs/cdk-enterprise-iac.ResourceTransform.LOGICAL_ID"></a>
 
 ---
 
