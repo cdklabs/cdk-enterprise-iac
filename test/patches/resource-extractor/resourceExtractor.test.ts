@@ -3,7 +3,7 @@ Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
 SPDX-License-Identifier: Apache-2.0
 */
 import { App, Aspects, CfnElement, RemovalPolicy, Stack } from 'aws-cdk-lib';
-import { Match, Template } from 'aws-cdk-lib/assertions';
+import { Match, Template, Annotations } from 'aws-cdk-lib/assertions';
 import {
   Instance,
   InstanceClass,
@@ -39,6 +39,40 @@ let resourceTypesToExtract = [
 
 const appStackName = 'AppStack';
 const extractedStackName = 'ExtractedStack';
+
+describe('Annotations for experimental mode', () => {
+  beforeEach(() => {
+    app = new App();
+    stack = new Stack(app, appStackName);
+    extractedStack = new Stack(app, extractedStackName);
+  });
+  test('warning shows for experimental mode', () => {
+    const func = new Function(stack, 'TestLambda', {
+      code: Code.fromInline(`def handler(event, context)\n    print(event)`),
+      handler: 'index.handler',
+      runtime: Runtime.PYTHON_3_9,
+    });
+    const bucket = new Bucket(stack, 'TestBucket');
+    bucket.grantReadWrite(func);
+
+    const synthedApp = app.synth();
+    Aspects.of(app).add(
+      new ResourceExtractor({
+        extractDestinationStack: extractedStack,
+        stackArtifacts: synthedApp.stacks,
+        valueShareMethod: ResourceExtractorShareMethod.CFN_OUTPUT,
+        resourceTypesToExtract,
+      })
+    );
+    app.synth({ force: true });
+    Annotations.fromStack(extractedStack).hasWarning(
+      '/ExtractedStack',
+      '❗ ResourceExtractor is in experimental mode. \
+      Please be sure to validate synthesized assets prior to deploy. \
+      Please open any issues found at https://github.com/cdklabs/cdk-enterprise-iac/issues'
+    );
+  });
+});
 
 describe('Extracting resources from stack', () => {
   beforeEach(() => {

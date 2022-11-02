@@ -29,6 +29,8 @@ A few examples of these tools below
 
 ### Resource extraction
 
+:warning: Resource extraction is in an experimental phase. Test and validate before using in production. Please open any issues found [here](https://github.com/cdklabs/cdk-enterprise-iac/)issues
+
 In many enterprises, there are separate teams with different IAM permissions than developers deploying CDK applications.
 
 For example there might be a networking team with permissions to deploy `AWS::EC2::SecurityGroup` and `AWS::EC2::EIP`, or a security team with permissions to deploy `AWS::IAM::Role` and `AWS::IAM::Policy`, but the developers deploying the CDK don't have those permissions

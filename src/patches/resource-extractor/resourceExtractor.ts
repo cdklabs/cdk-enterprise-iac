@@ -2,7 +2,7 @@
 Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
 SPDX-License-Identifier: Apache-2.0
 */
-import { CfnResource, Fn, IAspect, Stack } from 'aws-cdk-lib';
+import { Annotations, CfnResource, Fn, IAspect, Stack } from 'aws-cdk-lib';
 import { StringParameter } from 'aws-cdk-lib/aws-ssm';
 import { CloudFormationStackArtifact } from 'aws-cdk-lib/cx-api';
 import { IConstruct } from 'constructs';
@@ -96,6 +96,11 @@ export class ResourceExtractor implements IAspect {
     if (props.valueShareMethod) {
       this.valueShareMethod = props.valueShareMethod;
     }
+    Annotations.of(this.extractDestinationStack).addWarning(
+      '❗ ResourceExtractor is in experimental mode. \
+      Please be sure to validate synthesized assets prior to deploy. \
+      Please open any issues found at https://github.com/cdklabs/cdk-enterprise-iac/issues'
+    );
 
     /** Initialize CfnStore to save templates and mappings */
     this.cfn = new CfnStore({
