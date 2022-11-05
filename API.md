@@ -1356,7 +1356,48 @@ All aspects can visit an IConstruct.
 ---
 
 
+### ManagedPolicies <a name="ManagedPolicies" id="@cdklabs/cdk-enterprise-iac.ManagedPolicies"></a>
 
+- *Implements:* aws-cdk-lib.IAspect
+
+Looks for IAM Policies, replaces them with IAM Managed Policies
+
+For use in customer accounts where deployers are required to use Managed Policies.
+
+#### Initializers <a name="Initializers" id="@cdklabs/cdk-enterprise-iac.ManagedPolicies.Initializer"></a>
+
+```typescript
+import { ManagedPolicies } from '@cdklabs/cdk-enterprise-iac'
+
+new ManagedPolicies()
+```
+
+| **Name** | **Type** | **Description** |
+| --- | --- | --- |
+
+---
+
+#### Methods <a name="Methods" id="Methods"></a>
+
+| **Name** | **Description** |
+| --- | --- |
+| <code><a href="#@cdklabs/cdk-enterprise-iac.ManagedPolicies.visit">visit</a></code> | All aspects can visit an IConstruct. |
+
+---
+
+##### `visit` <a name="visit" id="@cdklabs/cdk-enterprise-iac.ManagedPolicies.visit"></a>
+
+```typescript
+public visit(node: IConstruct): void
+```
+
+All aspects can visit an IConstruct.
+
+###### `node`<sup>Required</sup> <a name="node" id="@cdklabs/cdk-enterprise-iac.ManagedPolicies.visit.parameter.node"></a>
+
+- *Type:* constructs.IConstruct
+
+---
 
 ### RemovePublicAccessBlockConfiguration <a name="RemovePublicAccessBlockConfiguration" id="@cdklabs/cdk-enterprise-iac.RemovePublicAccessBlockConfiguration"></a>
 
