@@ -1356,13 +1356,24 @@ All aspects can visit an IConstruct.
 ---
 
 
+
+
 ### ManagedPolicies <a name="ManagedPolicies" id="@cdklabs/cdk-enterprise-iac.ManagedPolicies"></a>
 
 - *Implements:* aws-cdk-lib.IAspect
 
-Looks for IAM Policies, replaces them with IAM Managed Policies
+Patch for turning all Policies into ManagedPolicies.
 
-For use in customer accounts where deployers are required to use Managed Policies.
+Some customers have policies in place that make it impossible to create standard policies. Instead,
+they must use managed policies
+
+*Example*
+
+```typescript
+// Replace all AWS::IAM::Policies with AWS::IAM::ManagedPolicies
+Aspects.of(stack).add(new ManagedPolicies())
+```
+
 
 #### Initializers <a name="Initializers" id="@cdklabs/cdk-enterprise-iac.ManagedPolicies.Initializer"></a>
 
@@ -1398,6 +1409,9 @@ All aspects can visit an IConstruct.
 - *Type:* constructs.IConstruct
 
 ---
+
+
+
 
 ### RemovePublicAccessBlockConfiguration <a name="RemovePublicAccessBlockConfiguration" id="@cdklabs/cdk-enterprise-iac.RemovePublicAccessBlockConfiguration"></a>
 
