@@ -6,8 +6,8 @@ import { App, Aspects, Stack, aws_iam as iam } from 'aws-cdk-lib';
 import { Template } from 'aws-cdk-lib/assertions';
 import { Code, Function, Runtime } from 'aws-cdk-lib/aws-lambda';
 import { Bucket } from 'aws-cdk-lib/aws-s3';
-import { ManagedPolicies } from '../../src/patches/managedPolicies';
 import { AddPermissionBoundary } from '../../src/patches/addPermissionsBoundary';
+import { ManagedPolicies } from '../../src/patches/managedPolicies';
 
 let app: App;
 let stack: Stack;
@@ -55,13 +55,10 @@ describe('Updating Resource Types', () => {
         policyPrefix,
       })
     );
-    Aspects.of(stack).add(new ManagedPolicies())
+    Aspects.of(stack).add(new ManagedPolicies());
     const template = Template.fromStack(stack);
     template.hasResourceProperties('AWS::IAM::ManagedPolicy', {
-      ManagedPolicyName: `${policyPrefix}${policyName}`.substring(
-        0,
-        128 - 1
-      ),
+      ManagedPolicyName: `${policyPrefix}${policyName}`.substring(0, 128 - 1),
     });
   });
 });
