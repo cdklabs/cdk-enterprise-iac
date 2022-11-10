@@ -1358,6 +1358,65 @@ All aspects can visit an IConstruct.
 
 
 
+### ConvertInlinePoliciesToManaged <a name="ConvertInlinePoliciesToManaged" id="@cdklabs/cdk-enterprise-iac.ConvertInlinePoliciesToManaged"></a>
+
+- *Implements:* aws-cdk-lib.IAspect
+
+Patch for turning all Policies into ConvertInlinePoliciesToManaged.
+
+Some users have policies in place that make it impossible to create inline policies. Instead,
+they must use managed policies.
+
+Note that order matters with this aspect. Specifically, it should generally be added first.
+This is because other aspects may add overrides that would be lost if applied before
+this aspect since the original aspect is removed and replaced.
+
+*Example*
+
+```typescript
+// Replace all AWS::IAM::Policy resources with equivalent AWS::IAM::ManagedPolicy
+Aspects.of(stack).add(new ConvertInlinePoliciesToManaged())
+```
+
+
+#### Initializers <a name="Initializers" id="@cdklabs/cdk-enterprise-iac.ConvertInlinePoliciesToManaged.Initializer"></a>
+
+```typescript
+import { ConvertInlinePoliciesToManaged } from '@cdklabs/cdk-enterprise-iac'
+
+new ConvertInlinePoliciesToManaged()
+```
+
+| **Name** | **Type** | **Description** |
+| --- | --- | --- |
+
+---
+
+#### Methods <a name="Methods" id="Methods"></a>
+
+| **Name** | **Description** |
+| --- | --- |
+| <code><a href="#@cdklabs/cdk-enterprise-iac.ConvertInlinePoliciesToManaged.visit">visit</a></code> | All aspects can visit an IConstruct. |
+
+---
+
+##### `visit` <a name="visit" id="@cdklabs/cdk-enterprise-iac.ConvertInlinePoliciesToManaged.visit"></a>
+
+```typescript
+public visit(node: IConstruct): void
+```
+
+All aspects can visit an IConstruct.
+
+###### `node`<sup>Required</sup> <a name="node" id="@cdklabs/cdk-enterprise-iac.ConvertInlinePoliciesToManaged.visit.parameter.node"></a>
+
+- *Type:* constructs.IConstruct
+
+---
+
+
+
+
 ### RemovePublicAccessBlockConfiguration <a name="RemovePublicAccessBlockConfiguration" id="@cdklabs/cdk-enterprise-iac.RemovePublicAccessBlockConfiguration"></a>
 
 - *Implements:* aws-cdk-lib.IAspect
