@@ -8,7 +8,7 @@ export * from './patches/addLambdaEnvironmentVariables';
 export * from './patches/removePublicAccessBlockConfiguration';
 export * from './patches/setApiGatewayEndpointConfiguration';
 export * from './patches/addCfnInitProxy';
-export * from './patches/managedPolicies';
+export * from './patches/convertInlinePoliciesToManaged';
 export * from './constructs/populateProvidedVpc/populateProvidedVpc';
 export * from './constructs/ecsIsoServiceAutoscaler/ecsIsoServiceAutoscaler';
 export * from './patches/resource-extractor/resourceExtractor';

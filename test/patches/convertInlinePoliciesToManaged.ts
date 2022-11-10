@@ -7,7 +7,7 @@ import { Template } from 'aws-cdk-lib/assertions';
 import { Code, Function, Runtime } from 'aws-cdk-lib/aws-lambda';
 import { Bucket } from 'aws-cdk-lib/aws-s3';
 import { AddPermissionBoundary } from '../../src/patches/addPermissionsBoundary';
-import { ManagedPolicies } from '../../src/patches/managedPolicies';
+import { ConvertInlinePoliciesToManaged } from '../../src/patches/convertInlinePoliciesToManaged';
 
 let app: App;
 let stack: Stack;
@@ -30,11 +30,10 @@ describe('Updating Resource Types', () => {
     const bucket = new Bucket(stack, 'TestBucket');
     bucket.grantReadWrite(func);
 
-    Aspects.of(app).add(new ManagedPolicies());
+    Aspects.of(app).add(new ConvertInlinePoliciesToManaged());
     app.synth();
 
     const appTemplate = Template.fromStack(stack);
-    // Extracted stack has IAM resources
     appTemplate.resourceCountIs('AWS::IAM::Policy', 0);
     appTemplate.resourceCountIs('AWS::IAM::ManagedPolicy', 1);
   });
@@ -55,7 +54,7 @@ describe('Updating Resource Types', () => {
         policyPrefix,
       })
     );
-    Aspects.of(stack).add(new ManagedPolicies());
+    Aspects.of(stack).add(new ConvertInlinePoliciesToManaged());
     const template = Template.fromStack(stack);
     template.hasResourceProperties('AWS::IAM::ManagedPolicy', {
       ManagedPolicyName: `${policyPrefix}${policyName}`.substring(0, 128 - 1),

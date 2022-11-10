@@ -856,7 +856,7 @@ const addPermissionBoundaryProps: AddPermissionBoundaryProps = { ... }
 | --- | --- | --- |
 | <code><a href="#@cdklabs/cdk-enterprise-iac.AddPermissionBoundaryProps.property.permissionsBoundaryPolicyName">permissionsBoundaryPolicyName</a></code> | <code>string</code> | Name of Permissions Boundary Policy to add to all IAM roles. |
 | <code><a href="#@cdklabs/cdk-enterprise-iac.AddPermissionBoundaryProps.property.instanceProfilePrefix">instanceProfilePrefix</a></code> | <code>string</code> | A prefix to prepend to the name of the IAM InstanceProfiles (Default: ''). |
-| <code><a href="#@cdklabs/cdk-enterprise-iac.AddPermissionBoundaryProps.property.policyPrefix">policyPrefix</a></code> | <code>string</code> | A prefix to prepend to the name of the IAM Policies and ManagedPolicies (Default: ''). |
+| <code><a href="#@cdklabs/cdk-enterprise-iac.AddPermissionBoundaryProps.property.policyPrefix">policyPrefix</a></code> | <code>string</code> | A prefix to prepend to the name of the IAM Policies and ConvertInlinePoliciesToManaged (Default: ''). |
 | <code><a href="#@cdklabs/cdk-enterprise-iac.AddPermissionBoundaryProps.property.rolePrefix">rolePrefix</a></code> | <code>string</code> | A prefix to prepend to the name of IAM Roles (Default: ''). |
 
 ---
@@ -893,7 +893,7 @@ public readonly policyPrefix: string;
 
 - *Type:* string
 
-A prefix to prepend to the name of the IAM Policies and ManagedPolicies (Default: '').
+A prefix to prepend to the name of the IAM Policies and ConvertInlinePoliciesToManaged (Default: '').
 
 ---
 
@@ -1702,11 +1702,11 @@ All aspects can visit an IConstruct.
 
 
 
-### ManagedPolicies <a name="ManagedPolicies" id="@cdklabs/cdk-enterprise-iac.ManagedPolicies"></a>
+### ConvertInlinePoliciesToManaged <a name="ConvertInlinePoliciesToManaged" id="@cdklabs/cdk-enterprise-iac.ConvertInlinePoliciesToManaged"></a>
 
 - *Implements:* aws-cdk-lib.IAspect
 
-Patch for turning all Policies into ManagedPolicies.
+Patch for turning all Policies into ConvertInlinePoliciesToManaged.
 
 Some customers have policies in place that make it impossible to create standard policies. Instead,
 they must use managed policies
@@ -1714,17 +1714,17 @@ they must use managed policies
 *Example*
 
 ```typescript
-// Replace all AWS::IAM::Policies with AWS::IAM::ManagedPolicies
-Aspects.of(stack).add(new ManagedPolicies())
+// Replace all AWS::IAM::Policies with AWS::IAM::ConvertInlinePoliciesToManaged
+Aspects.of(stack).add(new ConvertInlinePoliciesToManaged())
 ```
 
 
-#### Initializers <a name="Initializers" id="@cdklabs/cdk-enterprise-iac.ManagedPolicies.Initializer"></a>
+#### Initializers <a name="Initializers" id="@cdklabs/cdk-enterprise-iac.ConvertInlinePoliciesToManaged.Initializer"></a>
 
 ```typescript
-import { ManagedPolicies } from '@cdklabs/cdk-enterprise-iac'
+import { ConvertInlinePoliciesToManaged } from '@cdklabs/cdk-enterprise-iac'
 
-new ManagedPolicies()
+new ConvertInlinePoliciesToManaged()
 ```
 
 | **Name** | **Type** | **Description** |
@@ -1736,11 +1736,11 @@ new ManagedPolicies()
 
 | **Name** | **Description** |
 | --- | --- |
-| <code><a href="#@cdklabs/cdk-enterprise-iac.ManagedPolicies.visit">visit</a></code> | All aspects can visit an IConstruct. |
+| <code><a href="#@cdklabs/cdk-enterprise-iac.ConvertInlinePoliciesToManaged.visit">visit</a></code> | All aspects can visit an IConstruct. |
 
 ---
 
-##### `visit` <a name="visit" id="@cdklabs/cdk-enterprise-iac.ManagedPolicies.visit"></a>
+##### `visit` <a name="visit" id="@cdklabs/cdk-enterprise-iac.ConvertInlinePoliciesToManaged.visit"></a>
 
 ```typescript
 public visit(node: IConstruct): void
@@ -1748,7 +1748,7 @@ public visit(node: IConstruct): void
 
 All aspects can visit an IConstruct.
 
-###### `node`<sup>Required</sup> <a name="node" id="@cdklabs/cdk-enterprise-iac.ManagedPolicies.visit.parameter.node"></a>
+###### `node`<sup>Required</sup> <a name="node" id="@cdklabs/cdk-enterprise-iac.ConvertInlinePoliciesToManaged.visit.parameter.node"></a>
 
 - *Type:* constructs.IConstruct
 
