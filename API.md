@@ -1371,10 +1371,6 @@ Note that order matters with this aspect. Specifically, it should generally be a
 This is because other aspects may add overrides that would be lost if applied before
 this aspect since the original aspect is removed and replaced.
 
-Note that order matters with this aspect. Specifically, it should generally be added first.
-This is because other aspects may add overrides that would be lost if applied before
-this aspect since the original aspect is removed and replaced.
-
 *Example*
 
 ```typescript
