@@ -8,7 +8,7 @@ import { IConstruct } from 'constructs';
 /**
  * Patch for turning all Policies into ConvertInlinePoliciesToManaged
  *
- * Some customers have policies in place that make it impossible to create standard policies. Instead,
+ * Some users have policies in place that make it impossible to create inline policies. Instead,
  * they must use managed policies.
  *
  * Note that order matters with this aspect. Specifically, it should generally be added first.
@@ -16,7 +16,7 @@ import { IConstruct } from 'constructs';
  * this aspect since the original aspect is removed and replaced.
  *
  * @example
- * // Replace all AWS::IAM::Policies with AWS::IAM::ConvertInlinePoliciesToManaged
+ * // Replace all AWS::IAM::Policy resources with equivalent AWS::IAM::ManagedPolicy
  * Aspects.of(stack).add(new ConvertInlinePoliciesToManaged())
  */
 export class ConvertInlinePoliciesToManaged implements IAspect {

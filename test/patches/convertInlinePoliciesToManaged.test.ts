@@ -8,6 +8,10 @@ import { Code, Function, Runtime } from 'aws-cdk-lib/aws-lambda';
 import { Bucket } from 'aws-cdk-lib/aws-s3';
 import { AddPermissionBoundary } from '../../src/patches/addPermissionsBoundary';
 import { ConvertInlinePoliciesToManaged } from '../../src/patches/convertInlinePoliciesToManaged';
+import {
+  ResourceExtractor,
+  ResourceExtractorShareMethod,
+} from '../../src/patches/resource-extractor/resourceExtractor';
 
 let app: App;
 let stack: Stack;
@@ -59,5 +63,43 @@ describe('Updating Resource Types', () => {
     template.hasResourceProperties('AWS::IAM::ManagedPolicy', {
       ManagedPolicyName: `${policyPrefix}${policyName}`.substring(0, 128 - 1),
     });
+  });
+
+  test('ManagedPolicy works with resource extractor', () => {
+    const extractedStack = new Stack(app, 'TestExtractedStack');
+    const resourceTypesToExtract = [
+      'AWS::IAM::Role',
+      'AWS::IAM::Policy',
+      'AWS::IAM::ManagedPolicy',
+    ];
+    const func = new Function(stack, 'TestLambda', {
+      code: Code.fromInline(`def handler(event, context)\n    print(event)`),
+      handler: 'index.handler',
+      runtime: Runtime.PYTHON_3_9,
+    });
+    const bucket = new Bucket(stack, 'TestBucket');
+    bucket.grantReadWrite(func);
+    Aspects.of(stack).add(new ConvertInlinePoliciesToManaged());
+    const synthedApp = app.synth();
+
+    Aspects.of(app).add(
+      new ResourceExtractor({
+        extractDestinationStack: extractedStack,
+        stackArtifacts: synthedApp.stacks,
+        valueShareMethod: ResourceExtractorShareMethod.CFN_OUTPUT,
+        resourceTypesToExtract,
+      })
+    );
+
+    app.synth({ force: true });
+
+    const extractedTemplate = Template.fromStack(extractedStack);
+    const appTemplate = Template.fromStack(stack);
+    // Extracted stack has IAM resources
+    extractedTemplate.resourceCountIs('AWS::IAM::Role', 1);
+    extractedTemplate.resourceCountIs('AWS::IAM::ManagedPolicy', 1);
+    // Non-IAM resources present in app stack
+    appTemplate.resourceCountIs('AWS::S3::Bucket', 1);
+    appTemplate.resourceCountIs('AWS::Lambda::Function', 1);
   });
 });
