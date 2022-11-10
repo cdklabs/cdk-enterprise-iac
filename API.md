@@ -512,7 +512,7 @@ const addPermissionBoundaryProps: AddPermissionBoundaryProps = { ... }
 | --- | --- | --- |
 | <code><a href="#@cdklabs/cdk-enterprise-iac.AddPermissionBoundaryProps.property.permissionsBoundaryPolicyName">permissionsBoundaryPolicyName</a></code> | <code>string</code> | Name of Permissions Boundary Policy to add to all IAM roles. |
 | <code><a href="#@cdklabs/cdk-enterprise-iac.AddPermissionBoundaryProps.property.instanceProfilePrefix">instanceProfilePrefix</a></code> | <code>string</code> | A prefix to prepend to the name of the IAM InstanceProfiles (Default: ''). |
-| <code><a href="#@cdklabs/cdk-enterprise-iac.AddPermissionBoundaryProps.property.policyPrefix">policyPrefix</a></code> | <code>string</code> | A prefix to prepend to the name of the IAM Policies and ConvertInlinePoliciesToManaged (Default: ''). |
+| <code><a href="#@cdklabs/cdk-enterprise-iac.AddPermissionBoundaryProps.property.policyPrefix">policyPrefix</a></code> | <code>string</code> | A prefix to prepend to the name of the IAM Policies and ManagedPolicies (Default: ''). |
 | <code><a href="#@cdklabs/cdk-enterprise-iac.AddPermissionBoundaryProps.property.rolePrefix">rolePrefix</a></code> | <code>string</code> | A prefix to prepend to the name of IAM Roles (Default: ''). |
 
 ---
@@ -549,7 +549,7 @@ public readonly policyPrefix: string;
 
 - *Type:* string
 
-A prefix to prepend to the name of the IAM Policies and ConvertInlinePoliciesToManaged (Default: '').
+A prefix to prepend to the name of the IAM Policies and ManagedPolicies (Default: '').
 
 ---
 
@@ -1365,7 +1365,11 @@ All aspects can visit an IConstruct.
 Patch for turning all Policies into ConvertInlinePoliciesToManaged.
 
 Some customers have policies in place that make it impossible to create standard policies. Instead,
-they must use managed policies
+they must use managed policies.
+
+Note that order matters with this aspect. Specifically, it should generally be added first.
+This is because other aspects may add overrides that would be lost if applied before
+this aspect since the original aspect is removed and replaced.
 
 Note that order matters with this aspect. Specifically, it should generally be added first.
 This is because other aspects may add overrides that would be lost if applied before
