@@ -201,6 +201,13 @@ export class ResourceExtractor implements IAspect {
           foundRef
         ) as CfnResource;
 
+        let exportName;
+        if ('_exportName' in foundRefNode) {
+          const outputNode = foundRefNode as any;
+          exportName = outputNode._exportName;
+        } else {
+          exportName = this.extractDestinationStack.resolve(res.logicalId);
+        }
         // Figure out the pattern of how extracted resource is being referenced
         // e.g. using `Fn::GetAtt` or `Ref`
         const exportValue = this.cfn.determineExportValue(node, foundRef);
@@ -209,16 +216,24 @@ export class ResourceExtractor implements IAspect {
           // method to use when referencing in the App stack
           const importValue = this.exportValue(
             node.stack,
-            this.extractDestinationStack.resolve(res.logicalId),
+            exportName,
             exportValue
           );
 
-          // Override any ref to extracted resource
-          this.overrideFoundRefWithImportValue({
-            foundRefNode,
-            importValue,
-            flattenedKey: foundRef,
-          });
+          const foundRefType = foundRef.split('.')[1];
+          if (foundRefType == 'Resources') {
+            // Override any ref to extracted resource
+            this.overrideFoundRefWithImportValue({
+              foundRefNode,
+              importValue,
+              flattenedKey: foundRef,
+            });
+          } else if (foundRefType == 'Outputs') {
+            /** Delete Output */
+            node.stack.node.children.map((child) => {
+              child.node.tryRemoveChild(foundRefNode.node.id);
+            });
+          }
         }
 
         // Remove any DependsOn references
@@ -423,7 +438,12 @@ export class ResourceExtractor implements IAspect {
    */
   private exportValue(stack: Stack, name: string, value: any): string {
     const stackName = stack.stackName;
-    const shareName = `${stackName}:${name}`;
+    let shareName: string;
+    if (!name.startsWith(stackName)) {
+      shareName = `${stackName}:${name}`;
+    } else {
+      shareName = name;
+    }
 
     if (this.valueShareMethod == ResourceExtractorShareMethod.SSM_PARAMETER) {
       const paramName = `/${shareName.replace(':', '/')}`;

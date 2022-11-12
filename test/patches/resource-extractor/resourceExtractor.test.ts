@@ -2,7 +2,14 @@
 Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
 SPDX-License-Identifier: Apache-2.0
 */
-import { App, Aspects, CfnElement, RemovalPolicy, Stack } from 'aws-cdk-lib';
+import {
+  App,
+  Aspects,
+  CfnElement,
+  CfnOutput,
+  RemovalPolicy,
+  Stack,
+} from 'aws-cdk-lib';
 import { Match, Template, Annotations } from 'aws-cdk-lib/assertions';
 import {
   Instance,
@@ -378,6 +385,113 @@ describe('Extracting resources from stack', () => {
         },
         1
       );
+    });
+
+    test('Handle when a resource is output', () => {
+      const role = new Role(stack, 'ExportedRole', {
+        assumedBy: new ServicePrincipal('lambda.amazonaws.com'),
+      });
+      new CfnOutput(stack, 'MyOutputRole', {
+        value: role.roleArn,
+        exportName: 'myExport',
+      });
+
+      const synthedApp = app.synth();
+      Aspects.of(app).add(
+        new ResourceExtractor({
+          extractDestinationStack: extractedStack,
+          stackArtifacts: synthedApp.stacks,
+          valueShareMethod: ResourceExtractorShareMethod.CFN_OUTPUT,
+          resourceTypesToExtract,
+        })
+      );
+      app.synth({ force: true });
+
+      const extractedTemplate = Template.fromStack(extractedStack);
+      const appTemplate = Template.fromStack(stack);
+      // Extracted stack has IAM resources
+      extractedTemplate.resourceCountIs('AWS::IAM::Role', 1);
+      appTemplate.resourceCountIs('AWS::IAM::Role', 0);
+    });
+
+    test('multiple stacks with extracted resources trying to export', () => {
+      const secondStack = new Stack(app, 'AnotherStack');
+      const role = new Role(stack, 'ExportedRole', {
+        assumedBy: new ServicePrincipal('lambda.amazonaws.com'),
+      });
+
+      const bucketRegular = new Bucket(stack, 'TestBucketRegular');
+      const funcRegular = new Function(stack, 'TestLambdaRegular', {
+        code: Code.fromInline(`def handler(event, context)\n    print(event)`),
+        handler: 'index.handler',
+        runtime: Runtime.PYTHON_3_9,
+      });
+      bucketRegular.grantReadWrite(funcRegular);
+
+      const bucket = new Bucket(stack, 'TestBucket');
+      const func = new Function(secondStack, 'TestLambda', {
+        code: Code.fromInline(`def handler(event, context)\n    print(event)`),
+        handler: 'index.handler',
+        runtime: Runtime.PYTHON_3_9,
+        role,
+      });
+      bucket.grantReadWrite(func);
+
+      const synthedApp = app.synth();
+      Aspects.of(app).add(
+        new ResourceExtractor({
+          extractDestinationStack: extractedStack,
+          stackArtifacts: synthedApp.stacks,
+          valueShareMethod: ResourceExtractorShareMethod.CFN_OUTPUT,
+          resourceTypesToExtract,
+        })
+      );
+      app.synth({ force: true });
+
+      const extractedTemplate = Template.fromStack(extractedStack);
+      const appTemplate = Template.fromStack(stack);
+      const secondStackTemplate = Template.fromStack(secondStack);
+      // Extracted stack has IAM resources
+      extractedTemplate.resourceCountIs('AWS::IAM::Role', 2);
+      appTemplate.resourceCountIs('AWS::IAM::Role', 0);
+      secondStackTemplate.resourceCountIs('AWS::IAM::Role', 0);
+    });
+    test('multiple stacks with valid exports', () => {
+      const secondStack = new Stack(app, 'AnotherStack');
+      const role = new Role(stack, 'ExportedRole', {
+        assumedBy: new ServicePrincipal('lambda.amazonaws.com'),
+      });
+
+      const vpc = new Vpc(stack, 'TestVpc');
+
+      new Instance(secondStack, 'TestInstance', {
+        machineImage: MachineImage.latestAmazonLinux(),
+        instanceType: InstanceType.of(
+          InstanceClass.MEMORY5,
+          InstanceSize.LARGE
+        ),
+        vpc,
+        role,
+      });
+
+      const synthedApp = app.synth();
+      Aspects.of(app).add(
+        new ResourceExtractor({
+          extractDestinationStack: extractedStack,
+          stackArtifacts: synthedApp.stacks,
+          valueShareMethod: ResourceExtractorShareMethod.CFN_OUTPUT,
+          resourceTypesToExtract,
+        })
+      );
+      app.synth({ force: true });
+
+      const extractedTemplate = Template.fromStack(extractedStack);
+      const appTemplate = Template.fromStack(stack);
+      const secondStackTemplate = Template.fromStack(secondStack);
+      // Extracted stack has IAM resources
+      extractedTemplate.resourceCountIs('AWS::IAM::Role', 1);
+      appTemplate.resourceCountIs('AWS::IAM::Role', 0);
+      secondStackTemplate.resourceCountIs('AWS::IAM::Role', 0);
     });
   });
 });
