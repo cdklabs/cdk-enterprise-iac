@@ -15,9 +15,9 @@ def boto3_ecs_service_response(request) -> Dict[str, Any]:
     return {
         "services": [
             {
-                "serviceArn": "arn:aws:ecs:us-east-1:123456789012:service/MR-Infra-MRCluster535D1A46-2okCNvnaxoaU/MR-Task-MRService292C7250-9ncKQXCQxd5E",
-                "serviceName": "MR-Task-MRService292C7250-9ncKQXCQxd5E",
-                "clusterArn": "arn:aws:ecs:us-east-1:123456789012:cluster/MR-Infra-MRCluster535D1A46-2okCNvnaxoaU",
+                "serviceArn": "arn:aws:ecs:us-east-1:123456789012:service/Infra-Cluster535D1A46-2okCNvnaxoaU/Task-Service292C7250-9ncKQXCQxd5E",
+                "serviceName": "Task-Service292C7250-9ncKQXCQxd5E",
+                "clusterArn": "arn:aws:ecs:us-east-1:123456789012:cluster/Infra-Cluster535D1A46-2okCNvnaxoaU",
                 "loadBalancers": [],
                 "serviceRegistries": [],
                 "status": "ACTIVE",
@@ -25,7 +25,7 @@ def boto3_ecs_service_response(request) -> Dict[str, Any]:
                 "runningCount": 3,
                 "pendingCount": 0,
                 "launchType": "EC2",
-                "taskDefinition": "arn:aws:ecs:us-east-1:123456789012:task-definition/MRTaskMRTaskDefinition0707ECB5:8",
+                "taskDefinition": "arn:aws:ecs:us-east-1:123456789012:task-definition/TaskTaskDefinition0707ECB5:8",
                 "deploymentConfiguration": {
                     "deploymentCircuitBreaker": {
                         "enable": False,
@@ -38,7 +38,7 @@ def boto3_ecs_service_response(request) -> Dict[str, Any]:
                     {
                         "id": "ecs-svc/3665271676139587657",
                         "status": "PRIMARY",
-                        "taskDefinition": "arn:aws:ecs:us-east-1:123456789012:task-definition/MRTaskMRTaskDefinition0707ECB5:8",
+                        "taskDefinition": "arn:aws:ecs:us-east-1:123456789012:task-definition/TaskTaskDefinition0707ECB5:8",
                         "desiredCount": 3,
                         "pendingCount": 0,
                         "runningCount": 3,
@@ -54,7 +54,7 @@ def boto3_ecs_service_response(request) -> Dict[str, Any]:
                     {
                         "id": "b1dc4b42-5562-471e-93d0-e4683e18b5b3",
                         "createdAt": datetime.datetime(2022, 4, 21, 4, 0, 17, 762000, tzinfo=tzlocal()),
-                        "message": "(service MR-Task-MRService292C7250-9ncKQXCQxd5E) has reached a steady state."
+                        "message": "(service Task-Service292C7250-9ncKQXCQxd5E) has reached a steady state."
                     },
                 ],
                 "createdAt": datetime.datetime(2022, 4, 15, 11, 0, 32, 707000, tzinfo=tzlocal()),
@@ -88,18 +88,18 @@ def boto3_cw_alarm_not_ok_response() -> Dict[str, Any]:
             {
                 'ActionsEnabled': True,
                 'AlarmActions': [],
-                'AlarmArn': 'arn:aws:cloudwatch:us-east-2:672774589314:alarm:ModelRunnerTaskModelRunnerScalingAlarm84928327',
+                'AlarmArn': 'arn:aws:cloudwatch:us-east-2:672774589314:alarm:TaskScalingAlarm84928327',
                 'AlarmConfigurationUpdatedTimestamp': datetime.datetime(2022, 10, 30, 20, 40, 38, 309000, tzinfo=tzutc()),
-                'AlarmName': 'ModelRunnerTaskModelRunnerScalingAlarm84928327',
-                'AlarmRule': '(ALARM("arn:aws:cloudwatch:us-east-2:672774589314:alarm:ModelRunner-Task-RegionQueueScalingAlarm03E56567-LL8Z2IXZJQ5V") OR ALARM("arn:aws:cloudwatch:us-east-2:672774589314:alarm:ModelRunner-Task-ImageQueueScalingAlarm846F1F23-19LPTQIB9ANUQ") OR ALARM("arn:aws:cloudwatch:us-east-2:672774589314:alarm:ModelRunner-Task-ModelRunnerServiceMemAlarmC912E54C-1QNESY6WB4QW9") OR ALARM("arn:aws:cloudwatch:us-east-2:672774589314:alarm:ModelRunner-Task-ModelRunnerServiceCPUAlarmF42C7BBC-1TJ9IFELBG9IK"))',
+                'AlarmName': 'TaskScalingAlarm84928327',
+                'AlarmRule': '(ALARM("arn:aws:cloudwatch:us-east-2:672774589314:alarm:-Task-RegionQueueScalingAlarm03E56567-LL8Z2IXZJQ5V") OR ALARM("arn:aws:cloudwatch:us-east-2:672774589314:alarm:-Task-ImageQueueScalingAlarm846F1F23-19LPTQIB9ANUQ") OR ALARM("arn:aws:cloudwatch:us-east-2:672774589314:alarm:-Task-ServiceMemAlarmC912E54C-1QNESY6WB4QW9") OR ALARM("arn:aws:cloudwatch:us-east-2:672774589314:alarm:-Task-ServiceCPUAlarmF42C7BBC-1TJ9IFELBG9IK"))',
                 'InsufficientDataActions': [],
                 'OKActions': [],
-                'StateReason': 'arn:aws:cloudwatch:us-east-2:672774589314:alarm:ModelRunner-Task-ImageQueueScalingAlarm846F1F23-19LPTQIB9ANUQ transitioned to ALARM at Sunday 30 October, 2022 20:47:35 UTC',
+                'StateReason': 'arn:aws:cloudwatch:us-east-2:672774589314:alarm:-Task-ImageQueueScalingAlarm846F1F23-19LPTQIB9ANUQ transitioned to ALARM at Sunday 30 October, 2022 20:47:35 UTC',
                 'StateReasonData': """
                     {
                         "triggeringAlarms":[
                             {
-                                "arn":"arn:aws:cloudwatch:us-east-2:672774589314:alarm:ModelRunner-Task-ImageQueueScalingAlarm846F1F23-19LPTQIB9ANUQ",
+                                "arn":"arn:aws:cloudwatch:us-east-2:672774589314:alarm:-Task-ImageQueueScalingAlarm846F1F23-19LPTQIB9ANUQ",
                                 "state":{
                                     "value":"ALARM",
                                     "timestamp":"2022-10-30T20:47:35.671+0000"
@@ -114,8 +114,8 @@ def boto3_cw_alarm_not_ok_response() -> Dict[str, Any]:
         ],
         "MetricAlarms": [
             {
-                "AlarmName": "MR-Task-EcsScalingAlarm61D4C776-93VGP1UMJQ4A",
-                "AlarmArn": "arn:aws:cloudwatch:us-east-1:123456789012:alarm:MR-Task-EcsScalingAlarm61D4C776-93VGP1UMJQ4A",
+                "AlarmName": "Task-EcsScalingAlarm61D4C776-93VGP1UMJQ4A",
+                "AlarmArn": "arn:aws:cloudwatch:us-east-1:123456789012:alarm:Task-EcsScalingAlarm61D4C776-93VGP1UMJQ4A",
                 "AlarmConfigurationUpdatedTimestamp": datetime.datetime(2022,
                     4,
                     15,
@@ -190,18 +190,18 @@ def boto3_cw_alarm_ok_response() -> Dict[str, Any]:
             {
                 'ActionsEnabled': True,
                 'AlarmActions': [],
-                'AlarmArn': 'arn:aws:cloudwatch:us-east-2:672774589314:alarm:ModelRunnerTaskModelRunnerScalingAlarm84928327',
+                'AlarmArn': 'arn:aws:cloudwatch:us-east-2:672774589314:alarm:TaskScalingAlarm84928327',
                 'AlarmConfigurationUpdatedTimestamp': datetime.datetime(2022, 10, 30, 20, 40, 38, 309000, tzinfo=tzutc()),
-                'AlarmName': 'ModelRunnerTaskModelRunnerScalingAlarm84928327',
-                'AlarmRule': '(ALARM("arn:aws:cloudwatch:us-east-2:672774589314:alarm:ModelRunner-Task-RegionQueueScalingAlarm03E56567-LL8Z2IXZJQ5V") OR ALARM("arn:aws:cloudwatch:us-east-2:672774589314:alarm:ModelRunner-Task-ImageQueueScalingAlarm846F1F23-19LPTQIB9ANUQ") OR ALARM("arn:aws:cloudwatch:us-east-2:672774589314:alarm:ModelRunner-Task-ModelRunnerServiceMemAlarmC912E54C-1QNESY6WB4QW9") OR ALARM("arn:aws:cloudwatch:us-east-2:672774589314:alarm:ModelRunner-Task-ModelRunnerServiceCPUAlarmF42C7BBC-1TJ9IFELBG9IK"))',
+                'AlarmName': 'TaskScalingAlarm84928327',
+                'AlarmRule': '(ALARM("arn:aws:cloudwatch:us-east-2:672774589314:alarm:-Task-RegionQueueScalingAlarm03E56567-LL8Z2IXZJQ5V") OR ALARM("arn:aws:cloudwatch:us-east-2:672774589314:alarm:-Task-ImageQueueScalingAlarm846F1F23-19LPTQIB9ANUQ") OR ALARM("arn:aws:cloudwatch:us-east-2:672774589314:alarm:-Task-ServiceMemAlarmC912E54C-1QNESY6WB4QW9") OR ALARM("arn:aws:cloudwatch:us-east-2:672774589314:alarm:-Task-ServiceCPUAlarmF42C7BBC-1TJ9IFELBG9IK"))',
                 'InsufficientDataActions': [],
                 'OKActions': [],
-                'StateReason': 'arn:aws:cloudwatch:us-east-2:672774589314:alarm:ModelRunner-Task-ImageQueueScalingAlarm846F1F23-19LPTQIB9ANUQ transitioned to ALARM at Sunday 30 October, 2022 20:47:35 UTC',
+                'StateReason': 'arn:aws:cloudwatch:us-east-2:672774589314:alarm:-Task-ImageQueueScalingAlarm846F1F23-19LPTQIB9ANUQ transitioned to ALARM at Sunday 30 October, 2022 20:47:35 UTC',
                 'StateReasonData': """
                     {
                         "triggeringAlarms":[
                             {
-                                "arn":"arn:aws:cloudwatch:us-east-2:672774589314:alarm:ModelRunner-Task-ImageQueueScalingAlarm846F1F23-19LPTQIB9ANUQ",
+                                "arn":"arn:aws:cloudwatch:us-east-2:672774589314:alarm:-Task-ImageQueueScalingAlarm846F1F23-19LPTQIB9ANUQ",
                                 "state":{
                                     "value":"ALARM",
                                     "timestamp":"2022-10-30T20:47:35.671+0000"
@@ -216,8 +216,8 @@ def boto3_cw_alarm_ok_response() -> Dict[str, Any]:
         ],
         "MetricAlarms": [
             {
-                "AlarmName": "MR-Task-EcsScalingAlarm61D4C776-93VGP1UMJQ4A",
-                "AlarmArn": "arn:aws:cloudwatch:us-east-1:123456789012:alarm:MR-Task-EcsScalingAlarm61D4C776-93VGP1UMJQ4A",
+                "AlarmName": "Task-EcsScalingAlarm61D4C776-93VGP1UMJQ4A",
+                "AlarmArn": "arn:aws:cloudwatch:us-east-1:123456789012:alarm:Task-EcsScalingAlarm61D4C776-93VGP1UMJQ4A",
                 "AlarmConfigurationUpdatedTimestamp": datetime.datetime(2022,
                     4,
                     15,
