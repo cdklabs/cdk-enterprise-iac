@@ -21,6 +21,7 @@ export class CfnStore {
   public readonly templates: Json = {};
   public readonly flatTemplates: FlatJson;
   public readonly extractedStackExports: FlatJson = {};
+  public readonly trackedExports: Json = {};
 
   constructor(props: CfnStoreProps) {
     /** Save CloudFormation templates for future lookup */
@@ -36,6 +37,9 @@ export class CfnStore {
         this.extractedStackExports = this.createExportMap(stack);
       }
     }
+    // if (props.valueShareMethod == ResourceExtractorShareMethod.CFN_OUTPUT) {
+    //   this.trackedExports = {}
+    // }
   }
 
   /**
@@ -59,6 +63,23 @@ export class CfnStore {
       return resource.getAtt(attToGet);
     } else if (splitKey.slice(-2)[0] == 'DependsOn') {
       return false;
+    } else if (splitKey.slice(-1)[0] == 'Fn::ImportValue') {
+      // CDK has already configured the proper Export/Imports
+      // Work backwards to determine what this should be overwritten to
+      const originalImportWithoutStack =
+        this.flatTemplates[flattendKey].split(':')[1];
+      for (let exported of Object.values(this.trackedExports)) {
+        if (
+          exported['Fn::ImportValue'].split(':')[1] ==
+          originalImportWithoutStack
+        ) {
+          return { preExported: exported };
+        }
+      }
+
+      throw new Error(
+        `Can't determine export value for ${flattendKey}. Looking for ${this.flatTemplates[flattendKey]}`
+      );
     } else {
       throw new Error(`Can't determine export value for ${flattendKey}`);
     }

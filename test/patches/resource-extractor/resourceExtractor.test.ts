@@ -270,18 +270,76 @@ describe('Extracting resources from stack', () => {
 
       const extractedTemplate = Template.fromStack(extractedStack);
       const appTemplate = Template.fromStack(stack);
-      const roleLogicalId = Object.keys(
-        extractedTemplate.findResources('AWS::IAM::Role')
-      )[0];
 
-      extractedTemplate.hasOutput(`Export${appStackName}${roleLogicalId}`, {
-        Export: {
-          Name: `${appStackName}:${roleLogicalId}`,
-        },
-      });
+      extractedTemplate.hasOutput(
+        'ExportsOutputFnGetAttTestLambdaServiceRoleC28C2D9CArnEAAAEF1D',
+        {
+          Export: {
+            Name: 'ExtractedStack:ExportsOutputFnGetAttTestLambdaServiceRoleC28C2D9CArnEAAAEF1D',
+          },
+        }
+      );
       appTemplate.hasResourceProperties('AWS::Lambda::Function', {
         Role: {
-          'Fn::ImportValue': `${appStackName}:${roleLogicalId}`,
+          'Fn::ImportValue':
+            'ExtractedStack:ExportsOutputFnGetAttTestLambdaServiceRoleC28C2D9CArnEAAAEF1D',
+        },
+      });
+    });
+
+    test('More complex case', () => {
+      const secondStack = new Stack(app, 'AnotherStack');
+      const func = new Function(stack, 'TestLambda', {
+        code: Code.fromInline(`def handler(event, context)\n    print(event)`),
+        handler: 'index.handler',
+        runtime: Runtime.PYTHON_3_9,
+      });
+      const key = new Key(stack, 'TestKey');
+      key.addAlias('alias/TestKey');
+      const bucket = new Bucket(stack, 'TestBucket', {
+        encryptionKey: key,
+      });
+      bucket.grantReadWrite(func);
+      new Function(secondStack, 'SecondTestLambda', {
+        code: Code.fromInline(`def handler(event, context)\n    print(event)`),
+        handler: 'index.handler',
+        runtime: Runtime.PYTHON_3_9,
+        role: func.role,
+      });
+
+      const synthedApp = app.synth();
+      Aspects.of(app).add(
+        new ResourceExtractor({
+          extractDestinationStack: extractedStack,
+          stackArtifacts: synthedApp.stacks,
+          valueShareMethod: ResourceExtractorShareMethod.CFN_OUTPUT,
+          resourceTypesToExtract,
+        })
+      );
+      app.synth({ force: true });
+
+      const extractedTemplate = Template.fromStack(extractedStack);
+      const appTemplate = Template.fromStack(stack);
+      const secondTemplate = Template.fromStack(secondStack);
+
+      extractedTemplate.hasOutput(
+        'ExportsOutputFnGetAttTestLambdaServiceRoleC28C2D9CArnEAAAEF1D',
+        {
+          Export: {
+            Name: 'ExtractedStack:ExportsOutputFnGetAttTestLambdaServiceRoleC28C2D9CArnEAAAEF1D',
+          },
+        }
+      );
+      appTemplate.hasResourceProperties('AWS::Lambda::Function', {
+        Role: {
+          'Fn::ImportValue':
+            'ExtractedStack:ExportsOutputFnGetAttTestLambdaServiceRoleC28C2D9CArnEAAAEF1D',
+        },
+      });
+      secondTemplate.hasResourceProperties('AWS::Lambda::Function', {
+        Role: {
+          'Fn::ImportValue':
+            'ExtractedStack:ExportsOutputFnGetAttTestLambdaServiceRoleC28C2D9CArnEAAAEF1D',
         },
       });
     });
@@ -319,21 +377,19 @@ describe('Extracting resources from stack', () => {
 
       const extractedTemplate = Template.fromStack(extractedStack);
       const appTemplate = Template.fromStack(stack);
-      const instanceProfileLogicalId = Object.keys(
-        extractedTemplate.findResources('AWS::IAM::InstanceProfile')
-      )[0];
 
       extractedTemplate.hasOutput(
-        `Export${appStackName}${instanceProfileLogicalId}`,
+        'ExportsOutputRefTestInstanceInstanceProfileD0E2591041A4E70E',
         {
           Export: {
-            Name: `${appStackName}:${instanceProfileLogicalId}`,
+            Name: 'ExtractedStack:ExportsOutputRefTestInstanceInstanceProfileD0E2591041A4E70E',
           },
         }
       );
       appTemplate.hasResourceProperties('AWS::EC2::Instance', {
         IamInstanceProfile: {
-          'Fn::ImportValue': `${appStackName}:${instanceProfileLogicalId}`,
+          'Fn::ImportValue':
+            'ExtractedStack:ExportsOutputRefTestInstanceInstanceProfileD0E2591041A4E70E',
         },
       });
     });
@@ -394,6 +450,12 @@ describe('Extracting resources from stack', () => {
       new CfnOutput(stack, 'MyOutputRole', {
         value: role.roleArn,
         exportName: 'myExport',
+      });
+      new Function(stack, 'TestLambda', {
+        code: Code.fromInline(`def handler(event, context)\n    print(event)`),
+        handler: 'index.handler',
+        runtime: Runtime.PYTHON_3_9,
+        role,
       });
 
       const synthedApp = app.synth();
@@ -583,10 +645,6 @@ describe('Sharing Methods - API_LOOKUP', () => {
     const extractedTemplate = Template.fromStack(extractedStack);
     const appTemplate = Template.fromStack(stack);
 
-    const roleLogicalId = Object.keys(
-      extractedTemplate.findResources('AWS::IAM::Role')
-    )[0];
-
     // Extracted stack has IAM resources
     extractedTemplate.resourceCountIs('AWS::IAM::Role', 1);
     extractedTemplate.resourceCountIs('AWS::IAM::Policy', 1);
@@ -595,7 +653,7 @@ describe('Sharing Methods - API_LOOKUP', () => {
     appTemplate.resourceCountIs('AWS::S3::Bucket', 1);
     appTemplate.resourceCountIs('AWS::Lambda::Function', 1);
     appTemplate.hasResourceProperties('AWS::Lambda::Function', {
-      Role: `dummy-value-for-${appStackName}:${roleLogicalId}`,
+      Role: 'dummy-value-for-ExtractedStack:ExportsOutputFnGetAttTestLambdaServiceRoleC28C2D9CArnEAAAEF1D',
     });
   });
 });

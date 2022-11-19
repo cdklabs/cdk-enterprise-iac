@@ -2,7 +2,14 @@
 Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
 SPDX-License-Identifier: Apache-2.0
 */
-import { Annotations, CfnResource, Fn, IAspect, Stack } from 'aws-cdk-lib';
+import {
+  Annotations,
+  CfnResource,
+  Fn,
+  IAspect,
+  Stack,
+  Token,
+} from 'aws-cdk-lib';
 import { StringParameter } from 'aws-cdk-lib/aws-ssm';
 import { CloudFormationStackArtifact } from 'aws-cdk-lib/cx-api';
 import { IConstruct } from 'constructs';
@@ -189,6 +196,12 @@ export class ResourceExtractor implements IAspect {
         (key) => this.cfn.flatTemplates[key] === logicalId
       );
 
+      // Check to see if any of these are outputs that would be exported/imported
+      const foundOutputs = this.getRelatedImports(foundRefs);
+      foundRefs.push(...foundOutputs);
+      // track exported values
+      // const exportedValues: string[] = []
+
       // loop through resources in stack with Cfn intrinsic functions
       // referencing extracted resources
       for (const foundRef of foundRefs) {
@@ -201,37 +214,41 @@ export class ResourceExtractor implements IAspect {
           foundRef
         ) as CfnResource;
 
-        let exportName;
-        if ('_exportName' in foundRefNode) {
-          const outputNode = foundRefNode as any;
-          exportName = outputNode._exportName;
-        } else {
-          exportName = this.extractDestinationStack.resolve(res.logicalId);
+        // if a found ref is an Output, we can safely remove
+        const foundRefType = foundRef.split('.')[1];
+        if (foundRefType == 'Outputs') {
+          // This resource was referenced in an output
+          // which is no longer needed and can be removed
+          node.stack.node.children.map((child) => {
+            console.log(child);
+            child.node.tryRemoveChild(foundRefNode?.node.id);
+          });
+          continue;
         }
+
+        const exportName = this.extractDestinationStack.resolve(res.logicalId);
+
         // Figure out the pattern of how extracted resource is being referenced
-        // e.g. using `Fn::GetAtt` or `Ref`
-        const exportValue = this.cfn.determineExportValue(node, foundRef);
+        // e.g. using `Fn::GetAtt`, `Ref` or `Fn::ImportValue`
+        const exportValue = this.cfn.determineExportValue(res, foundRef);
         if (exportValue) {
+          let importValue;
+          if (typeof exportValue === 'object' && 'preExported' in exportValue) {
+            importValue = exportValue.preExported;
+          } else {
+            importValue = this.exportValue(node.stack, exportName, exportValue);
+            this.cfn.trackedExports[foundRef] =
+              this.extractDestinationStack.resolve(importValue);
+          }
           // Generate export in ExportedStack, and return the `Fn::ImportValue`
           // method to use when referencing in the App stack
-          const importValue = this.exportValue(
-            node.stack,
-            exportName,
-            exportValue
-          );
 
-          const foundRefType = foundRef.split('.')[1];
           if (foundRefType == 'Resources') {
             // Override any ref to extracted resource
             this.overrideFoundRefWithImportValue({
               foundRefNode,
               importValue,
               flattenedKey: foundRef,
-            });
-          } else if (foundRefType == 'Outputs') {
-            /** Delete Output */
-            node.stack.node.children.map((child) => {
-              child.node.tryRemoveChild(foundRefNode.node.id);
             });
           }
         }
@@ -311,7 +328,10 @@ export class ResourceExtractor implements IAspect {
     // find property to override
     const splitKey = props.flattenedKey.split('.');
     let propertyOverridePath: string;
-    if (splitKey.slice(-1)[0] == 'Ref') {
+    if (
+      splitKey.slice(-1)[0] == 'Ref' ||
+      splitKey.slice(-1)[0] == 'Fn::ImportValue'
+    ) {
       propertyOverridePath = splitKey.slice(4, -1).join('.');
     } else if (splitKey.slice(-2)[0] == 'Fn::GetAtt') {
       propertyOverridePath = splitKey.slice(4, -2).join('.');
@@ -319,10 +339,17 @@ export class ResourceExtractor implements IAspect {
       propertyOverridePath = 'notFound';
     }
     if (this.valueShareMethod == ResourceExtractorShareMethod.CFN_OUTPUT) {
-      props.foundRefNode.addPropertyOverride(
-        propertyOverridePath,
-        props.foundRefNode.stack.resolve(props.importValue)
-      );
+      if (Token.isUnresolved(props.importValue)) {
+        props.foundRefNode.addPropertyOverride(
+          propertyOverridePath,
+          props.foundRefNode.stack.resolve(props.importValue)
+        );
+      } else {
+        props.foundRefNode.addPropertyOverride(
+          propertyOverridePath,
+          props.importValue
+        );
+      }
     } else if (
       this.valueShareMethod == ResourceExtractorShareMethod.SSM_PARAMETER
     ) {
@@ -376,7 +403,7 @@ export class ResourceExtractor implements IAspect {
     flattendKey: string
   ): IConstruct | undefined {
     const foundRefLogicalId = flattendKey.split('.')[2];
-    return node.stack.node.findAll().find((x: any) => {
+    return node.stack.node.root.node.findAll().find((x: any) => {
       if ('stack' in x && 'logicalId' in x) {
         return x.stack.resolve(x.logicalId) == foundRefLogicalId;
       } else {
@@ -427,6 +454,38 @@ export class ResourceExtractor implements IAspect {
     return logicalIds;
   }
 
+  private getRelatedImports = (foundRefs: string[]): string[] => {
+    const relatedImportResources: string[] = [];
+    for (let i = 0; i < foundRefs.length; i++) {
+      const ref = foundRefs[i];
+      const splitKey = ref.split('.');
+      if (splitKey[1] == 'Outputs') {
+        let possibleExportKey: string;
+        if (splitKey.slice(-1)[0] == 'Ref') {
+          possibleExportKey = splitKey
+            .slice(0, -2)
+            .concat(['Export', 'Name'])
+            .join('.');
+        } else if (splitKey.slice(-2)[0] == 'Fn::GetAtt') {
+          possibleExportKey = splitKey
+            .slice(0, -3)
+            .concat(['Export', 'Name'])
+            .join('.');
+        } else {
+          throw new Error(`Can't determine possible export key for ${ref}`);
+        }
+        if (Object.keys(this.cfn.flatTemplates).includes(possibleExportKey)) {
+          const foundExports = Object.keys(this.cfn.flatTemplates).filter(
+            (key) =>
+              this.cfn.flatTemplates[key] ===
+              this.cfn.flatTemplates[possibleExportKey]
+          );
+          relatedImportResources.push(...foundExports);
+        }
+      }
+    }
+    return relatedImportResources;
+  };
   /**
    * Exports a value using a consistent standard for the different value
    * share methods.
@@ -466,9 +525,10 @@ export class ResourceExtractor implements IAspect {
           `Export${stackName}:${name}`
         )
       ) {
-        return this.extractDestinationStack.exportValue(stack.resolve(value), {
-          name: shareName,
-        });
+        // return this.extractDestinationStack.exportValue(stack.resolve(value), {
+        //   name: shareName,
+        // });
+        return this.extractDestinationStack.exportValue(value);
       } else {
         return Fn.importValue(shareName);
       }
