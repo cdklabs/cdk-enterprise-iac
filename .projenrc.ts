@@ -39,10 +39,8 @@ const project = new awscdk.AwsCdkConstructLibrary({
   },
   autoApproveUpgrades: true,
   depsUpgradeOptions: {
-    // ignoreProjen: false,
     workflowOptions: {
       labels: ['auto-approve'],
-      // secret: 'PROJEN_GITHUB_TOKEN',
       container: {
         image: 'jsii/superchain:1-buster-slim-node14',
       },
@@ -81,22 +79,7 @@ project.eslint?.addExtends('plugin:security/recommended');
 
 new WorkflowDockerPatch(project, { workflow: 'build' });
 new WorkflowDockerPatch(project, { workflow: 'release' });
-// const buildWorkflow = project.tryFindObjectFile('.github/workflows/build.yml');
-// if (buildWorkflow) {
 
-//   buildWorkflow.patch(
-//     JsonPatch.add('/jobs/build/container/options', '--group-add 121')
-//     );
-//   }
-// const releaseWorkflow = project.tryFindObjectFile(
-//   '.github/workflows/release.yml'
-// );
-// if (releaseWorkflow) {
-
-//   releaseWorkflow.patch(
-//     JsonPatch.add('/jobs/release/container/options', '--group-add 121')
-//     );
-// }
 new JsonFile(project, 'test/integ/tsconfig.json', {
   obj: {
     extends: '../../tsconfig.dev.json',
