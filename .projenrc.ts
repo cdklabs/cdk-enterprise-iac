@@ -2,10 +2,14 @@
 Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
 SPDX-License-Identifier: Apache-2.0
 */
-const { awscdk, JsonPatch, JsonFile } = require('projen');
+import { awscdk, JsonFile } from 'projen';
+import { NpmAccess } from 'projen/lib/javascript';
+import { WorkflowDockerPatch } from './projenrc/WorkflowDockerPatch';
+
 const project = new awscdk.AwsCdkConstructLibrary({
   author: 'Taylor Ondrey',
   authorAddress: 'ondreyt@amazon.com',
+  projenrcTs: true,
   cdkVersion: '2.41.0',
   defaultReleaseBranch: 'main',
   name: '@cdklabs/cdk-enterprise-iac',
@@ -28,23 +32,21 @@ const project = new awscdk.AwsCdkConstructLibrary({
     '!**/*.integ.snapshot/**/asset.*/**',
     '*.bak',
   ],
-  eslintOptions: { prettier: true },
+  eslintOptions: { prettier: true, dirs: ['src', 'projenrc'] },
   autoApproveOptions: {
     allowedUsernames: ['cdklabs-automation'],
     secret: 'GITHUB_TOKEN',
   },
   autoApproveUpgrades: true,
   depsUpgradeOptions: {
-    ignoreProjen: false,
     workflowOptions: {
       labels: ['auto-approve'],
-      secret: 'PROJEN_GITHUB_TOKEN',
       container: {
         image: 'jsii/superchain:1-buster-slim-node14',
       },
     },
   },
-  npmAccess: 'public',
+  npmAccess: NpmAccess.PUBLIC,
   publishToPypi: {
     distName: 'cdklabs.cdk-enterprise-iac',
     module: 'cdklabs.cdk_enterprise_iac',
@@ -67,24 +69,18 @@ project.package.addField('prettier', {
   semi: true,
   trailingComma: 'es5',
 });
-project.eslint.addRules({
+project.eslint?.addRules({
   'prettier/prettier': [
     'error',
     { singleQuote: true, semi: true, trailingComma: 'es5' },
   ],
 });
-project.eslint.addExtends('plugin:security/recommended');
-const buildWorkflow = project.tryFindObjectFile('.github/workflows/build.yml');
-buildWorkflow.patch(
-  JsonPatch.add('/jobs/build/container/options', '--group-add 121')
-);
-const releaseWorkflow = project.tryFindObjectFile(
-  '.github/workflows/release.yml'
-);
-releaseWorkflow.patch(
-  JsonPatch.add('/jobs/release/container/options', '--group-add 121')
-);
-const integConfig = new JsonFile(project, 'test/integ/tsconfig.json', {
+project.eslint?.addExtends('plugin:security/recommended');
+
+new WorkflowDockerPatch(project, { workflow: 'build' });
+new WorkflowDockerPatch(project, { workflow: 'release' });
+
+new JsonFile(project, 'test/integ/tsconfig.json', {
   obj: {
     extends: '../../tsconfig.dev.json',
     include: ['./**/integ.*.ts'],

@@ -50,7 +50,8 @@ jobs:
           path: dist
     container:
       image: jsii/superchain:1-buster-slim-node14
-      options: --group-add 121
+      options: --group-add ${{ needs.get-docker-group.outputs.dockerId }}
+    needs: get-docker-group
   self-mutation:
     needs: build
     runs-on: ubuntu-latest
@@ -190,3 +191,11 @@ jobs:
         run: cd .repo && npx projen package:dotnet
       - name: Collect dotnet Artifact
         run: mv .repo/dist dist
+  get-docker-group:
+    runs-on: ubuntu-latest
+    outputs:
+      dockerId: ${{ steps.get_docker_id.outputs.id }}
+    steps:
+      - name: Get docker id
+        id: get_docker_id
+        run: 'echo "id=$(cut -d: -f3 < <(getent group docker))" >> $GITHUB_OUTPUT'

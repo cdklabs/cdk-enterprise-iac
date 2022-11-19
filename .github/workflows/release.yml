@@ -43,7 +43,8 @@ jobs:
           path: dist
     container:
       image: jsii/superchain:1-buster-slim-node14
-      options: --group-add 121
+      options: --group-add ${{ needs.get-docker-group.outputs.dockerId }}
+    needs: get-docker-group
   release_github:
     name: Publish to GitHub Releases
     needs: release
@@ -215,3 +216,11 @@ jobs:
         env:
           NUGET_API_KEY: ${{ secrets.NUGET_API_KEY }}
         run: npx -p publib@latest publib-nuget
+  get-docker-group:
+    runs-on: ubuntu-latest
+    outputs:
+      dockerId: ${{ steps.get_docker_id.outputs.id }}
+    steps:
+      - name: Get docker id
+        id: get_docker_id
+        run: 'echo "id=$(cut -d: -f3 < <(getent group docker))" >> $GITHUB_OUTPUT'
