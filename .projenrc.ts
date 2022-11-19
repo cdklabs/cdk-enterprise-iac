@@ -32,7 +32,7 @@ const project = new awscdk.AwsCdkConstructLibrary({
     '!**/*.integ.snapshot/**/asset.*/**',
     '*.bak',
   ],
-  eslintOptions: { prettier: true, dirs: ['src'] },
+  eslintOptions: { prettier: true, dirs: ['src', 'projenrc'] },
   autoApproveOptions: {
     allowedUsernames: ['cdklabs-automation'],
     secret: 'GITHUB_TOKEN',

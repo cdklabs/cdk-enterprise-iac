@@ -14,7 +14,10 @@ export interface WorkflowDockerPatchOptions {
    * @default - same as `workflow`
    */
   workflowName?: string;
-
+  /**
+   * Name of job that gathers the docker group id
+   * @default - get-docker-group
+   */
   dockerGroupJobName?: string;
 }
 
