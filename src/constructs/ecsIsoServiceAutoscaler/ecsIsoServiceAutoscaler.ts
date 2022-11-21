@@ -5,7 +5,7 @@ SPDX-License-Identifier: Apache-2.0
 
 import * as path from 'path';
 import { Duration } from 'aws-cdk-lib';
-import { Alarm } from 'aws-cdk-lib/aws-cloudwatch';
+import { AlarmBase } from 'aws-cdk-lib/aws-cloudwatch';
 import { Cluster, IService } from 'aws-cdk-lib/aws-ecs';
 import { Rule, Schedule } from 'aws-cdk-lib/aws-events';
 import { LambdaFunction } from 'aws-cdk-lib/aws-events-targets';
@@ -71,8 +71,10 @@ export interface EcsIsoServiceAutoscalerProps {
   readonly maximumTaskCount?: number;
   /**
    * The Cloudwatch Alarm that will cause scaling actions to be invoked, whether it's in or not in alarm will determine scale up and down actions.
+   *
+   * Note: composite alarms can not be generated with CFN in all regions, while this allows you to pass in a composite alarm alarm creation is outside the scope of this construct
    */
-  readonly scaleAlarm: Alarm;
+  readonly scaleAlarm: AlarmBase;
   /**
    * The number of tasks that will scale out on scale out alarm status
    *
