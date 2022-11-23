@@ -408,7 +408,6 @@ describe('Sharing Methods - CFN_OUTPUT', () => {
     // Extracted stack has IAM resources
     extractedTemplate.resourceCountIs('AWS::IAM::Role', 2);
     appTemplate.resourceCountIs('AWS::IAM::Role', 0);
-    console.log(appTemplate.toJSON().Outputs);
     appTemplate.hasOutput('*', {
       Value: {
         'Fn::ImportValue': Match.anyValue(),
@@ -499,7 +498,6 @@ describe('Sharing Methods - SSM_PARAMETER', () => {
     // Extracted stack has IAM resources
     extractedTemplate.resourceCountIs('AWS::IAM::Role', 2);
     appTemplate.resourceCountIs('AWS::IAM::Role', 0);
-    console.log(appTemplate.toJSON().Outputs);
     appTemplate.hasOutput('*', {
       Value: Match.stringLikeRegexp('dummy-value-for-*'),
     });
@@ -588,7 +586,6 @@ describe('Sharing Methods - API_LOOKUP', () => {
     // Extracted stack has IAM resources
     extractedTemplate.resourceCountIs('AWS::IAM::Role', 2);
     appTemplate.resourceCountIs('AWS::IAM::Role', 0);
-    console.log(appTemplate.toJSON().Outputs);
     appTemplate.hasOutput('*', {
       Value: Match.stringLikeRegexp('dummy-value-for-*'),
     });
