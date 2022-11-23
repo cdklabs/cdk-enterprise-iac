@@ -2,7 +2,14 @@
 Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
 SPDX-License-Identifier: Apache-2.0
 */
-import { Annotations, CfnResource, Fn, IAspect, Stack } from 'aws-cdk-lib';
+import {
+  Annotations,
+  CfnOutput,
+  CfnResource,
+  Fn,
+  IAspect,
+  Stack,
+} from 'aws-cdk-lib';
 import { StringParameter } from 'aws-cdk-lib/aws-ssm';
 import { CloudFormationStackArtifact } from 'aws-cdk-lib/cx-api';
 import { IConstruct } from 'constructs';
@@ -12,7 +19,7 @@ import { ResourceTransformer } from './resourceTransformer';
 import { FlatJson, Json } from './types';
 
 interface overrideFoundRefWithImportValueProps {
-  readonly foundRefNode: CfnResource;
+  readonly foundRefNode: CfnResource | CfnOutput;
   readonly importValue: string;
   readonly flattenedKey: string;
 }
@@ -196,10 +203,9 @@ export class ResourceExtractor implements IAspect {
         if (this.isRefAlsoGettingExtracted(foundRef)) continue;
 
         // Get the CfnResource that is referencing this extracted resource
-        const foundRefNode = this.getResourceFromFoundRef(
-          node,
-          foundRef
-        ) as CfnResource;
+        const foundRefNode = this.getResourceFromFoundRef(node, foundRef) as
+          | CfnResource
+          | CfnOutput;
 
         // Figure out the pattern of how extracted resource is being referenced
         // e.g. using `Fn::GetAtt` or `Ref`
@@ -222,10 +228,12 @@ export class ResourceExtractor implements IAspect {
         }
 
         // Remove any DependsOn references
-        this.deletionOverrideDependsOn({
-          foundRefNode,
-          flattenedKey: foundRef,
-        });
+        if (foundRefNode instanceof CfnResource) {
+          this.deletionOverrideDependsOn({
+            foundRefNode,
+            flattenedKey: foundRef,
+          });
+        }
       }
     }
 
@@ -303,32 +311,40 @@ export class ResourceExtractor implements IAspect {
     } else {
       propertyOverridePath = 'notFound';
     }
+
     if (this.valueShareMethod == ResourceExtractorShareMethod.CFN_OUTPUT) {
-      props.foundRefNode.addPropertyOverride(
-        propertyOverridePath,
-        props.foundRefNode.stack.resolve(props.importValue)
-      );
+      const newValue = props.foundRefNode.stack.resolve(props.importValue);
+      if (props.foundRefNode instanceof CfnOutput) {
+        props.foundRefNode.value = newValue;
+      } else {
+        props.foundRefNode.addPropertyOverride(propertyOverridePath, newValue);
+      }
     } else if (
       this.valueShareMethod == ResourceExtractorShareMethod.SSM_PARAMETER
     ) {
-      props.foundRefNode.addPropertyOverride(
-        propertyOverridePath,
-        StringParameter.valueFromLookup(
-          props.foundRefNode.stack,
-          props.importValue
-        )
+      const newValue = StringParameter.valueFromLookup(
+        props.foundRefNode.stack,
+        props.importValue
       );
+      if (props.foundRefNode instanceof CfnOutput) {
+        props.foundRefNode.value = newValue;
+      } else {
+        props.foundRefNode.addPropertyOverride(propertyOverridePath, newValue);
+      }
     } else if (
       this.valueShareMethod == ResourceExtractorShareMethod.API_LOOKUP
     ) {
       const importValue = props.foundRefNode.stack.resolve(props.importValue)[
         'Fn::ImportValue'
       ];
-      props.foundRefNode.addPropertyOverride(
-        propertyOverridePath,
+      const newValue =
         this.cfn.extractedStackExports[importValue] ||
-          `dummy-value-for-${importValue}`
-      );
+        `dummy-value-for-${importValue}`;
+      if (props.foundRefNode instanceof CfnOutput) {
+        props.foundRefNode.value = newValue;
+      } else {
+        props.foundRefNode.addPropertyOverride(propertyOverridePath, newValue);
+      }
     }
   }
 
