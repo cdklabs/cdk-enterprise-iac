@@ -11,11 +11,11 @@
     "@jridgewell/trace-mapping" "^0.3.9"
 
 "@aws-cdk/integ-runner@^2":
-  version "2.51.1"
-  resolved "https://registry.yarnpkg.com/@aws-cdk/integ-runner/-/integ-runner-2.51.1.tgz#164dbb9427b440d4f18807edcea5d9932eb10605"
-  integrity sha512-IoUg2DNYZIL0pdW0H5koh5clboRRxUdmSFN+hImxhWB1T3wcTGGhcxnSUdyAUdiNHhGMwlHKCJBq/rceuCg6BQ==
+  version "2.52.0"
+  resolved "https://registry.yarnpkg.com/@aws-cdk/integ-runner/-/integ-runner-2.52.0.tgz#2b3ad7f6a6d3ee9399d0d66d0db8c7338e428a54"
+  integrity sha512-mdK0j/6flD7uXrNVkXk3w4b+UUusormDFIKlBvFHGXhYaKpnBc10vQCwCYonsEgND3xv7NeZMqdUcJ49JqZ+/Q==
   dependencies:
-    aws-cdk "2.51.1"
+    aws-cdk "2.52.0"
 
 "@aws-cdk/integ-tests-alpha@2.41.0-alpha.0":
   version "2.41.0-alpha.0"
@@ -1295,10 +1295,10 @@ aws-cdk-lib@2.41.0:
     semver "^7.3.7"
     yaml "1.10.2"
 
-aws-cdk@2.51.1:
-  version "2.51.1"
-  resolved "https://registry.yarnpkg.com/aws-cdk/-/aws-cdk-2.51.1.tgz#f836e97b27b3493c2c9c3e36b62f2df6a7d3b946"
-  integrity sha512-c60bIcMfe/gn4qkw/TZvqw+DxVGFn25D624RcciLxIAI/t9v2taaPfIdlCVXDSr3qfy0Oc7GpEh3jL9I/RpVFw==
+aws-cdk@2.52.0:
+  version "2.52.0"
+  resolved "https://registry.yarnpkg.com/aws-cdk/-/aws-cdk-2.52.0.tgz#432820388bbf981a3c16004333cf7337bd615de1"
+  integrity sha512-48MO8W2l+m+vGWmV3yPO67MBP/U1AjmNDhiWpxvGUcPuHHNe6C86/m5yhieXmB8j/WeMxG6p7GsLcjQtwoFvTA==
   optionalDependencies:
     fsevents "2.3.2"
 
@@ -3203,9 +3203,9 @@ ignore-walk@^6.0.0:
     minimatch "^5.0.1"
 
 ignore@^5.2.0:
-  version "5.2.0"
-  resolved "https://registry.yarnpkg.com/ignore/-/ignore-5.2.0.tgz#6d3bac8fa7fe0d45d9f9be7bac2fc279577e345a"
-  integrity sha512-CmxgYGiEPCLhfLnpPp1MoRmifwEIOgjcHXxOBjv7mY96c+eWScsOP9c112ZyLdWHi0FxHjI+4uVhKYp/gcdRmQ==
+  version "5.2.1"
+  resolved "https://registry.yarnpkg.com/ignore/-/ignore-5.2.1.tgz#c2b1f76cb999ede1502f3a226a9310fdfe88d46c"
+  integrity sha512-d2qQLzTJ9WxQftPAuEQpSPmKqzxePjzVbpAVv62AQ64NTL+wR4JkrVqR/LqFsFEUsHDAiId52mJteHDFuDkElA==
 
 import-fresh@^3.0.0, import-fresh@^3.2.1:
   version "3.3.0"
@@ -4069,10 +4069,10 @@ jsii-diff@^1.71.0:
     log4js "^6.7.0"
     yargs "^16.2.0"
 
-jsii-docgen@^7.0.161:
-  version "7.0.161"
-  resolved "https://registry.yarnpkg.com/jsii-docgen/-/jsii-docgen-7.0.161.tgz#a2da6b6afa07c97f9a75b4710d4bf9139cf4bea8"
-  integrity sha512-jQO8jiJuRG4/nBFHJpl1BtiRXXn6FaYcfCy800DVgO7gQg2rsCMD3JJ9GFypL8ih/A9YBB+ydST1vS/M3rjRFQ==
+jsii-docgen@^7.0.162:
+  version "7.0.162"
+  resolved "https://registry.yarnpkg.com/jsii-docgen/-/jsii-docgen-7.0.162.tgz#2dd6bcd710ee60d154605a55ab1ce2eb02031e4b"
+  integrity sha512-ZqjGP8BnM3xC63F8KennuA+HzpUQpe3NX3oeXCA2jyNWq19yGBsldfk8mu8+eraxTffcjCPvBDKwENDX/62paw==
   dependencies:
     "@jsii/spec" "^1.71.0"
     case "^1.6.3"
