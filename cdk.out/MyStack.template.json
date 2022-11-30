@@ -1,0 +1,1859 @@
+{
+ "Resources": {
+  "CdkproxyServerLibansiblePlaybookproxyServerIntegTestBucketC3D6230F": {
+   "Type": "AWS::S3::Bucket",
+   "Properties": {
+    "Tags": [
+     {
+      "Key": "aws-cdk:auto-delete-objects",
+      "Value": "true"
+     },
+     {
+      "Key": "aws-cdk:cr-owned:s3Deployment:32760f04",
+      "Value": "true"
+     }
+    ]
+   },
+   "UpdateReplacePolicy": "Delete",
+   "DeletionPolicy": "Delete",
+   "Metadata": {
+    "aws:cdk:path": "MyStack/Cdk-proxyServer-Lib/ansiblePlaybook/proxyServerIntegTestBucket/Resource"
+   }
+  },
+  "CdkproxyServerLibansiblePlaybookproxyServerIntegTestBucketPolicyFDB432CC": {
+   "Type": "AWS::S3::BucketPolicy",
+   "Properties": {
+    "Bucket": {
+     "Ref": "CdkproxyServerLibansiblePlaybookproxyServerIntegTestBucketC3D6230F"
+    },
+    "PolicyDocument": {
+     "Statement": [
+      {
+       "Action": [
+        "s3:GetBucket*",
+        "s3:List*",
+        "s3:DeleteObject*"
+       ],
+       "Effect": "Allow",
+       "Principal": {
+        "AWS": {
+         "Fn::GetAtt": [
+          "CustomS3AutoDeleteObjectsCustomResourceProviderRole3B1BD092",
+          "Arn"
+         ]
+        }
+       },
+       "Resource": [
+        {
+         "Fn::GetAtt": [
+          "CdkproxyServerLibansiblePlaybookproxyServerIntegTestBucketC3D6230F",
+          "Arn"
+         ]
+        },
+        {
+         "Fn::Join": [
+          "",
+          [
+           {
+            "Fn::GetAtt": [
+             "CdkproxyServerLibansiblePlaybookproxyServerIntegTestBucketC3D6230F",
+             "Arn"
+            ]
+           },
+           "/*"
+          ]
+         ]
+        }
+       ]
+      }
+     ],
+     "Version": "2012-10-17"
+    }
+   },
+   "Metadata": {
+    "aws:cdk:path": "MyStack/Cdk-proxyServer-Lib/ansiblePlaybook/proxyServerIntegTestBucket/Policy/Resource"
+   }
+  },
+  "CdkproxyServerLibansiblePlaybookproxyServerIntegTestBucketAutoDeleteObjectsCustomResource142C2D54": {
+   "Type": "Custom::S3AutoDeleteObjects",
+   "Properties": {
+    "ServiceToken": {
+     "Fn::GetAtt": [
+      "CustomS3AutoDeleteObjectsCustomResourceProviderHandler9D90184F",
+      "Arn"
+     ]
+    },
+    "BucketName": {
+     "Ref": "CdkproxyServerLibansiblePlaybookproxyServerIntegTestBucketC3D6230F"
+    }
+   },
+   "DependsOn": [
+    "CdkproxyServerLibansiblePlaybookproxyServerIntegTestBucketPolicyFDB432CC"
+   ],
+   "UpdateReplacePolicy": "Delete",
+   "DeletionPolicy": "Delete",
+   "Metadata": {
+    "aws:cdk:path": "MyStack/Cdk-proxyServer-Lib/ansiblePlaybook/proxyServerIntegTestBucket/AutoDeleteObjectsCustomResource/Default"
+   }
+  },
+  "CdkproxyServerLibansiblePlaybookDeployPlaybookAwsCliLayer1456E0E9": {
+   "Type": "AWS::Lambda::LayerVersion",
+   "Properties": {
+    "Content": {
+     "S3Bucket": {
+      "Fn::Sub": "cdk-hnb659fds-assets-${AWS::AccountId}-${AWS::Region}"
+     },
+     "S3Key": "731f24951dbe4e08bfc519dd7c23a4f7158528bd5557e38437b08292ab2a873c.zip"
+    },
+    "Description": "/opt/awscli/aws"
+   },
+   "Metadata": {
+    "aws:cdk:path": "MyStack/Cdk-proxyServer-Lib/ansiblePlaybook/DeployPlaybook/AwsCliLayer/Resource",
+    "aws:asset:path": "asset.731f24951dbe4e08bfc519dd7c23a4f7158528bd5557e38437b08292ab2a873c.zip",
+    "aws:asset:is-bundled": false,
+    "aws:asset:property": "Content"
+   }
+  },
+  "CdkproxyServerLibansiblePlaybookDeployPlaybookCustomResource73BD865B": {
+   "Type": "Custom::CDKBucketDeployment",
+   "Properties": {
+    "ServiceToken": {
+     "Fn::GetAtt": [
+      "CustomCDKBucketDeployment8693BB64968944B69AAFB0CC9EB8756C81C01536",
+      "Arn"
+     ]
+    },
+    "SourceBucketNames": [
+     {
+      "Fn::Sub": "cdk-hnb659fds-assets-${AWS::AccountId}-${AWS::Region}"
+     }
+    ],
+    "SourceObjectKeys": [
+     "a3d8f99a1fc57241aa86a09cd0ad6d2fc916fc4353d654214c1f6f3b4ebbf551.zip"
+    ],
+    "DestinationBucketName": {
+     "Ref": "CdkproxyServerLibansiblePlaybookproxyServerIntegTestBucketC3D6230F"
+    },
+    "DestinationBucketKeyPrefix": "s3Deployment",
+    "Prune": true
+   },
+   "UpdateReplacePolicy": "Delete",
+   "DeletionPolicy": "Delete",
+   "Metadata": {
+    "aws:cdk:path": "MyStack/Cdk-proxyServer-Lib/ansiblePlaybook/DeployPlaybook/CustomResource/Default"
+   }
+  },
+  "proxyVPCrProxyVPC2F284DCF": {
+   "Type": "AWS::EC2::VPC",
+   "Properties": {
+    "CidrBlock": "172.16.0.0/18",
+    "EnableDnsHostnames": true,
+    "EnableDnsSupport": true,
+    "InstanceTenancy": "default",
+    "Tags": [
+     {
+      "Key": "Name",
+      "Value": "MyStack/proxyVPC/rProxyVPC"
+     }
+    ]
+   },
+   "Metadata": {
+    "aws:cdk:path": "MyStack/proxyVPC/rProxyVPC/Resource"
+   }
+  },
+  "proxyVPCrProxyVPCrProxyPublicSubnet1SubnetF02C9C2B": {
+   "Type": "AWS::EC2::Subnet",
+   "Properties": {
+    "VpcId": {
+     "Ref": "proxyVPCrProxyVPC2F284DCF"
+    },
+    "AvailabilityZone": {
+     "Fn::Select": [
+      0,
+      {
+       "Fn::GetAZs": ""
+      }
+     ]
+    },
+    "CidrBlock": "172.16.0.0/20",
+    "MapPublicIpOnLaunch": true,
+    "Tags": [
+     {
+      "Key": "aws-cdk:subnet-name",
+      "Value": "rProxyPublic"
+     },
+     {
+      "Key": "aws-cdk:subnet-type",
+      "Value": "Public"
+     },
+     {
+      "Key": "Name",
+      "Value": "MyStack/proxyVPC/rProxyVPC/rProxyPublicSubnet1"
+     }
+    ]
+   },
+   "Metadata": {
+    "aws:cdk:path": "MyStack/proxyVPC/rProxyVPC/rProxyPublicSubnet1/Subnet"
+   }
+  },
+  "proxyVPCrProxyVPCrProxyPublicSubnet1RouteTable0BA78588": {
+   "Type": "AWS::EC2::RouteTable",
+   "Properties": {
+    "VpcId": {
+     "Ref": "proxyVPCrProxyVPC2F284DCF"
+    },
+    "Tags": [
+     {
+      "Key": "Name",
+      "Value": "MyStack/proxyVPC/rProxyVPC/rProxyPublicSubnet1"
+     }
+    ]
+   },
+   "Metadata": {
+    "aws:cdk:path": "MyStack/proxyVPC/rProxyVPC/rProxyPublicSubnet1/RouteTable"
+   }
+  },
+  "proxyVPCrProxyVPCrProxyPublicSubnet1RouteTableAssociation484E11AC": {
+   "Type": "AWS::EC2::SubnetRouteTableAssociation",
+   "Properties": {
+    "RouteTableId": {
+     "Ref": "proxyVPCrProxyVPCrProxyPublicSubnet1RouteTable0BA78588"
+    },
+    "SubnetId": {
+     "Ref": "proxyVPCrProxyVPCrProxyPublicSubnet1SubnetF02C9C2B"
+    }
+   },
+   "Metadata": {
+    "aws:cdk:path": "MyStack/proxyVPC/rProxyVPC/rProxyPublicSubnet1/RouteTableAssociation"
+   }
+  },
+  "proxyVPCrProxyVPCrProxyPublicSubnet1DefaultRouteB5A03A29": {
+   "Type": "AWS::EC2::Route",
+   "Properties": {
+    "RouteTableId": {
+     "Ref": "proxyVPCrProxyVPCrProxyPublicSubnet1RouteTable0BA78588"
+    },
+    "DestinationCidrBlock": "0.0.0.0/0",
+    "GatewayId": {
+     "Ref": "proxyVPCrProxyVPCIGW3B31D572"
+    }
+   },
+   "DependsOn": [
+    "proxyVPCrProxyVPCVPCGW3035C8D7"
+   ],
+   "Metadata": {
+    "aws:cdk:path": "MyStack/proxyVPC/rProxyVPC/rProxyPublicSubnet1/DefaultRoute"
+   }
+  },
+  "proxyVPCrProxyVPCrProxyPublicSubnet2Subnet5919E133": {
+   "Type": "AWS::EC2::Subnet",
+   "Properties": {
+    "VpcId": {
+     "Ref": "proxyVPCrProxyVPC2F284DCF"
+    },
+    "AvailabilityZone": {
+     "Fn::Select": [
+      1,
+      {
+       "Fn::GetAZs": ""
+      }
+     ]
+    },
+    "CidrBlock": "172.16.16.0/20",
+    "MapPublicIpOnLaunch": true,
+    "Tags": [
+     {
+      "Key": "aws-cdk:subnet-name",
+      "Value": "rProxyPublic"
+     },
+     {
+      "Key": "aws-cdk:subnet-type",
+      "Value": "Public"
+     },
+     {
+      "Key": "Name",
+      "Value": "MyStack/proxyVPC/rProxyVPC/rProxyPublicSubnet2"
+     }
+    ]
+   },
+   "Metadata": {
+    "aws:cdk:path": "MyStack/proxyVPC/rProxyVPC/rProxyPublicSubnet2/Subnet"
+   }
+  },
+  "proxyVPCrProxyVPCrProxyPublicSubnet2RouteTableEA131145": {
+   "Type": "AWS::EC2::RouteTable",
+   "Properties": {
+    "VpcId": {
+     "Ref": "proxyVPCrProxyVPC2F284DCF"
+    },
+    "Tags": [
+     {
+      "Key": "Name",
+      "Value": "MyStack/proxyVPC/rProxyVPC/rProxyPublicSubnet2"
+     }
+    ]
+   },
+   "Metadata": {
+    "aws:cdk:path": "MyStack/proxyVPC/rProxyVPC/rProxyPublicSubnet2/RouteTable"
+   }
+  },
+  "proxyVPCrProxyVPCrProxyPublicSubnet2RouteTableAssociation35DB9089": {
+   "Type": "AWS::EC2::SubnetRouteTableAssociation",
+   "Properties": {
+    "RouteTableId": {
+     "Ref": "proxyVPCrProxyVPCrProxyPublicSubnet2RouteTableEA131145"
+    },
+    "SubnetId": {
+     "Ref": "proxyVPCrProxyVPCrProxyPublicSubnet2Subnet5919E133"
+    }
+   },
+   "Metadata": {
+    "aws:cdk:path": "MyStack/proxyVPC/rProxyVPC/rProxyPublicSubnet2/RouteTableAssociation"
+   }
+  },
+  "proxyVPCrProxyVPCrProxyPublicSubnet2DefaultRoute7DC5335A": {
+   "Type": "AWS::EC2::Route",
+   "Properties": {
+    "RouteTableId": {
+     "Ref": "proxyVPCrProxyVPCrProxyPublicSubnet2RouteTableEA131145"
+    },
+    "DestinationCidrBlock": "0.0.0.0/0",
+    "GatewayId": {
+     "Ref": "proxyVPCrProxyVPCIGW3B31D572"
+    }
+   },
+   "DependsOn": [
+    "proxyVPCrProxyVPCVPCGW3035C8D7"
+   ],
+   "Metadata": {
+    "aws:cdk:path": "MyStack/proxyVPC/rProxyVPC/rProxyPublicSubnet2/DefaultRoute"
+   }
+  },
+  "proxyVPCrProxyVPCrProxyPrivateSubnet1SubnetA12C142A": {
+   "Type": "AWS::EC2::Subnet",
+   "Properties": {
+    "VpcId": {
+     "Ref": "proxyVPCrProxyVPC2F284DCF"
+    },
+    "AvailabilityZone": {
+     "Fn::Select": [
+      0,
+      {
+       "Fn::GetAZs": ""
+      }
+     ]
+    },
+    "CidrBlock": "172.16.32.0/20",
+    "MapPublicIpOnLaunch": false,
+    "Tags": [
+     {
+      "Key": "aws-cdk:subnet-name",
+      "Value": "rProxyPrivate"
+     },
+     {
+      "Key": "aws-cdk:subnet-type",
+      "Value": "Isolated"
+     },
+     {
+      "Key": "Name",
+      "Value": "MyStack/proxyVPC/rProxyVPC/rProxyPrivateSubnet1"
+     }
+    ]
+   },
+   "Metadata": {
+    "aws:cdk:path": "MyStack/proxyVPC/rProxyVPC/rProxyPrivateSubnet1/Subnet"
+   }
+  },
+  "proxyVPCrProxyVPCrProxyPrivateSubnet1RouteTableDDD02BA0": {
+   "Type": "AWS::EC2::RouteTable",
+   "Properties": {
+    "VpcId": {
+     "Ref": "proxyVPCrProxyVPC2F284DCF"
+    },
+    "Tags": [
+     {
+      "Key": "Name",
+      "Value": "MyStack/proxyVPC/rProxyVPC/rProxyPrivateSubnet1"
+     }
+    ]
+   },
+   "Metadata": {
+    "aws:cdk:path": "MyStack/proxyVPC/rProxyVPC/rProxyPrivateSubnet1/RouteTable"
+   }
+  },
+  "proxyVPCrProxyVPCrProxyPrivateSubnet1RouteTableAssociation3956BE03": {
+   "Type": "AWS::EC2::SubnetRouteTableAssociation",
+   "Properties": {
+    "RouteTableId": {
+     "Ref": "proxyVPCrProxyVPCrProxyPrivateSubnet1RouteTableDDD02BA0"
+    },
+    "SubnetId": {
+     "Ref": "proxyVPCrProxyVPCrProxyPrivateSubnet1SubnetA12C142A"
+    }
+   },
+   "Metadata": {
+    "aws:cdk:path": "MyStack/proxyVPC/rProxyVPC/rProxyPrivateSubnet1/RouteTableAssociation"
+   }
+  },
+  "proxyVPCrProxyVPCrProxyPrivateSubnet2Subnet8B71C0F3": {
+   "Type": "AWS::EC2::Subnet",
+   "Properties": {
+    "VpcId": {
+     "Ref": "proxyVPCrProxyVPC2F284DCF"
+    },
+    "AvailabilityZone": {
+     "Fn::Select": [
+      1,
+      {
+       "Fn::GetAZs": ""
+      }
+     ]
+    },
+    "CidrBlock": "172.16.48.0/20",
+    "MapPublicIpOnLaunch": false,
+    "Tags": [
+     {
+      "Key": "aws-cdk:subnet-name",
+      "Value": "rProxyPrivate"
+     },
+     {
+      "Key": "aws-cdk:subnet-type",
+      "Value": "Isolated"
+     },
+     {
+      "Key": "Name",
+      "Value": "MyStack/proxyVPC/rProxyVPC/rProxyPrivateSubnet2"
+     }
+    ]
+   },
+   "Metadata": {
+    "aws:cdk:path": "MyStack/proxyVPC/rProxyVPC/rProxyPrivateSubnet2/Subnet"
+   }
+  },
+  "proxyVPCrProxyVPCrProxyPrivateSubnet2RouteTable1E7014A1": {
+   "Type": "AWS::EC2::RouteTable",
+   "Properties": {
+    "VpcId": {
+     "Ref": "proxyVPCrProxyVPC2F284DCF"
+    },
+    "Tags": [
+     {
+      "Key": "Name",
+      "Value": "MyStack/proxyVPC/rProxyVPC/rProxyPrivateSubnet2"
+     }
+    ]
+   },
+   "Metadata": {
+    "aws:cdk:path": "MyStack/proxyVPC/rProxyVPC/rProxyPrivateSubnet2/RouteTable"
+   }
+  },
+  "proxyVPCrProxyVPCrProxyPrivateSubnet2RouteTableAssociation0C1F8184": {
+   "Type": "AWS::EC2::SubnetRouteTableAssociation",
+   "Properties": {
+    "RouteTableId": {
+     "Ref": "proxyVPCrProxyVPCrProxyPrivateSubnet2RouteTable1E7014A1"
+    },
+    "SubnetId": {
+     "Ref": "proxyVPCrProxyVPCrProxyPrivateSubnet2Subnet8B71C0F3"
+    }
+   },
+   "Metadata": {
+    "aws:cdk:path": "MyStack/proxyVPC/rProxyVPC/rProxyPrivateSubnet2/RouteTableAssociation"
+   }
+  },
+  "proxyVPCrProxyVPCIGW3B31D572": {
+   "Type": "AWS::EC2::InternetGateway",
+   "Properties": {
+    "Tags": [
+     {
+      "Key": "Name",
+      "Value": "MyStack/proxyVPC/rProxyVPC"
+     }
+    ]
+   },
+   "Metadata": {
+    "aws:cdk:path": "MyStack/proxyVPC/rProxyVPC/IGW"
+   }
+  },
+  "proxyVPCrProxyVPCVPCGW3035C8D7": {
+   "Type": "AWS::EC2::VPCGatewayAttachment",
+   "Properties": {
+    "VpcId": {
+     "Ref": "proxyVPCrProxyVPC2F284DCF"
+    },
+    "InternetGatewayId": {
+     "Ref": "proxyVPCrProxyVPCIGW3B31D572"
+    }
+   },
+   "Metadata": {
+    "aws:cdk:path": "MyStack/proxyVPC/rProxyVPC/VPCGW"
+   }
+  },
+  "proxyVPCrProxyVPCrProxyVPCFlowLogIAMRole809DFD14": {
+   "Type": "AWS::IAM::Role",
+   "Properties": {
+    "AssumeRolePolicyDocument": {
+     "Statement": [
+      {
+       "Action": "sts:AssumeRole",
+       "Effect": "Allow",
+       "Principal": {
+        "Service": "vpc-flow-logs.amazonaws.com"
+       }
+      }
+     ],
+     "Version": "2012-10-17"
+    },
+    "Tags": [
+     {
+      "Key": "Name",
+      "Value": "MyStack/proxyVPC/rProxyVPC"
+     }
+    ]
+   },
+   "Metadata": {
+    "aws:cdk:path": "MyStack/proxyVPC/rProxyVPC/rProxyVPCFlowLog/IAMRole/Resource"
+   }
+  },
+  "proxyVPCrProxyVPCrProxyVPCFlowLogIAMRoleDefaultPolicy1B1B3BCF": {
+   "Type": "AWS::IAM::Policy",
+   "Properties": {
+    "PolicyDocument": {
+     "Statement": [
+      {
+       "Action": [
+        "logs:CreateLogStream",
+        "logs:PutLogEvents",
+        "logs:DescribeLogStreams"
+       ],
+       "Effect": "Allow",
+       "Resource": {
+        "Fn::GetAtt": [
+         "proxyVPCrProxyVPCrProxyVPCFlowLogLogGroup31083FE3",
+         "Arn"
+        ]
+       }
+      },
+      {
+       "Action": "iam:PassRole",
+       "Effect": "Allow",
+       "Resource": {
+        "Fn::GetAtt": [
+         "proxyVPCrProxyVPCrProxyVPCFlowLogIAMRole809DFD14",
+         "Arn"
+        ]
+       }
+      }
+     ],
+     "Version": "2012-10-17"
+    },
+    "PolicyName": "proxyVPCrProxyVPCrProxyVPCFlowLogIAMRoleDefaultPolicy1B1B3BCF",
+    "Roles": [
+     {
+      "Ref": "proxyVPCrProxyVPCrProxyVPCFlowLogIAMRole809DFD14"
+     }
+    ]
+   },
+   "Metadata": {
+    "aws:cdk:path": "MyStack/proxyVPC/rProxyVPC/rProxyVPCFlowLog/IAMRole/DefaultPolicy/Resource"
+   }
+  },
+  "proxyVPCrProxyVPCrProxyVPCFlowLogLogGroup31083FE3": {
+   "Type": "AWS::Logs::LogGroup",
+   "Properties": {
+    "RetentionInDays": 731,
+    "Tags": [
+     {
+      "Key": "Name",
+      "Value": "MyStack/proxyVPC/rProxyVPC"
+     }
+    ]
+   },
+   "UpdateReplacePolicy": "Retain",
+   "DeletionPolicy": "Retain",
+   "Metadata": {
+    "aws:cdk:path": "MyStack/proxyVPC/rProxyVPC/rProxyVPCFlowLog/LogGroup/Resource"
+   }
+  },
+  "proxyVPCrProxyVPCrProxyVPCFlowLogFA26526A": {
+   "Type": "AWS::EC2::FlowLog",
+   "Properties": {
+    "ResourceId": {
+     "Ref": "proxyVPCrProxyVPC2F284DCF"
+    },
+    "ResourceType": "VPC",
+    "TrafficType": "ALL",
+    "DeliverLogsPermissionArn": {
+     "Fn::GetAtt": [
+      "proxyVPCrProxyVPCrProxyVPCFlowLogIAMRole809DFD14",
+      "Arn"
+     ]
+    },
+    "LogDestinationType": "cloud-watch-logs",
+    "LogGroupName": {
+     "Ref": "proxyVPCrProxyVPCrProxyVPCFlowLogLogGroup31083FE3"
+    },
+    "Tags": [
+     {
+      "Key": "Name",
+      "Value": "MyStack/proxyVPC/rProxyVPC"
+     }
+    ]
+   },
+   "Metadata": {
+    "aws:cdk:path": "MyStack/proxyVPC/rProxyVPC/rProxyVPCFlowLog/FlowLog"
+   }
+  },
+  "proxyVPCrProxySecurityGroupE383DA72": {
+   "Type": "AWS::EC2::SecurityGroup",
+   "Properties": {
+    "GroupDescription": "Proxy Security Group",
+    "SecurityGroupEgress": [
+     {
+      "CidrIp": "0.0.0.0/0",
+      "Description": "Allow all outbound traffic by default",
+      "IpProtocol": "-1"
+     }
+    ],
+    "SecurityGroupIngress": [
+     {
+      "CidrIp": {
+       "Fn::GetAtt": [
+        "proxyVPCrProxyVPC2F284DCF",
+        "CidrBlock"
+       ]
+      },
+      "Description": "Allow access on proxy port within proxy VPC ",
+      "FromPort": 3128,
+      "IpProtocol": "tcp",
+      "ToPort": 3128
+     }
+    ],
+    "VpcId": {
+     "Ref": "proxyVPCrProxyVPC2F284DCF"
+    }
+   },
+   "Metadata": {
+    "aws:cdk:path": "MyStack/proxyVPC/rProxySecurityGroup/Resource"
+   }
+  },
+  "CustomS3AutoDeleteObjectsCustomResourceProviderRole3B1BD092": {
+   "Type": "AWS::IAM::Role",
+   "Properties": {
+    "AssumeRolePolicyDocument": {
+     "Version": "2012-10-17",
+     "Statement": [
+      {
+       "Action": "sts:AssumeRole",
+       "Effect": "Allow",
+       "Principal": {
+        "Service": "lambda.amazonaws.com"
+       }
+      }
+     ]
+    },
+    "ManagedPolicyArns": [
+     {
+      "Fn::Sub": "arn:${AWS::Partition}:iam::aws:policy/service-role/AWSLambdaBasicExecutionRole"
+     }
+    ]
+   },
+   "Metadata": {
+    "aws:cdk:path": "MyStack/Custom::S3AutoDeleteObjectsCustomResourceProvider/Role"
+   }
+  },
+  "CustomS3AutoDeleteObjectsCustomResourceProviderHandler9D90184F": {
+   "Type": "AWS::Lambda::Function",
+   "Properties": {
+    "Code": {
+     "S3Bucket": {
+      "Fn::Sub": "cdk-hnb659fds-assets-${AWS::AccountId}-${AWS::Region}"
+     },
+     "S3Key": "e57c1acaa363d7d2b81736776007a7091bc73dff4aeb8135627c4511a51e7dca.zip"
+    },
+    "Timeout": 900,
+    "MemorySize": 128,
+    "Handler": "__entrypoint__.handler",
+    "Role": {
+     "Fn::GetAtt": [
+      "CustomS3AutoDeleteObjectsCustomResourceProviderRole3B1BD092",
+      "Arn"
+     ]
+    },
+    "Runtime": "nodejs14.x",
+    "Description": {
+     "Fn::Join": [
+      "",
+      [
+       "Lambda function for auto-deleting objects in ",
+       {
+        "Ref": "CdkproxyServerLibansiblePlaybookproxyServerIntegTestBucketC3D6230F"
+       },
+       " S3 bucket."
+      ]
+     ]
+    }
+   },
+   "DependsOn": [
+    "CustomS3AutoDeleteObjectsCustomResourceProviderRole3B1BD092"
+   ],
+   "Metadata": {
+    "aws:cdk:path": "MyStack/Custom::S3AutoDeleteObjectsCustomResourceProvider/Handler",
+    "aws:asset:path": "asset.e57c1acaa363d7d2b81736776007a7091bc73dff4aeb8135627c4511a51e7dca",
+    "aws:asset:property": "Code"
+   }
+  },
+  "CustomCDKBucketDeployment8693BB64968944B69AAFB0CC9EB8756CServiceRole89A01265": {
+   "Type": "AWS::IAM::Role",
+   "Properties": {
+    "AssumeRolePolicyDocument": {
+     "Statement": [
+      {
+       "Action": "sts:AssumeRole",
+       "Effect": "Allow",
+       "Principal": {
+        "Service": "lambda.amazonaws.com"
+       }
+      }
+     ],
+     "Version": "2012-10-17"
+    },
+    "ManagedPolicyArns": [
+     {
+      "Fn::Join": [
+       "",
+       [
+        "arn:",
+        {
+         "Ref": "AWS::Partition"
+        },
+        ":iam::aws:policy/service-role/AWSLambdaBasicExecutionRole"
+       ]
+      ]
+     }
+    ]
+   },
+   "Metadata": {
+    "aws:cdk:path": "MyStack/Custom::CDKBucketDeployment8693BB64968944B69AAFB0CC9EB8756C/ServiceRole/Resource"
+   }
+  },
+  "CustomCDKBucketDeployment8693BB64968944B69AAFB0CC9EB8756CServiceRoleDefaultPolicy88902FDF": {
+   "Type": "AWS::IAM::Policy",
+   "Properties": {
+    "PolicyDocument": {
+     "Statement": [
+      {
+       "Action": [
+        "s3:GetObject*",
+        "s3:GetBucket*",
+        "s3:List*"
+       ],
+       "Effect": "Allow",
+       "Resource": [
+        {
+         "Fn::Join": [
+          "",
+          [
+           "arn:",
+           {
+            "Ref": "AWS::Partition"
+           },
+           ":s3:::",
+           {
+            "Fn::Sub": "cdk-hnb659fds-assets-${AWS::AccountId}-${AWS::Region}"
+           }
+          ]
+         ]
+        },
+        {
+         "Fn::Join": [
+          "",
+          [
+           "arn:",
+           {
+            "Ref": "AWS::Partition"
+           },
+           ":s3:::",
+           {
+            "Fn::Sub": "cdk-hnb659fds-assets-${AWS::AccountId}-${AWS::Region}"
+           },
+           "/*"
+          ]
+         ]
+        }
+       ]
+      },
+      {
+       "Action": [
+        "s3:GetObject*",
+        "s3:GetBucket*",
+        "s3:List*",
+        "s3:DeleteObject*",
+        "s3:PutObject",
+        "s3:PutObjectLegalHold",
+        "s3:PutObjectRetention",
+        "s3:PutObjectTagging",
+        "s3:PutObjectVersionTagging",
+        "s3:Abort*"
+       ],
+       "Effect": "Allow",
+       "Resource": [
+        {
+         "Fn::GetAtt": [
+          "CdkproxyServerLibansiblePlaybookproxyServerIntegTestBucketC3D6230F",
+          "Arn"
+         ]
+        },
+        {
+         "Fn::Join": [
+          "",
+          [
+           {
+            "Fn::GetAtt": [
+             "CdkproxyServerLibansiblePlaybookproxyServerIntegTestBucketC3D6230F",
+             "Arn"
+            ]
+           },
+           "/*"
+          ]
+         ]
+        }
+       ]
+      }
+     ],
+     "Version": "2012-10-17"
+    },
+    "PolicyName": "CustomCDKBucketDeployment8693BB64968944B69AAFB0CC9EB8756CServiceRoleDefaultPolicy88902FDF",
+    "Roles": [
+     {
+      "Ref": "CustomCDKBucketDeployment8693BB64968944B69AAFB0CC9EB8756CServiceRole89A01265"
+     }
+    ]
+   },
+   "Metadata": {
+    "aws:cdk:path": "MyStack/Custom::CDKBucketDeployment8693BB64968944B69AAFB0CC9EB8756C/ServiceRole/DefaultPolicy/Resource"
+   }
+  },
+  "CustomCDKBucketDeployment8693BB64968944B69AAFB0CC9EB8756C81C01536": {
+   "Type": "AWS::Lambda::Function",
+   "Properties": {
+    "Code": {
+     "S3Bucket": {
+      "Fn::Sub": "cdk-hnb659fds-assets-${AWS::AccountId}-${AWS::Region}"
+     },
+     "S3Key": "f98b78092dcdd31f5e6d47489beb5f804d4835ef86a8085d0a2053cb9ae711da.zip"
+    },
+    "Role": {
+     "Fn::GetAtt": [
+      "CustomCDKBucketDeployment8693BB64968944B69AAFB0CC9EB8756CServiceRole89A01265",
+      "Arn"
+     ]
+    },
+    "Handler": "index.handler",
+    "Layers": [
+     {
+      "Ref": "CdkproxyServerLibansiblePlaybookDeployPlaybookAwsCliLayer1456E0E9"
+     }
+    ],
+    "Runtime": "python3.9",
+    "Timeout": 900
+   },
+   "DependsOn": [
+    "CustomCDKBucketDeployment8693BB64968944B69AAFB0CC9EB8756CServiceRoleDefaultPolicy88902FDF",
+    "CustomCDKBucketDeployment8693BB64968944B69AAFB0CC9EB8756CServiceRole89A01265"
+   ],
+   "Metadata": {
+    "aws:cdk:path": "MyStack/Custom::CDKBucketDeployment8693BB64968944B69AAFB0CC9EB8756C/Resource",
+    "aws:asset:path": "asset.f98b78092dcdd31f5e6d47489beb5f804d4835ef86a8085d0a2053cb9ae711da",
+    "aws:asset:is-bundled": false,
+    "aws:asset:property": "Code"
+   }
+  },
+  "proxyResourcesrProxyRoleE5484524": {
+   "Type": "AWS::IAM::Role",
+   "Properties": {
+    "AssumeRolePolicyDocument": {
+     "Statement": [
+      {
+       "Action": "sts:AssumeRole",
+       "Effect": "Allow",
+       "Principal": {
+        "Service": {
+         "Fn::Join": [
+          "",
+          [
+           "ec2.",
+           {
+            "Ref": "AWS::URLSuffix"
+           }
+          ]
+         ]
+        }
+       }
+      }
+     ],
+     "Version": "2012-10-17"
+    },
+    "ManagedPolicyArns": [
+     {
+      "Fn::Join": [
+       "",
+       [
+        "arn:",
+        {
+         "Ref": "AWS::Partition"
+        },
+        ":iam::aws:policy/AmazonSSMManagedInstanceCore"
+       ]
+      ]
+     },
+     {
+      "Fn::Join": [
+       "",
+       [
+        "arn:",
+        {
+         "Ref": "AWS::Partition"
+        },
+        ":iam::aws:policy/CloudWatchAgentServerPolicy"
+       ]
+      ]
+     }
+    ],
+    "Path": "/"
+   },
+   "Metadata": {
+    "aws:cdk:path": "MyStack/proxyResources/rProxyRole/Resource"
+   }
+  },
+  "proxyResourcesrProxyRoleDefaultPolicyE2A37115": {
+   "Type": "AWS::IAM::Policy",
+   "Properties": {
+    "PolicyDocument": {
+     "Statement": [
+      {
+       "Action": [
+        "cloudformation:DescribeStackResource",
+        "cloudformation:SignalResource"
+       ],
+       "Effect": "Allow",
+       "Resource": {
+        "Ref": "AWS::StackId"
+       }
+      },
+      {
+       "Action": [
+        "s3:GetObject*",
+        "s3:GetBucket*",
+        "s3:List*",
+        "s3:DeleteObject*",
+        "s3:PutObject",
+        "s3:PutObjectLegalHold",
+        "s3:PutObjectRetention",
+        "s3:PutObjectTagging",
+        "s3:PutObjectVersionTagging",
+        "s3:Abort*"
+       ],
+       "Effect": "Allow",
+       "Resource": [
+        {
+         "Fn::GetAtt": [
+          "CdkproxyServerLibansiblePlaybookproxyServerIntegTestBucketC3D6230F",
+          "Arn"
+         ]
+        },
+        {
+         "Fn::Join": [
+          "",
+          [
+           {
+            "Fn::GetAtt": [
+             "CdkproxyServerLibansiblePlaybookproxyServerIntegTestBucketC3D6230F",
+             "Arn"
+            ]
+           },
+           "/*"
+          ]
+         ]
+        }
+       ]
+      },
+      {
+       "Action": [
+        "logs:CreateLogGroup",
+        "logs:CreateLogStream",
+        "logs:PutLogEvents",
+        "logs:DescribeLogStreams"
+       ],
+       "Effect": "Allow",
+       "Resource": {
+        "Fn::GetAtt": [
+         "proxyResourcesrProxyLogGroup38305443",
+         "Arn"
+        ]
+       }
+      }
+     ],
+     "Version": "2012-10-17"
+    },
+    "PolicyName": "proxyResourcesrProxyRoleDefaultPolicyE2A37115",
+    "Roles": [
+     {
+      "Ref": "proxyResourcesrProxyRoleE5484524"
+     }
+    ]
+   },
+   "Metadata": {
+    "aws:cdk:path": "MyStack/proxyResources/rProxyRole/DefaultPolicy/Resource"
+   }
+  },
+  "proxyResourcesrNlb58E2E94E": {
+   "Type": "AWS::ElasticLoadBalancingV2::LoadBalancer",
+   "Properties": {
+    "LoadBalancerAttributes": [
+     {
+      "Key": "deletion_protection.enabled",
+      "Value": "false"
+     }
+    ],
+    "Scheme": "internal",
+    "Subnets": [
+     {
+      "Ref": "proxyVPCrProxyVPCrProxyPrivateSubnet1SubnetA12C142A"
+     },
+     {
+      "Ref": "proxyVPCrProxyVPCrProxyPrivateSubnet2Subnet8B71C0F3"
+     }
+    ],
+    "Type": "network"
+   },
+   "Metadata": {
+    "aws:cdk:path": "MyStack/proxyResources/rNlb/Resource"
+   }
+  },
+  "proxyResourcesrNlbrNlbListnerHTTPS27DB92AA": {
+   "Type": "AWS::ElasticLoadBalancingV2::Listener",
+   "Properties": {
+    "DefaultActions": [
+     {
+      "TargetGroupArn": {
+       "Ref": "proxyResourcesrNlbTargetGrouopFDB58E72"
+      },
+      "Type": "forward"
+     }
+    ],
+    "LoadBalancerArn": {
+     "Ref": "proxyResourcesrNlb58E2E94E"
+    },
+    "Port": 3128,
+    "Protocol": "TCP"
+   },
+   "Metadata": {
+    "aws:cdk:path": "MyStack/proxyResources/rNlb/rNlbListnerHTTPS/Resource"
+   }
+  },
+  "proxyResourcesproxyAsgLaunchTemplateProfile35E8CCD7": {
+   "Type": "AWS::IAM::InstanceProfile",
+   "Properties": {
+    "Roles": [
+     {
+      "Ref": "proxyResourcesrProxyRoleE5484524"
+     }
+    ]
+   },
+   "Metadata": {
+    "aws:cdk:path": "MyStack/proxyResources/proxyAsgLaunchTemplate/Profile"
+   }
+  },
+  "proxyResourcesproxyAsgLaunchTemplateFE52DA58": {
+   "Type": "AWS::EC2::LaunchTemplate",
+   "Properties": {
+    "LaunchTemplateData": {
+     "BlockDeviceMappings": [
+      {
+       "DeviceName": "/dev/xvda",
+       "Ebs": {
+        "VolumeSize": 100,
+        "VolumeType": "gp2"
+       }
+      },
+      {
+       "DeviceName": "/dev/xvdb",
+       "Ebs": {
+        "VolumeSize": 250,
+        "VolumeType": "gp2"
+       }
+      }
+     ],
+     "IamInstanceProfile": {
+      "Arn": {
+       "Fn::GetAtt": [
+        "proxyResourcesproxyAsgLaunchTemplateProfile35E8CCD7",
+        "Arn"
+       ]
+      }
+     },
+     "ImageId": {
+      "Ref": "SsmParameterValueawsserviceamiamazonlinuxlatestamzn2amihvmx8664gp2C96584B6F00A464EAD1953AFF4B05118Parameter"
+     },
+     "InstanceType": "t2.micro",
+     "SecurityGroupIds": [
+      {
+       "Fn::GetAtt": [
+        "proxyVPCrProxySecurityGroupE383DA72",
+        "GroupId"
+       ]
+      }
+     ],
+     "TagSpecifications": [
+      {
+       "ResourceType": "instance",
+       "Tags": [
+        {
+         "Key": "Name",
+         "Value": "MyStack/proxyResources/proxyAsgLaunchTemplate"
+        }
+       ]
+      },
+      {
+       "ResourceType": "volume",
+       "Tags": [
+        {
+         "Key": "Name",
+         "Value": "MyStack/proxyResources/proxyAsgLaunchTemplate"
+        }
+       ]
+      }
+     ],
+     "UserData": {
+      "Fn::Base64": {
+       "Fn::Join": [
+        "",
+        [
+         "#!/bin/bash\nexec > >(tee -a /var/log/user-data.log|logger -t user-data -s 2>/dev/console) 2>&1\nyum -y install lvm2\nyum -y install xfsprogs\necho \"Setup volumes\"\n# Configure logical volumes\nvgcreate osvolume /dev/xvdb\nlvcreate -l 15%VG -n tmp /dev/osvolume\nlvcreate -l 20%VG -n usr_home /dev/osvolume\nlvcreate -l  5%VG -n var /dev/osvolume\nlvcreate -l 40%VG -n var_log /dev/osvolume\nlvcreate -l 10%VG -n var_log_audit /dev/osvolume\n# Format logical volumes\nmkfs.xfs -f /dev/osvolume/tmp\nmkfs.xfs -f /dev/osvolume/usr_home\nmkfs.xfs -f /dev/osvolume/var\nmkfs.xfs -f /dev/osvolume/var_log\nmkfs.xfs -f /dev/osvolume/var_log_audit\n# Mount logical volumes\ncat << EOF >> /etc/fstab\n/dev/osvolume/tmp /tmp xfs defaults,nodev,nosuid,noexec 0 0\n/dev/osvolume/usr_home /usr/home xfs defaults,nodev,nosuid 0 0\n/dev/osvolume/var /var xfs defaults,nodev,nosuid 0 0\n/dev/osvolume/var_log /var/log xfs defaults,nodev,nosuid 0 0\n/dev/osvolume/var_log_audit /var/log/audit xfs defaults,nodev,nosuid 0 0\nEOF\nmount /tmp\nmkdir /usr/home\nmount /usr/home\nrsync -apXs /home/ /usr/home/\nrsync -apXs /var/ /tmp/var/\nmount /var\nmkdir /var/log\nmount /var/log\nmkdir /var/log/audit\nmount /var/log/audit\nrsync -apXs /tmp/var/ /var/\nrm -rf /tmp/*\nexec > >(tee -a /var/log/user-data.log|logger -t user-data -s 2>/dev/console) 2>&1\nmkdir -p /root/.aws\ncat << EOF >> /root/.aws/config\n[default]\nregion = ",
+         {
+          "Ref": "AWS::Region"
+         },
+         "\nEOF\nchmod 600 /root/.aws/config\n# update and install required software\nyum -y update\nyum -y install python-pip python-setuptools awscli awslogs\n# Enable the Extra Packages for Enterprise Linux (EPEL) repository\namazon-linux-extras install ansible2 -y\n# verify ansible install\nansible --version\n# If installing on platform other than AL2, can install helper scripts using link below;\n## See docs here: https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/cfn-helper-scripts-reference.html\n# easy_install https://s3.amazonaws.com/cloudformation-examples/aws-cfn-bootstrap-py3-latest.tar.gz\n# If running from high-side, install cfn-helper scripts and add extra parameters\nadd_cfn_param=''\n# Start cfn-init\n/opt/aws/bin/cfn-init -s ",
+         {
+          "Ref": "AWS::StackId"
+         },
+         " -r proxyAsgLaunchTemplate --region ",
+         {
+          "Ref": "AWS::Region"
+         },
+         " --role ",
+         {
+          "Ref": "proxyResourcesrProxyRoleE5484524"
+         },
+         " $add_cfn_param || error_exit 'Failed to run cfn-init'\npip freeze\necho \"User data complete\"\n# fingerprint: f534f1259189d780\n(\n  set +e\n  /opt/aws/bin/cfn-init -v --region ",
+         {
+          "Ref": "AWS::Region"
+         },
+         " --stack ",
+         {
+          "Ref": "AWS::StackName"
+         },
+         " --resource proxyResourcesrProxyASG6C308D83 -c default\n  /opt/aws/bin/cfn-signal -e $? --region ",
+         {
+          "Ref": "AWS::Region"
+         },
+         " --stack ",
+         {
+          "Ref": "AWS::StackName"
+         },
+         " --resource proxyResourcesrProxyASG6C308D83\n  cat /var/log/cfn-init.log >&2\n)"
+        ]
+       ]
+      }
+     }
+    },
+    "TagSpecifications": [
+     {
+      "ResourceType": "launch-template",
+      "Tags": [
+       {
+        "Key": "Name",
+        "Value": "MyStack/proxyResources/proxyAsgLaunchTemplate"
+       }
+      ]
+     }
+    ]
+   },
+   "Metadata": {
+    "aws:cdk:path": "MyStack/proxyResources/proxyAsgLaunchTemplate/Resource"
+   }
+  },
+  "proxyResourcesrProxyLogGroup38305443": {
+   "Type": "AWS::Logs::LogGroup",
+   "Properties": {
+    "RetentionInDays": 7
+   },
+   "UpdateReplacePolicy": "Retain",
+   "DeletionPolicy": "Retain",
+   "Metadata": {
+    "aws:cdk:path": "MyStack/proxyResources/rProxyLogGroup/Resource"
+   }
+  },
+  "proxyResourcesrProxyASG6C308D83": {
+   "Type": "AWS::AutoScaling::AutoScalingGroup",
+   "Properties": {
+    "MaxSize": "6",
+    "MinSize": "2",
+    "Cooldown": "120",
+    "DesiredCapacity": "2",
+    "HealthCheckGracePeriod": 300,
+    "HealthCheckType": "ELB",
+    "LaunchTemplate": {
+     "LaunchTemplateId": {
+      "Ref": "proxyResourcesproxyAsgLaunchTemplateFE52DA58"
+     },
+     "Version": {
+      "Fn::GetAtt": [
+       "proxyResourcesproxyAsgLaunchTemplateFE52DA58",
+       "LatestVersionNumber"
+      ]
+     }
+    },
+    "TargetGroupARNs": [
+     {
+      "Ref": "proxyResourcesrNlbTargetGrouopFDB58E72"
+     }
+    ],
+    "TerminationPolicies": [
+     "OldestInstance"
+    ],
+    "VPCZoneIdentifier": [
+     {
+      "Ref": "proxyVPCrProxyVPCrProxyPublicSubnet1SubnetF02C9C2B"
+     },
+     {
+      "Ref": "proxyVPCrProxyVPCrProxyPublicSubnet2Subnet5919E133"
+     }
+    ]
+   },
+   "CreationPolicy": {
+    "ResourceSignal": {
+     "Count": 1,
+     "Timeout": "PT10M"
+    }
+   },
+   "UpdatePolicy": {
+    "AutoScalingRollingUpdate": {
+     "SuspendProcesses": [
+      "HealthCheck",
+      "ReplaceUnhealthy",
+      "AZRebalance",
+      "AlarmNotification",
+      "ScheduledActions"
+     ],
+     "WaitOnResourceSignals": true,
+     "PauseTime": "PT10M"
+    },
+    "AutoScalingScheduledAction": {
+     "IgnoreUnmodifiedGroupSizeProperties": true
+    }
+   },
+   "Metadata": {
+    "aws:cdk:path": "MyStack/proxyResources/rProxyASG/ASG",
+    "AWS::CloudFormation::Init": {
+     "configSets": {
+      "default": [
+       "config"
+      ]
+     },
+     "config": {
+      "files": {
+       "/etc/awslogs/awscli.conf": {
+        "content": {
+         "Fn::Join": [
+          "",
+          [
+           " [plugins] \n cwlogs = cwlogs \n [default] \n region = ",
+           {
+            "Ref": "AWS::Region"
+           }
+          ]
+         ]
+        },
+        "encoding": "plain",
+        "mode": "000755",
+        "owner": "root",
+        "group": "root"
+       },
+       "/etc/ansible/ansible.cfg": {
+        "content": "[defaults] \nlog_path = /var/log/ansible.log",
+        "encoding": "plain",
+        "mode": "000755",
+        "owner": "root",
+        "group": "root"
+       },
+       "/etc/awslogs/awslogs.conf": {
+        "content": "\n          state_file = /var/lib/awslogs/agent-state\n          #datetime_format = %d/%b/%Y:%H:%M:%S\n\n          [/var/log/ansible/ansible.log]\n          file = /var/log/ansible.log\n          log_group_name = rProxyLogGrou\n          log_stream_name = {instance_id}/ansible.log\n\n          [/var/log/user-data.log]\n          file = /var/log/user-data.log\n          log_group_name = rProxyLogGroup\n          log_stream_name = {instance_id}/user-data.log')",
+        "encoding": "plain",
+        "mode": "000400",
+        "owner": "root",
+        "group": "root"
+       },
+       "/etc/cfn/cfn-hup.conf": {
+        "content": {
+         "Fn::Join": [
+          "",
+          [
+           "\n          [main]\n          stack= ",
+           {
+            "Ref": "AWS::StackId"
+           },
+           "\n          region= ",
+           {
+            "Ref": "AWS::Region"
+           },
+           "\n          interval=5"
+          ]
+         ]
+        },
+        "encoding": "plain",
+        "mode": "000400",
+        "owner": "root",
+        "group": "root"
+       },
+       "/etc/cfn/hooks.d/cfn-auto-reloader.conf": {
+        "content": {
+         "Fn::Join": [
+          "",
+          [
+           "\n          [cfn-auto-reloader-hook]\n          triggers=post.update\n          path=Resources.rProxyLaunchTemplate\n          action=/opt/aws/bin/cfn-init -v --stack MyStack --resource rProxyLaunchTemplate --region ",
+           {
+            "Ref": "AWS::Region"
+           },
+           "\n          runas=root"
+          ]
+         ]
+        },
+        "encoding": "plain",
+        "mode": "000400",
+        "owner": "root",
+        "group": "root"
+       }
+      },
+      "commands": {
+       "000": {
+        "command": {
+         "Fn::Join": [
+          "",
+          [
+           "aws s3 cp s3://",
+           {
+            "Ref": "CdkproxyServerLibansiblePlaybookproxyServerIntegTestBucketC3D6230F"
+           },
+           "/s3Deployment/ansible-playbook-proxy/ /opt/aws/ansible-playbook-proxy/ --recursive"
+          ]
+         ]
+        }
+       },
+       "001": {
+        "command": {
+         "Fn::Join": [
+          "",
+          [
+           "aws s3 cp s3://",
+           {
+            "Ref": "CdkproxyServerLibansiblePlaybookproxyServerIntegTestBucketC3D6230F"
+           },
+           "/s3Deployment/squid-resources/ /opt/aws/ --recursive"
+          ]
+         ]
+        }
+       },
+       "002": {
+        "command": {
+         "Fn::Join": [
+          "",
+          [
+           "aws s3 cp s3://",
+           {
+            "Ref": "CdkproxyServerLibansiblePlaybookproxyServerIntegTestBucketC3D6230F"
+           },
+           "/s3Deployment/config.sh /opt/aws/config.sh"
+          ]
+         ]
+        }
+       },
+       "003": {
+        "command": "bash /opt/aws/config.sh"
+       },
+       "004": {
+        "command": {
+         "Fn::Join": [
+          "",
+          [
+           "ansible-playbook -vvv ./main.yml --extra-vars '{\"squid\": {\"AWS_REGION\": \"",
+           {
+            "Ref": "AWS::Region"
+           },
+           "\", \"squid_resources_path\": \"/etc/squid\", \"squid_config_files_path\": \"/opt/aws/cf_resources\" }, \"squid_cloudwatch\": {\"AWS_REGION\": \"",
+           {
+            "Ref": "AWS::Region"
+           },
+           "\", \"sns_topic_arn\": \"\", \"log_group_name\": \"MyStack/proxyResources/rProxyLogGroup\", \"proxy_dimension\": \"MyStack\"} }' "
+          ]
+         ]
+        },
+        "env": {
+         "PATH": "/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/root/bin"
+        },
+        "cwd": "/opt/aws/ansible-playbook-proxy",
+        "ignoreErrors": true
+       }
+      },
+      "services": {
+       "sysvinit": {
+        "awslogsd": {
+         "enabled": true,
+         "ensureRunning": true,
+         "files": [
+          "/etc/cfn/cfn-hup.conf",
+          "/etc/cfn/hooks.d/cfn-auto-reloader.conf"
+         ]
+        },
+        "cfn-hup": {
+         "enabled": true,
+         "ensureRunning": true,
+         "files": [
+          "/etc/cfn/cfn-hup.conf",
+          "/etc/cfn/hooks.d/cfn-auto-reloader.conf"
+         ]
+        }
+       }
+      }
+     }
+    }
+   }
+  },
+  "proxyResourcesrProxyASGscaleToCPULowerPolicy4B41F97D": {
+   "Type": "AWS::AutoScaling::ScalingPolicy",
+   "Properties": {
+    "AutoScalingGroupName": {
+     "Ref": "proxyResourcesrProxyASG6C308D83"
+    },
+    "AdjustmentType": "ChangeInCapacity",
+    "MetricAggregationType": "Average",
+    "PolicyType": "StepScaling",
+    "StepAdjustments": [
+     {
+      "MetricIntervalUpperBound": 0,
+      "ScalingAdjustment": -1
+     }
+    ]
+   },
+   "Metadata": {
+    "aws:cdk:path": "MyStack/proxyResources/rProxyASG/scaleToCPU/LowerPolicy/Resource"
+   }
+  },
+  "proxyResourcesrProxyASGscaleToCPULowerAlarmC0B50E17": {
+   "Type": "AWS::CloudWatch::Alarm",
+   "Properties": {
+    "ComparisonOperator": "LessThanOrEqualToThreshold",
+    "EvaluationPeriods": 1,
+    "AlarmActions": [
+     {
+      "Ref": "proxyResourcesrProxyASGscaleToCPULowerPolicy4B41F97D"
+     }
+    ],
+    "AlarmDescription": "Lower threshold scaling alarm",
+    "Dimensions": [
+     {
+      "Name": "AutoScalingGroupName",
+      "Value": {
+       "Ref": "proxyResourcesrProxyASG6C308D83"
+      }
+     }
+    ],
+    "MetricName": "CPUUtilization",
+    "Namespace": "AWS/EC2",
+    "Period": 300,
+    "Statistic": "Average",
+    "Threshold": 10
+   },
+   "Metadata": {
+    "aws:cdk:path": "MyStack/proxyResources/rProxyASG/scaleToCPU/LowerAlarm/Resource"
+   }
+  },
+  "proxyResourcesrProxyASGscaleToCPUUpperPolicyE80B4F7F": {
+   "Type": "AWS::AutoScaling::ScalingPolicy",
+   "Properties": {
+    "AutoScalingGroupName": {
+     "Ref": "proxyResourcesrProxyASG6C308D83"
+    },
+    "AdjustmentType": "ChangeInCapacity",
+    "MetricAggregationType": "Average",
+    "PolicyType": "StepScaling",
+    "StepAdjustments": [
+     {
+      "MetricIntervalLowerBound": 0,
+      "ScalingAdjustment": 1
+     }
+    ]
+   },
+   "Metadata": {
+    "aws:cdk:path": "MyStack/proxyResources/rProxyASG/scaleToCPU/UpperPolicy/Resource"
+   }
+  },
+  "proxyResourcesrProxyASGscaleToCPUUpperAlarm688DAD8C": {
+   "Type": "AWS::CloudWatch::Alarm",
+   "Properties": {
+    "ComparisonOperator": "GreaterThanOrEqualToThreshold",
+    "EvaluationPeriods": 1,
+    "AlarmActions": [
+     {
+      "Ref": "proxyResourcesrProxyASGscaleToCPUUpperPolicyE80B4F7F"
+     }
+    ],
+    "AlarmDescription": "Upper threshold scaling alarm",
+    "Dimensions": [
+     {
+      "Name": "AutoScalingGroupName",
+      "Value": {
+       "Ref": "proxyResourcesrProxyASG6C308D83"
+      }
+     }
+    ],
+    "MetricName": "CPUUtilization",
+    "Namespace": "AWS/EC2",
+    "Period": 300,
+    "Statistic": "Average",
+    "Threshold": 80
+   },
+   "Metadata": {
+    "aws:cdk:path": "MyStack/proxyResources/rProxyASG/scaleToCPU/UpperAlarm/Resource"
+   }
+  },
+  "proxyResourcesrNlbTargetGrouopFDB58E72": {
+   "Type": "AWS::ElasticLoadBalancingV2::TargetGroup",
+   "Properties": {
+    "Port": 3128,
+    "Protocol": "TCP",
+    "TargetGroupAttributes": [
+     {
+      "Key": "deregistration_delay.timeout_seconds",
+      "Value": "60"
+     }
+    ],
+    "TargetType": "instance",
+    "VpcId": {
+     "Ref": "proxyVPCrProxyVPC2F284DCF"
+    }
+   },
+   "Metadata": {
+    "aws:cdk:path": "MyStack/proxyResources/rNlbTargetGrouop/Resource"
+   }
+  },
+  "proxyResourcesrProxyDashboard5D7267FC": {
+   "Type": "AWS::CloudWatch::Dashboard",
+   "Properties": {
+    "DashboardBody": {
+     "Fn::Join": [
+      "",
+      [
+       "{\"widgets\":[{\"type\":\"metric\",\"width\":16,\"height\":9,\"x\":0,\"y\":0,\"properties\":{\"view\":\"timeSeries\",\"title\":\"CPU Utilization\",\"region\":\"",
+       {
+        "Ref": "AWS::Region"
+       },
+       "\",\"metrics\":[[\"AWS/EC2\",\"CPUUtilization\",\"AutoScalingGroupName\",\"",
+       {
+        "Ref": "proxyResourcesrProxyASG6C308D83"
+       },
+       "\"]],\"yAxis\":{}}},{\"type\":\"metric\",\"width\":8,\"height\":3,\"x\":16,\"y\":0,\"properties\":{\"view\":\"timeSeries\",\"title\":\"Server Requests\",\"region\":\"",
+       {
+        "Ref": "AWS::Region"
+       },
+       "\",\"metrics\":[[\"Proxy\",\"server.all.requests\",\"Proxy\",\"MyStack\"],[\"Proxy\",\"server.all.errors\",\"Proxy\",\"MyStack\"]],\"yAxis\":{}}},{\"type\":\"metric\",\"width\":8,\"height\":3,\"x\":16,\"y\":3,\"properties\":{\"view\":\"timeSeries\",\"title\":\"Server Traffic Volume\",\"region\":\"",
+       {
+        "Ref": "AWS::Region"
+       },
+       "\",\"metrics\":[[\"Proxy\",\"server.all.kbytes_in\",\"Proxy\",\"MyStack\"],[\"Proxy\",\"server.all.kbytes_out\",\"Proxy\",\"MyStack\"]],\"yAxis\":{}}},{\"type\":\"metric\",\"width\":8,\"height\":3,\"x\":16,\"y\":6,\"properties\":{\"view\":\"timeSeries\",\"title\":\"Client Traffic Volume\",\"region\":\"",
+       {
+        "Ref": "AWS::Region"
+       },
+       "\",\"metrics\":[[\"Proxy\",\"client_http.kbytes_in\",\"Proxy\",\"MyStack\"],[\"Proxy\",\"client_http.kbytes_out\",\"Proxy\",\"MyStack\"]],\"yAxis\":{}}},{\"type\":\"metric\",\"width\":8,\"height\":4,\"x\":16,\"y\":9,\"properties\":{\"view\":\"timeSeries\",\"title\":\"Client Requests\",\"region\":\"",
+       {
+        "Ref": "AWS::Region"
+       },
+       "\",\"metrics\":[[\"Proxy\",\"client_http.requests\",\"Proxy\",\"MyStack\"],[\"Proxy\",\"client_http.hits\",\"Proxy\",\"MyStack\"],[\"Proxy\",\"client_http.errors\",\"Proxy\",\"MyStack\"]],\"yAxis\":{}}},{\"type\":\"metric\",\"width\":8,\"height\":4,\"x\":0,\"y\":13,\"properties\":{\"view\":\"timeSeries\",\"title\":\"Network IO\",\"region\":\"",
+       {
+        "Ref": "AWS::Region"
+       },
+       "\",\"metrics\":[[\"AWS/EC2\",\"NetworkIn\",\"AutoScalingGroupName\",\"",
+       {
+        "Ref": "proxyResourcesrProxyASG6C308D83"
+       },
+       "\"],[\"AWS/EC2\",\"NetworkOut\",\"AutoScalingGroupName\",\"",
+       {
+        "Ref": "proxyResourcesrProxyASG6C308D83"
+       },
+       "\"]],\"yAxis\":{}}},{\"type\":\"metric\",\"width\":8,\"height\":4,\"x\":8,\"y\":13,\"properties\":{\"view\":\"timeSeries\",\"title\":\"Disk IO\",\"region\":\"",
+       {
+        "Ref": "AWS::Region"
+       },
+       "\",\"metrics\":[[\"AWS/EC2\",\"EBSReadBytes\",\"AutoScalingGroupName\",\"",
+       {
+        "Ref": "proxyResourcesrProxyASG6C308D83"
+       },
+       "\"],[\"AWS/EC2\",\"EBSWriteBytes\",\"AutoScalingGroupName\",\"",
+       {
+        "Ref": "proxyResourcesrProxyASG6C308D83"
+       },
+       "\"]],\"yAxis\":{}}}]}"
+      ]
+     ]
+    },
+    "DashboardName": "cwdashboard-MyStack"
+   },
+   "Metadata": {
+    "aws:cdk:path": "MyStack/proxyResources/rProxyDashboard/Resource"
+   }
+  },
+  "CDKMetadata": {
+   "Type": "AWS::CDK::Metadata",
+   "Properties": {
+    "Analytics": "v2:deflate64:H4sIAAAAAAAA/2VT227iMBD9lr4b79JW1b5CqlaV0CoiiFc0cabg4tiRL0Qoyr/vYOcC2iefc2Y8N4+f+euS/36C1i1EdV4oWfKu8CDOjKRD5154tw7ijJ5l33pA6ciNkuI6ywNPZA0Oe+ZeDl2FjTLXGrXnyfQ+CQycQ+/46nb0TEFdVsA7iriBK9o9WieNZoXUR4Xe6I+ghb8pEyDXEfcMxTPv9o24qfs8Y3koqaIilDpVP6OtCR53UCqc9VmjcoyQMCaIBpZbeQGPc4wv7dES/iS1heuQdGArTyM8xR4/lGk35hhLHWCBIljpr5/WhCZW8CBsgFo67bBuFEVjcRz3Ss8k1LzbmlR+POfHmNGXdh60wNyab6nomjJHxzuqYEo8YhqeAuelUAaqEhRdo6FfaJ5/0bfGnjekr6OONl2846OPdB71YB/xYNuBPdKsxrx3tGcQvHECFGXk3YpIkcjk/Z9WeGwGYWj3TllNq/Hg0jNqLlQteHGiNApsHWNH8A7uVBqw1U2aSN+zLDhv6i06E6xI4x5xWteDuq3qgT6LUJKvWpcpGbeXxa2mr3SkEtgc4SEgPc1FVmlkOVio0SeSGV3JtNbaVMh/3K/L8o0v//Dl04+TcmGD9rJGvk3nP/d8R2rHAwAA"
+   },
+   "Metadata": {
+    "aws:cdk:path": "MyStack/CDKMetadata/Default"
+   },
+   "Condition": "CDKMetadataAvailable"
+  }
+ },
+ "Parameters": {
+  "SsmParameterValueawsserviceamiamazonlinuxlatestamzn2amihvmx8664gp2C96584B6F00A464EAD1953AFF4B05118Parameter": {
+   "Type": "AWS::SSM::Parameter::Value<AWS::EC2::Image::Id>",
+   "Default": "/aws/service/ami-amazon-linux-latest/amzn2-ami-hvm-x86_64-gp2"
+  },
+  "BootstrapVersion": {
+   "Type": "AWS::SSM::Parameter::Value<String>",
+   "Default": "/cdk-bootstrap/hnb659fds/version",
+   "Description": "Version of the CDK Bootstrap resources in this environment, automatically retrieved from SSM Parameter Store. [cdk:skip]"
+  }
+ },
+ "Conditions": {
+  "CDKMetadataAvailable": {
+   "Fn::Or": [
+    {
+     "Fn::Or": [
+      {
+       "Fn::Equals": [
+        {
+         "Ref": "AWS::Region"
+        },
+        "af-south-1"
+       ]
+      },
+      {
+       "Fn::Equals": [
+        {
+         "Ref": "AWS::Region"
+        },
+        "ap-east-1"
+       ]
+      },
+      {
+       "Fn::Equals": [
+        {
+         "Ref": "AWS::Region"
+        },
+        "ap-northeast-1"
+       ]
+      },
+      {
+       "Fn::Equals": [
+        {
+         "Ref": "AWS::Region"
+        },
+        "ap-northeast-2"
+       ]
+      },
+      {
+       "Fn::Equals": [
+        {
+         "Ref": "AWS::Region"
+        },
+        "ap-south-1"
+       ]
+      },
+      {
+       "Fn::Equals": [
+        {
+         "Ref": "AWS::Region"
+        },
+        "ap-southeast-1"
+       ]
+      },
+      {
+       "Fn::Equals": [
+        {
+         "Ref": "AWS::Region"
+        },
+        "ap-southeast-2"
+       ]
+      },
+      {
+       "Fn::Equals": [
+        {
+         "Ref": "AWS::Region"
+        },
+        "ca-central-1"
+       ]
+      },
+      {
+       "Fn::Equals": [
+        {
+         "Ref": "AWS::Region"
+        },
+        "cn-north-1"
+       ]
+      },
+      {
+       "Fn::Equals": [
+        {
+         "Ref": "AWS::Region"
+        },
+        "cn-northwest-1"
+       ]
+      }
+     ]
+    },
+    {
+     "Fn::Or": [
+      {
+       "Fn::Equals": [
+        {
+         "Ref": "AWS::Region"
+        },
+        "eu-central-1"
+       ]
+      },
+      {
+       "Fn::Equals": [
+        {
+         "Ref": "AWS::Region"
+        },
+        "eu-north-1"
+       ]
+      },
+      {
+       "Fn::Equals": [
+        {
+         "Ref": "AWS::Region"
+        },
+        "eu-south-1"
+       ]
+      },
+      {
+       "Fn::Equals": [
+        {
+         "Ref": "AWS::Region"
+        },
+        "eu-west-1"
+       ]
+      },
+      {
+       "Fn::Equals": [
+        {
+         "Ref": "AWS::Region"
+        },
+        "eu-west-2"
+       ]
+      },
+      {
+       "Fn::Equals": [
+        {
+         "Ref": "AWS::Region"
+        },
+        "eu-west-3"
+       ]
+      },
+      {
+       "Fn::Equals": [
+        {
+         "Ref": "AWS::Region"
+        },
+        "me-south-1"
+       ]
+      },
+      {
+       "Fn::Equals": [
+        {
+         "Ref": "AWS::Region"
+        },
+        "sa-east-1"
+       ]
+      },
+      {
+       "Fn::Equals": [
+        {
+         "Ref": "AWS::Region"
+        },
+        "us-east-1"
+       ]
+      },
+      {
+       "Fn::Equals": [
+        {
+         "Ref": "AWS::Region"
+        },
+        "us-east-2"
+       ]
+      }
+     ]
+    },
+    {
+     "Fn::Or": [
+      {
+       "Fn::Equals": [
+        {
+         "Ref": "AWS::Region"
+        },
+        "us-west-1"
+       ]
+      },
+      {
+       "Fn::Equals": [
+        {
+         "Ref": "AWS::Region"
+        },
+        "us-west-2"
+       ]
+      }
+     ]
+    }
+   ]
+  }
+ },
+ "Rules": {
+  "CheckBootstrapVersion": {
+   "Assertions": [
+    {
+     "Assert": {
+      "Fn::Not": [
+       {
+        "Fn::Contains": [
+         [
+          "1",
+          "2",
+          "3",
+          "4",
+          "5"
+         ],
+         {
+          "Ref": "BootstrapVersion"
+         }
+        ]
+       }
+      ]
+     },
+     "AssertDescription": "CDK bootstrap stack version 6 required. Please run 'cdk bootstrap' with a recent version of the CDK CLI."
+    }
+   ]
+  }
+ }
+}

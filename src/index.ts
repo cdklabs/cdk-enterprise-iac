@@ -13,3 +13,5 @@ export * from './constructs/populateProvidedVpc/populateProvidedVpc';
 export * from './constructs/ecsIsoServiceAutoscaler/ecsIsoServiceAutoscaler';
 export * from './patches/resource-extractor/resourceExtractor';
 export { ResourceTransform } from './patches/resource-extractor/resourceTransformer';
+export * from './constructs/proxyServer/proxyServer';
+export * from './constructs/proxyServer/proxyResources';

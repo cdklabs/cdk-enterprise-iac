@@ -8,25 +8,25 @@ import * as logs from 'aws-cdk-lib/aws-logs';
 import * as s3 from 'aws-cdk-lib/aws-s3';
 import { Construct } from 'constructs';
 
-export interface ProxyResourcesProps {
+export interface IProxyResourcesProps {
   /**
    * Vpc to deploy the proxy server in
    */
-  vpc: ec2.Vpc;
+  readonly vpc: ec2.Vpc;
   /**
    * Security group to attach to the proxy server instances
    */
-  proxySG: ec2.SecurityGroup;
+  readonly proxySG: ec2.SecurityGroup;
   /**
    * Port proxy server is accessible on
    */
-  proxyPort: number;
+  readonly proxyPort: number;
   /**
    * Bucket Ansible playbook can be downloaded from for porxy server instances
    */
-  ansibleBucket: string;
+  readonly ansibleBucket: string;
 
-  testBucket: s3.Bucket;
+  readonly testBucket: s3.Bucket;
 }
 
 /**
@@ -42,8 +42,9 @@ export interface ProxyResourcesProps {
 
 export class ProxyResources extends Construct {
   public readonly proxyUrl: string;
+  public readonly proxyArn: string;
 
-  constructor(scope: Construct, id: string, props: ProxyResourcesProps) {
+  constructor(scope: Construct, id: string, props: IProxyResourcesProps) {
     super(scope, id);
 
     // Create the proxy role
@@ -72,6 +73,8 @@ export class ProxyResources extends Construct {
     // Create the proxy url string
     this.proxyUrl =
       'http://' + rNlb.loadBalancerDnsName + ':' + props.proxyPort;
+
+    this.proxyArn = rNlb.loadBalancerArn;
 
     // Create the user data for the launch template
     const userData = ec2.UserData.forLinux();
@@ -200,10 +203,10 @@ export class ProxyResources extends Construct {
       vpc: props.vpc,
       vpcSubnets: { subnetType: ec2.SubnetType.PUBLIC },
       cooldown: cdk.Duration.seconds(120),
-      //healthCheck: asg.HealthCheck.elb( { grace: cdk.Duration.seconds(300) } ), //FIXME will enable health check on the elb for the ASG
-      desiredCapacity: 3,
+      healthCheck: asg.HealthCheck.elb({ grace: cdk.Duration.seconds(300) }), //FIXME will enable health check on the elb for the ASG
+      desiredCapacity: 2,
       maxCapacity: 6,
-      minCapacity: 3,
+      minCapacity: 2,
       terminationPolicies: [asg.TerminationPolicy.OLDEST_INSTANCE],
       launchTemplate: proxyAsgLaunchTemplate,
 
@@ -317,8 +320,10 @@ export class ProxyResources extends Construct {
           }
         )
       ),
-      signals: asg.Signals.waitForAll({ timeout: cdk.Duration.minutes(10) }), //FIXME decide which one to use
-      //signals: asg.Signals.waitForCount(1,{ timeout: cdk.Duration.minutes(10)})
+      //signals: asg.Signals.waitForAll({ timeout: cdk.Duration.minutes(10) }), //FIXME decide which one to use
+      signals: asg.Signals.waitForCount(1, {
+        timeout: cdk.Duration.minutes(10),
+      }),
     });
 
     props.testBucket.grantReadWrite(rProxyAsg);

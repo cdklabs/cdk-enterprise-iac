@@ -268,6 +268,270 @@ The tree node.
 ---
 
 
+### Proxy <a name="Proxy" id="@cdklabs/cdk-enterprise-iac.Proxy"></a>
+
+Creates a Proxy construct.
+
+This construct allows you to deploy a proxy server
+in an Auto Scaling Group fronted by a Networl Loadbalancer
+
+#### Initializers <a name="Initializers" id="@cdklabs/cdk-enterprise-iac.Proxy.Initializer"></a>
+
+```typescript
+import { Proxy } from '@cdklabs/cdk-enterprise-iac'
+
+new Proxy(scope: Construct, id: string, props: ProxyProps)
+```
+
+| **Name** | **Type** | **Description** |
+| --- | --- | --- |
+| <code><a href="#@cdklabs/cdk-enterprise-iac.Proxy.Initializer.parameter.scope">scope</a></code> | <code>constructs.Construct</code> | *No description.* |
+| <code><a href="#@cdklabs/cdk-enterprise-iac.Proxy.Initializer.parameter.id">id</a></code> | <code>string</code> | *No description.* |
+| <code><a href="#@cdklabs/cdk-enterprise-iac.Proxy.Initializer.parameter.props">props</a></code> | <code><a href="#@cdklabs/cdk-enterprise-iac.ProxyProps">ProxyProps</a></code> | *No description.* |
+
+---
+
+##### `scope`<sup>Required</sup> <a name="scope" id="@cdklabs/cdk-enterprise-iac.Proxy.Initializer.parameter.scope"></a>
+
+- *Type:* constructs.Construct
+
+---
+
+##### `id`<sup>Required</sup> <a name="id" id="@cdklabs/cdk-enterprise-iac.Proxy.Initializer.parameter.id"></a>
+
+- *Type:* string
+
+---
+
+##### `props`<sup>Required</sup> <a name="props" id="@cdklabs/cdk-enterprise-iac.Proxy.Initializer.parameter.props"></a>
+
+- *Type:* <a href="#@cdklabs/cdk-enterprise-iac.ProxyProps">ProxyProps</a>
+
+---
+
+#### Methods <a name="Methods" id="Methods"></a>
+
+| **Name** | **Description** |
+| --- | --- |
+| <code><a href="#@cdklabs/cdk-enterprise-iac.Proxy.toString">toString</a></code> | Returns a string representation of this construct. |
+
+---
+
+##### `toString` <a name="toString" id="@cdklabs/cdk-enterprise-iac.Proxy.toString"></a>
+
+```typescript
+public toString(): string
+```
+
+Returns a string representation of this construct.
+
+#### Static Functions <a name="Static Functions" id="Static Functions"></a>
+
+| **Name** | **Description** |
+| --- | --- |
+| <code><a href="#@cdklabs/cdk-enterprise-iac.Proxy.isConstruct">isConstruct</a></code> | Checks if `x` is a construct. |
+
+---
+
+##### ~~`isConstruct`~~ <a name="isConstruct" id="@cdklabs/cdk-enterprise-iac.Proxy.isConstruct"></a>
+
+```typescript
+import { Proxy } from '@cdklabs/cdk-enterprise-iac'
+
+Proxy.isConstruct(x: any)
+```
+
+Checks if `x` is a construct.
+
+###### `x`<sup>Required</sup> <a name="x" id="@cdklabs/cdk-enterprise-iac.Proxy.isConstruct.parameter.x"></a>
+
+- *Type:* any
+
+Any object.
+
+---
+
+#### Properties <a name="Properties" id="Properties"></a>
+
+| **Name** | **Type** | **Description** |
+| --- | --- | --- |
+| <code><a href="#@cdklabs/cdk-enterprise-iac.Proxy.property.node">node</a></code> | <code>constructs.Node</code> | The tree node. |
+| <code><a href="#@cdklabs/cdk-enterprise-iac.Proxy.property.proxyArn">proxyArn</a></code> | <code>string</code> | *No description.* |
+| <code><a href="#@cdklabs/cdk-enterprise-iac.Proxy.property.proxyUrl">proxyUrl</a></code> | <code>string</code> | *No description.* |
+| <code><a href="#@cdklabs/cdk-enterprise-iac.Proxy.property.resources">resources</a></code> | <code><a href="#@cdklabs/cdk-enterprise-iac.ProxyResources">ProxyResources</a></code> | *No description.* |
+
+---
+
+##### `node`<sup>Required</sup> <a name="node" id="@cdklabs/cdk-enterprise-iac.Proxy.property.node"></a>
+
+```typescript
+public readonly node: Node;
+```
+
+- *Type:* constructs.Node
+
+The tree node.
+
+---
+
+##### `proxyArn`<sup>Required</sup> <a name="proxyArn" id="@cdklabs/cdk-enterprise-iac.Proxy.property.proxyArn"></a>
+
+```typescript
+public readonly proxyArn: string;
+```
+
+- *Type:* string
+
+---
+
+##### `proxyUrl`<sup>Required</sup> <a name="proxyUrl" id="@cdklabs/cdk-enterprise-iac.Proxy.property.proxyUrl"></a>
+
+```typescript
+public readonly proxyUrl: string;
+```
+
+- *Type:* string
+
+---
+
+##### `resources`<sup>Required</sup> <a name="resources" id="@cdklabs/cdk-enterprise-iac.Proxy.property.resources"></a>
+
+```typescript
+public readonly resources: ProxyResources;
+```
+
+- *Type:* <a href="#@cdklabs/cdk-enterprise-iac.ProxyResources">ProxyResources</a>
+
+---
+
+
+### ProxyResources <a name="ProxyResources" id="@cdklabs/cdk-enterprise-iac.ProxyResources"></a>
+
+Creates a ProxyResources construct.
+
+This construct will deploy a auto scaling group
+and network load balancer to create a proxy server that can be accessed in the
+private isolated subnets of the vpc it is created in.
+
+#### Initializers <a name="Initializers" id="@cdklabs/cdk-enterprise-iac.ProxyResources.Initializer"></a>
+
+```typescript
+import { ProxyResources } from '@cdklabs/cdk-enterprise-iac'
+
+new ProxyResources(scope: Construct, id: string, props: IProxyResourcesProps)
+```
+
+| **Name** | **Type** | **Description** |
+| --- | --- | --- |
+| <code><a href="#@cdklabs/cdk-enterprise-iac.ProxyResources.Initializer.parameter.scope">scope</a></code> | <code>constructs.Construct</code> | *No description.* |
+| <code><a href="#@cdklabs/cdk-enterprise-iac.ProxyResources.Initializer.parameter.id">id</a></code> | <code>string</code> | *No description.* |
+| <code><a href="#@cdklabs/cdk-enterprise-iac.ProxyResources.Initializer.parameter.props">props</a></code> | <code><a href="#@cdklabs/cdk-enterprise-iac.IProxyResourcesProps">IProxyResourcesProps</a></code> | *No description.* |
+
+---
+
+##### `scope`<sup>Required</sup> <a name="scope" id="@cdklabs/cdk-enterprise-iac.ProxyResources.Initializer.parameter.scope"></a>
+
+- *Type:* constructs.Construct
+
+---
+
+##### `id`<sup>Required</sup> <a name="id" id="@cdklabs/cdk-enterprise-iac.ProxyResources.Initializer.parameter.id"></a>
+
+- *Type:* string
+
+---
+
+##### `props`<sup>Required</sup> <a name="props" id="@cdklabs/cdk-enterprise-iac.ProxyResources.Initializer.parameter.props"></a>
+
+- *Type:* <a href="#@cdklabs/cdk-enterprise-iac.IProxyResourcesProps">IProxyResourcesProps</a>
+
+---
+
+#### Methods <a name="Methods" id="Methods"></a>
+
+| **Name** | **Description** |
+| --- | --- |
+| <code><a href="#@cdklabs/cdk-enterprise-iac.ProxyResources.toString">toString</a></code> | Returns a string representation of this construct. |
+
+---
+
+##### `toString` <a name="toString" id="@cdklabs/cdk-enterprise-iac.ProxyResources.toString"></a>
+
+```typescript
+public toString(): string
+```
+
+Returns a string representation of this construct.
+
+#### Static Functions <a name="Static Functions" id="Static Functions"></a>
+
+| **Name** | **Description** |
+| --- | --- |
+| <code><a href="#@cdklabs/cdk-enterprise-iac.ProxyResources.isConstruct">isConstruct</a></code> | Checks if `x` is a construct. |
+
+---
+
+##### ~~`isConstruct`~~ <a name="isConstruct" id="@cdklabs/cdk-enterprise-iac.ProxyResources.isConstruct"></a>
+
+```typescript
+import { ProxyResources } from '@cdklabs/cdk-enterprise-iac'
+
+ProxyResources.isConstruct(x: any)
+```
+
+Checks if `x` is a construct.
+
+###### `x`<sup>Required</sup> <a name="x" id="@cdklabs/cdk-enterprise-iac.ProxyResources.isConstruct.parameter.x"></a>
+
+- *Type:* any
+
+Any object.
+
+---
+
+#### Properties <a name="Properties" id="Properties"></a>
+
+| **Name** | **Type** | **Description** |
+| --- | --- | --- |
+| <code><a href="#@cdklabs/cdk-enterprise-iac.ProxyResources.property.node">node</a></code> | <code>constructs.Node</code> | The tree node. |
+| <code><a href="#@cdklabs/cdk-enterprise-iac.ProxyResources.property.proxyArn">proxyArn</a></code> | <code>string</code> | *No description.* |
+| <code><a href="#@cdklabs/cdk-enterprise-iac.ProxyResources.property.proxyUrl">proxyUrl</a></code> | <code>string</code> | *No description.* |
+
+---
+
+##### `node`<sup>Required</sup> <a name="node" id="@cdklabs/cdk-enterprise-iac.ProxyResources.property.node"></a>
+
+```typescript
+public readonly node: Node;
+```
+
+- *Type:* constructs.Node
+
+The tree node.
+
+---
+
+##### `proxyArn`<sup>Required</sup> <a name="proxyArn" id="@cdklabs/cdk-enterprise-iac.ProxyResources.property.proxyArn"></a>
+
+```typescript
+public readonly proxyArn: string;
+```
+
+- *Type:* string
+
+---
+
+##### `proxyUrl`<sup>Required</sup> <a name="proxyUrl" id="@cdklabs/cdk-enterprise-iac.ProxyResources.property.proxyUrl"></a>
+
+```typescript
+public readonly proxyUrl: string;
+```
+
+- *Type:* string
+
+---
+
+
 ### SplitVpcEvenly <a name="SplitVpcEvenly" id="@cdklabs/cdk-enterprise-iac.SplitVpcEvenly"></a>
 
 Splits a VPC evenly between a provided number of AZs (3 if not defined), and attaches a provided route table to each, and labels.
@@ -818,6 +1082,91 @@ public readonly vpcId: string;
 - *Type:* string
 
 ID of the VPC provided that needs to be populated.
+
+---
+
+### ProxyProps <a name="ProxyProps" id="@cdklabs/cdk-enterprise-iac.ProxyProps"></a>
+
+#### Initializer <a name="Initializer" id="@cdklabs/cdk-enterprise-iac.ProxyProps.Initializer"></a>
+
+```typescript
+import { ProxyProps } from '@cdklabs/cdk-enterprise-iac'
+
+const proxyProps: ProxyProps = { ... }
+```
+
+#### Properties <a name="Properties" id="Properties"></a>
+
+| **Name** | **Type** | **Description** |
+| --- | --- | --- |
+| <code><a href="#@cdklabs/cdk-enterprise-iac.ProxyProps.property.proxyPlaybookBucketName">proxyPlaybookBucketName</a></code> | <code>string</code> | Name of the bucket to create where the Ansible Playbook will be stored. |
+| <code><a href="#@cdklabs/cdk-enterprise-iac.ProxyProps.property.proxyApprovedDomains">proxyApprovedDomains</a></code> | <code>string[]</code> | Array of the approved Domain for for proxy server. |
+| <code><a href="#@cdklabs/cdk-enterprise-iac.ProxyProps.property.proxyPort">proxyPort</a></code> | <code>number</code> | Port which the proxy will use. |
+| <code><a href="#@cdklabs/cdk-enterprise-iac.ProxyProps.property.proxySecurityGroup">proxySecurityGroup</a></code> | <code>aws-cdk-lib.aws_ec2.SecurityGroup</code> | The security group for the proxy server. |
+| <code><a href="#@cdklabs/cdk-enterprise-iac.ProxyProps.property.proxyVPC">proxyVPC</a></code> | <code>aws-cdk-lib.aws_ec2.Vpc</code> | Vpc to launch the proxy server, should have public subnets and private isolated subnets. |
+
+---
+
+##### `proxyPlaybookBucketName`<sup>Required</sup> <a name="proxyPlaybookBucketName" id="@cdklabs/cdk-enterprise-iac.ProxyProps.property.proxyPlaybookBucketName"></a>
+
+```typescript
+public readonly proxyPlaybookBucketName: string;
+```
+
+- *Type:* string
+
+Name of the bucket to create where the Ansible Playbook will be stored.
+
+---
+
+##### `proxyApprovedDomains`<sup>Optional</sup> <a name="proxyApprovedDomains" id="@cdklabs/cdk-enterprise-iac.ProxyProps.property.proxyApprovedDomains"></a>
+
+```typescript
+public readonly proxyApprovedDomains: string[];
+```
+
+- *Type:* string[]
+- *Default:* ['.amazon.com']
+
+Array of the approved Domain for for proxy server.
+
+---
+
+##### `proxyPort`<sup>Optional</sup> <a name="proxyPort" id="@cdklabs/cdk-enterprise-iac.ProxyProps.property.proxyPort"></a>
+
+```typescript
+public readonly proxyPort: number;
+```
+
+- *Type:* number
+
+Port which the proxy will use.
+
+---
+
+##### `proxySecurityGroup`<sup>Optional</sup> <a name="proxySecurityGroup" id="@cdklabs/cdk-enterprise-iac.ProxyProps.property.proxySecurityGroup"></a>
+
+```typescript
+public readonly proxySecurityGroup: SecurityGroup;
+```
+
+- *Type:* aws-cdk-lib.aws_ec2.SecurityGroup
+- *Default:* A security group with TCP allowed on {proxyPort} for all resources within the proxy vpc cidr
+
+The security group for the proxy server.
+
+---
+
+##### `proxyVPC`<sup>Optional</sup> <a name="proxyVPC" id="@cdklabs/cdk-enterprise-iac.ProxyProps.property.proxyVPC"></a>
+
+```typescript
+public readonly proxyVPC: Vpc;
+```
+
+- *Type:* aws-cdk-lib.aws_ec2.Vpc
+- *Default:* A Vpc with 2 Az containg a public subnet and private isolated subnet in each AZ will be created
+
+Vpc to launch the proxy server, should have public subnets and private isolated subnets.
 
 ---
 
@@ -1658,6 +2007,82 @@ All aspects can visit an IConstruct.
 
 
 
+## Protocols <a name="Protocols" id="Protocols"></a>
+
+### IProxyResourcesProps <a name="IProxyResourcesProps" id="@cdklabs/cdk-enterprise-iac.IProxyResourcesProps"></a>
+
+- *Implemented By:* <a href="#@cdklabs/cdk-enterprise-iac.IProxyResourcesProps">IProxyResourcesProps</a>
+
+
+#### Properties <a name="Properties" id="Properties"></a>
+
+| **Name** | **Type** | **Description** |
+| --- | --- | --- |
+| <code><a href="#@cdklabs/cdk-enterprise-iac.IProxyResourcesProps.property.ansibleBucket">ansibleBucket</a></code> | <code>string</code> | Bucket Ansible playbook can be downloaded from for porxy server instances. |
+| <code><a href="#@cdklabs/cdk-enterprise-iac.IProxyResourcesProps.property.proxyPort">proxyPort</a></code> | <code>number</code> | Port proxy server is accessible on. |
+| <code><a href="#@cdklabs/cdk-enterprise-iac.IProxyResourcesProps.property.proxySG">proxySG</a></code> | <code>aws-cdk-lib.aws_ec2.SecurityGroup</code> | Security group to attach to the proxy server instances. |
+| <code><a href="#@cdklabs/cdk-enterprise-iac.IProxyResourcesProps.property.testBucket">testBucket</a></code> | <code>aws-cdk-lib.aws_s3.Bucket</code> | *No description.* |
+| <code><a href="#@cdklabs/cdk-enterprise-iac.IProxyResourcesProps.property.vpc">vpc</a></code> | <code>aws-cdk-lib.aws_ec2.Vpc</code> | Vpc to deploy the proxy server in. |
+
+---
+
+##### `ansibleBucket`<sup>Required</sup> <a name="ansibleBucket" id="@cdklabs/cdk-enterprise-iac.IProxyResourcesProps.property.ansibleBucket"></a>
+
+```typescript
+public readonly ansibleBucket: string;
+```
+
+- *Type:* string
+
+Bucket Ansible playbook can be downloaded from for porxy server instances.
+
+---
+
+##### `proxyPort`<sup>Required</sup> <a name="proxyPort" id="@cdklabs/cdk-enterprise-iac.IProxyResourcesProps.property.proxyPort"></a>
+
+```typescript
+public readonly proxyPort: number;
+```
+
+- *Type:* number
+
+Port proxy server is accessible on.
+
+---
+
+##### `proxySG`<sup>Required</sup> <a name="proxySG" id="@cdklabs/cdk-enterprise-iac.IProxyResourcesProps.property.proxySG"></a>
+
+```typescript
+public readonly proxySG: SecurityGroup;
+```
+
+- *Type:* aws-cdk-lib.aws_ec2.SecurityGroup
+
+Security group to attach to the proxy server instances.
+
+---
+
+##### `testBucket`<sup>Required</sup> <a name="testBucket" id="@cdklabs/cdk-enterprise-iac.IProxyResourcesProps.property.testBucket"></a>
+
+```typescript
+public readonly testBucket: Bucket;
+```
+
+- *Type:* aws-cdk-lib.aws_s3.Bucket
+
+---
+
+##### `vpc`<sup>Required</sup> <a name="vpc" id="@cdklabs/cdk-enterprise-iac.IProxyResourcesProps.property.vpc"></a>
+
+```typescript
+public readonly vpc: Vpc;
+```
+
+- *Type:* aws-cdk-lib.aws_ec2.Vpc
+
+Vpc to deploy the proxy server in.
+
+---
 
 ## Enums <a name="Enums" id="Enums"></a>
 

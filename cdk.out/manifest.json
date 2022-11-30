@@ -1,0 +1,372 @@
+{
+  "version": "21.0.0",
+  "artifacts": {
+    "Tree": {
+      "type": "cdk:tree",
+      "properties": {
+        "file": "tree.json"
+      }
+    },
+    "MyStack.assets": {
+      "type": "cdk:asset-manifest",
+      "properties": {
+        "file": "MyStack.assets.json",
+        "requiresBootstrapStackVersion": 6,
+        "bootstrapStackVersionSsmParameter": "/cdk-bootstrap/hnb659fds/version"
+      }
+    },
+    "MyStack": {
+      "type": "aws:cloudformation:stack",
+      "environment": "aws://unknown-account/unknown-region",
+      "properties": {
+        "templateFile": "MyStack.template.json",
+        "validateOnSynth": false,
+        "assumeRoleArn": "arn:${AWS::Partition}:iam::${AWS::AccountId}:role/cdk-hnb659fds-deploy-role-${AWS::AccountId}-${AWS::Region}",
+        "cloudFormationExecutionRoleArn": "arn:${AWS::Partition}:iam::${AWS::AccountId}:role/cdk-hnb659fds-cfn-exec-role-${AWS::AccountId}-${AWS::Region}",
+        "stackTemplateAssetObjectUrl": "s3://cdk-hnb659fds-assets-${AWS::AccountId}-${AWS::Region}/b3bd608e6a5cbb6c467fcf4e9ef16ed704fef6e097197e7c5590992bc47c00ca.json",
+        "requiresBootstrapStackVersion": 6,
+        "bootstrapStackVersionSsmParameter": "/cdk-bootstrap/hnb659fds/version",
+        "additionalDependencies": [
+          "MyStack.assets"
+        ],
+        "lookupRole": {
+          "arn": "arn:${AWS::Partition}:iam::${AWS::AccountId}:role/cdk-hnb659fds-lookup-role-${AWS::AccountId}-${AWS::Region}",
+          "requiresBootstrapStackVersion": 8,
+          "bootstrapStackVersionSsmParameter": "/cdk-bootstrap/hnb659fds/version"
+        }
+      },
+      "dependencies": [
+        "MyStack.assets"
+      ],
+      "metadata": {
+        "/MyStack/Cdk-proxyServer-Lib/ansiblePlaybook/proxyServerIntegTestBucket/Resource": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "CdkproxyServerLibansiblePlaybookproxyServerIntegTestBucketC3D6230F"
+          }
+        ],
+        "/MyStack/Cdk-proxyServer-Lib/ansiblePlaybook/proxyServerIntegTestBucket/Policy/Resource": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "CdkproxyServerLibansiblePlaybookproxyServerIntegTestBucketPolicyFDB432CC"
+          }
+        ],
+        "/MyStack/Cdk-proxyServer-Lib/ansiblePlaybook/proxyServerIntegTestBucket/AutoDeleteObjectsCustomResource/Default": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "CdkproxyServerLibansiblePlaybookproxyServerIntegTestBucketAutoDeleteObjectsCustomResource142C2D54"
+          }
+        ],
+        "/MyStack/Cdk-proxyServer-Lib/ansiblePlaybook/DeployPlaybook/AwsCliLayer/Resource": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "CdkproxyServerLibansiblePlaybookDeployPlaybookAwsCliLayer1456E0E9"
+          }
+        ],
+        "/MyStack/Cdk-proxyServer-Lib/ansiblePlaybook/DeployPlaybook/CustomResource/Default": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "CdkproxyServerLibansiblePlaybookDeployPlaybookCustomResource73BD865B"
+          }
+        ],
+        "/MyStack/proxyVPC/rProxyVPC/Resource": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "proxyVPCrProxyVPC2F284DCF"
+          }
+        ],
+        "/MyStack/proxyVPC/rProxyVPC/rProxyPublicSubnet1/Subnet": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "proxyVPCrProxyVPCrProxyPublicSubnet1SubnetF02C9C2B"
+          }
+        ],
+        "/MyStack/proxyVPC/rProxyVPC/rProxyPublicSubnet1/RouteTable": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "proxyVPCrProxyVPCrProxyPublicSubnet1RouteTable0BA78588"
+          }
+        ],
+        "/MyStack/proxyVPC/rProxyVPC/rProxyPublicSubnet1/RouteTableAssociation": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "proxyVPCrProxyVPCrProxyPublicSubnet1RouteTableAssociation484E11AC"
+          }
+        ],
+        "/MyStack/proxyVPC/rProxyVPC/rProxyPublicSubnet1/DefaultRoute": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "proxyVPCrProxyVPCrProxyPublicSubnet1DefaultRouteB5A03A29"
+          }
+        ],
+        "/MyStack/proxyVPC/rProxyVPC/rProxyPublicSubnet2/Subnet": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "proxyVPCrProxyVPCrProxyPublicSubnet2Subnet5919E133"
+          }
+        ],
+        "/MyStack/proxyVPC/rProxyVPC/rProxyPublicSubnet2/RouteTable": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "proxyVPCrProxyVPCrProxyPublicSubnet2RouteTableEA131145"
+          }
+        ],
+        "/MyStack/proxyVPC/rProxyVPC/rProxyPublicSubnet2/RouteTableAssociation": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "proxyVPCrProxyVPCrProxyPublicSubnet2RouteTableAssociation35DB9089"
+          }
+        ],
+        "/MyStack/proxyVPC/rProxyVPC/rProxyPublicSubnet2/DefaultRoute": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "proxyVPCrProxyVPCrProxyPublicSubnet2DefaultRoute7DC5335A"
+          }
+        ],
+        "/MyStack/proxyVPC/rProxyVPC/rProxyPrivateSubnet1/Subnet": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "proxyVPCrProxyVPCrProxyPrivateSubnet1SubnetA12C142A"
+          }
+        ],
+        "/MyStack/proxyVPC/rProxyVPC/rProxyPrivateSubnet1/RouteTable": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "proxyVPCrProxyVPCrProxyPrivateSubnet1RouteTableDDD02BA0"
+          }
+        ],
+        "/MyStack/proxyVPC/rProxyVPC/rProxyPrivateSubnet1/RouteTableAssociation": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "proxyVPCrProxyVPCrProxyPrivateSubnet1RouteTableAssociation3956BE03"
+          }
+        ],
+        "/MyStack/proxyVPC/rProxyVPC/rProxyPrivateSubnet2/Subnet": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "proxyVPCrProxyVPCrProxyPrivateSubnet2Subnet8B71C0F3"
+          }
+        ],
+        "/MyStack/proxyVPC/rProxyVPC/rProxyPrivateSubnet2/RouteTable": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "proxyVPCrProxyVPCrProxyPrivateSubnet2RouteTable1E7014A1"
+          }
+        ],
+        "/MyStack/proxyVPC/rProxyVPC/rProxyPrivateSubnet2/RouteTableAssociation": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "proxyVPCrProxyVPCrProxyPrivateSubnet2RouteTableAssociation0C1F8184"
+          }
+        ],
+        "/MyStack/proxyVPC/rProxyVPC/IGW": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "proxyVPCrProxyVPCIGW3B31D572"
+          }
+        ],
+        "/MyStack/proxyVPC/rProxyVPC/VPCGW": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "proxyVPCrProxyVPCVPCGW3035C8D7"
+          }
+        ],
+        "/MyStack/proxyVPC/rProxyVPC/rProxyVPCFlowLog/IAMRole/Resource": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "proxyVPCrProxyVPCrProxyVPCFlowLogIAMRole809DFD14"
+          }
+        ],
+        "/MyStack/proxyVPC/rProxyVPC/rProxyVPCFlowLog/IAMRole/DefaultPolicy/Resource": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "proxyVPCrProxyVPCrProxyVPCFlowLogIAMRoleDefaultPolicy1B1B3BCF"
+          }
+        ],
+        "/MyStack/proxyVPC/rProxyVPC/rProxyVPCFlowLog/LogGroup/Resource": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "proxyVPCrProxyVPCrProxyVPCFlowLogLogGroup31083FE3"
+          }
+        ],
+        "/MyStack/proxyVPC/rProxyVPC/rProxyVPCFlowLog/FlowLog": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "proxyVPCrProxyVPCrProxyVPCFlowLogFA26526A"
+          }
+        ],
+        "/MyStack/proxyVPC/rProxySecurityGroup/Resource": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "proxyVPCrProxySecurityGroupE383DA72"
+          }
+        ],
+        "/MyStack/Custom::S3AutoDeleteObjectsCustomResourceProvider/Role": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "CustomS3AutoDeleteObjectsCustomResourceProviderRole3B1BD092"
+          }
+        ],
+        "/MyStack/Custom::S3AutoDeleteObjectsCustomResourceProvider/Handler": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "CustomS3AutoDeleteObjectsCustomResourceProviderHandler9D90184F"
+          }
+        ],
+        "/MyStack/Custom::CDKBucketDeployment8693BB64968944B69AAFB0CC9EB8756C/ServiceRole/Resource": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "CustomCDKBucketDeployment8693BB64968944B69AAFB0CC9EB8756CServiceRole89A01265"
+          }
+        ],
+        "/MyStack/Custom::CDKBucketDeployment8693BB64968944B69AAFB0CC9EB8756C/ServiceRole/DefaultPolicy/Resource": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "CustomCDKBucketDeployment8693BB64968944B69AAFB0CC9EB8756CServiceRoleDefaultPolicy88902FDF"
+          }
+        ],
+        "/MyStack/Custom::CDKBucketDeployment8693BB64968944B69AAFB0CC9EB8756C/Resource": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "CustomCDKBucketDeployment8693BB64968944B69AAFB0CC9EB8756C81C01536"
+          }
+        ],
+        "/MyStack/proxyResources/rProxyRole/Resource": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "proxyResourcesrProxyRoleE5484524"
+          }
+        ],
+        "/MyStack/proxyResources/rProxyRole/DefaultPolicy/Resource": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "proxyResourcesrProxyRoleDefaultPolicyE2A37115"
+          }
+        ],
+        "/MyStack/proxyResources/rNlb/Resource": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "proxyResourcesrNlb58E2E94E"
+          }
+        ],
+        "/MyStack/proxyResources/rNlb/rNlbListnerHTTPS/Resource": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "proxyResourcesrNlbrNlbListnerHTTPS27DB92AA"
+          }
+        ],
+        "/MyStack/proxyResources/proxyAsgLaunchTemplate/Profile": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "proxyResourcesproxyAsgLaunchTemplateProfile35E8CCD7"
+          }
+        ],
+        "/MyStack/proxyResources/proxyAsgLaunchTemplate/Resource": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "proxyResourcesproxyAsgLaunchTemplateFE52DA58"
+          }
+        ],
+        "/MyStack/proxyResources/rProxyLogGroup/Resource": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "proxyResourcesrProxyLogGroup38305443"
+          }
+        ],
+        "/MyStack/proxyResources/rProxyASG": [
+          {
+            "type": "aws:cdk:warning",
+            "data": "desiredCapacity has been configured. Be aware this will reset the size of your AutoScalingGroup on every deployment. See https://github.com/aws/aws-cdk/issues/5215",
+            "trace": [
+              "Annotations.addMessage (/Users/blakbar/Documents/open_source/cdk-enterprise-iac/node_modules/aws-cdk-lib/core/lib/annotations.js:1:1213)",
+              "Annotations.addWarning (/Users/blakbar/Documents/open_source/cdk-enterprise-iac/node_modules/aws-cdk-lib/core/lib/annotations.js:1:600)",
+              "new AutoScalingGroup (/Users/blakbar/Documents/open_source/cdk-enterprise-iac/node_modules/aws-cdk-lib/aws-autoscaling/lib/auto-scaling-group.js:1:13492)",
+              "new ProxyResources (/Users/blakbar/Documents/open_source/cdk-enterprise-iac/lib/constructs/proxyServer/proxyResources.js:79:27)",
+              "new Proxy (/Users/blakbar/Documents/open_source/cdk-enterprise-iac/lib/constructs/proxyServer/proxyServer.js:52:26)",
+              "Object.<anonymous> (/Users/blakbar/Documents/open_source/cdk-enterprise-iac/lib/constructs/proxyServer/integ.proxyServer.js:7:1)",
+              "Module._compile (node:internal/modules/cjs/loader:1155:14)",
+              "Object.Module._extensions..js (node:internal/modules/cjs/loader:1209:10)",
+              "Module.load (node:internal/modules/cjs/loader:1033:32)",
+              "Function.Module._load (node:internal/modules/cjs/loader:868:12)",
+              "Function.executeUserEntryPoint [as runMain] (node:internal/modules/run_main:81:12)",
+              "node:internal/main/run_main_module:22:47"
+            ]
+          }
+        ],
+        "/MyStack/proxyResources/rProxyASG/ASG": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "proxyResourcesrProxyASG6C308D83"
+          }
+        ],
+        "/MyStack/proxyResources/rProxyASG/scaleToCPU/LowerPolicy/Resource": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "proxyResourcesrProxyASGscaleToCPULowerPolicy4B41F97D"
+          }
+        ],
+        "/MyStack/proxyResources/rProxyASG/scaleToCPU/LowerAlarm/Resource": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "proxyResourcesrProxyASGscaleToCPULowerAlarmC0B50E17"
+          }
+        ],
+        "/MyStack/proxyResources/rProxyASG/scaleToCPU/UpperPolicy/Resource": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "proxyResourcesrProxyASGscaleToCPUUpperPolicyE80B4F7F"
+          }
+        ],
+        "/MyStack/proxyResources/rProxyASG/scaleToCPU/UpperAlarm/Resource": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "proxyResourcesrProxyASGscaleToCPUUpperAlarm688DAD8C"
+          }
+        ],
+        "/MyStack/proxyResources/rNlbTargetGrouop/Resource": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "proxyResourcesrNlbTargetGrouopFDB58E72"
+          }
+        ],
+        "/MyStack/proxyResources/rProxyDashboard/Resource": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "proxyResourcesrProxyDashboard5D7267FC"
+          }
+        ],
+        "/MyStack/SsmParameterValue:--aws--service--ami-amazon-linux-latest--amzn2-ami-hvm-x86_64-gp2:C96584B6-F00A-464E-AD19-53AFF4B05118.Parameter": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "SsmParameterValueawsserviceamiamazonlinuxlatestamzn2amihvmx8664gp2C96584B6F00A464EAD1953AFF4B05118Parameter"
+          }
+        ],
+        "/MyStack/CDKMetadata/Default": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "CDKMetadata"
+          }
+        ],
+        "/MyStack/CDKMetadata/Condition": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "CDKMetadataAvailable"
+          }
+        ],
+        "/MyStack/BootstrapVersion": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "BootstrapVersion"
+          }
+        ],
+        "/MyStack/CheckBootstrapVersion": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "CheckBootstrapVersion"
+          }
+        ]
+      },
+      "displayName": "MyStack"
+    }
+  }
+}

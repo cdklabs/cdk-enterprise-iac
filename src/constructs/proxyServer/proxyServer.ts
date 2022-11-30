@@ -51,6 +51,7 @@ export class Proxy extends Construct {
   //public readonly network: proxyNetwork.ProxyNetwork;
   public readonly resources: proxyResources.ProxyResources;
   public readonly proxyUrl: string;
+  public readonly proxyArn: string;
 
   constructor(scope: Construct, id: string, props: ProxyProps) {
     super(scope, id);
@@ -114,5 +115,6 @@ export class Proxy extends Construct {
     );
 
     this.proxyUrl = this.resources.proxyUrl;
+    this.proxyArn = this.resources.proxyArn;
   }
 }

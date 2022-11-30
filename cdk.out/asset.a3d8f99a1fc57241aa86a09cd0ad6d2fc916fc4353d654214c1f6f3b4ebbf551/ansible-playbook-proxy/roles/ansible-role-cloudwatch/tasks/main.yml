@@ -1,0 +1,42 @@
+################
+# Monitoring
+################
+
+- name: "get-stats-cron.sh"
+  ansible.builtin.template:
+    src: "get-stats-cron.sh"
+    dest: "/usr/local/bin/get-stats-cron.sh"
+    mode: 0755
+    owner: root
+    group: root
+
+- name: Push squid stats to cloudwatch
+  ansible.builtin.cron:
+    name: "Push squid stats to cloudwatch"
+    minute: "*/5"
+    job: "/usr/local/bin/get-stats-cron.sh"
+
+- name: "squid-status-monitoring.sh"
+  ansible.builtin.template:
+    src: squid-status-monitoring.sh
+    dest: "/usr/local/bin/squid-status-monitoring.sh"
+    mode: 0755
+    owner: root
+    group: root
+
+- name: Monitor the squid service
+  ansible.builtin.cron:
+    name: "squid status monitoring"
+    minute: "*/1"
+    job: "/usr/local/bin/squid-status-monitoring.sh"
+
+- name: Add squid logs to CW
+  blockinfile:
+    path: /etc/awslogs/awslogs.conf
+    block: |
+      [/var/log/squid/access.log]
+      file = /var/log/squid/access.log
+      log_group_name = {{squid_cloudwatch.log_group_name}}
+      log_stream_name = {instance_id}/squid_access.log
+  notify:
+    - Restart awslogsd
