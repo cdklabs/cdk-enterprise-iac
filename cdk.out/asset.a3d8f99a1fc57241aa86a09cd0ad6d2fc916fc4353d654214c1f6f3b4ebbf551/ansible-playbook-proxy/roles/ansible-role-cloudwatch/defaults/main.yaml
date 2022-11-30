@@ -1,5 +1,0 @@
----
-squid_cloudwatch:
-  AWS_REGION: "REPLACE_REGION"
-  log_group_name:
-  sns_topic_arn:

@@ -1,4 +1,0 @@
----
-squid:
-  AWS_REGION: "REPLACE_REGION"
-  squid_resources_path: "/etc/squid"
