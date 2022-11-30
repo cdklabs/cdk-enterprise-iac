@@ -18,6 +18,7 @@ const project = new awscdk.AwsCdkConstructLibrary({
     'eslint-plugin-security',
     '@aws-cdk/integ-tests-alpha@2.41.0-alpha.0',
     '@aws-cdk/integ-runner@^2',
+    'natural-compare-lite',
   ],
   deps: ['aws-sdk@^2.1230.0'],
   bundledDeps: ['aws-sdk'],

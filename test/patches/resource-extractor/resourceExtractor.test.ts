@@ -229,155 +229,189 @@ describe('Extracting resources from stack', () => {
     appTemplate.resourceCountIs('AWS::EC2::Instance', 1);
     appTemplate.resourceCountIs('AWS::RDS::DBInstance', 1);
   });
+});
 
-  describe('Sharing Methods - CFN_OUTPUT', () => {
-    beforeEach(() => {
-      app = new App();
-      stack = new Stack(app, appStackName);
-      extractedStack = new Stack(app, extractedStackName);
+describe('Sharing Methods - CFN_OUTPUT', () => {
+  beforeEach(() => {
+    app = new App();
+    stack = new Stack(app, appStackName);
+    extractedStack = new Stack(app, extractedStackName);
+  });
+
+  test('Simple case', () => {
+    const func = new Function(stack, 'TestLambda', {
+      code: Code.fromInline(`def handler(event, context)\n    print(event)`),
+      handler: 'index.handler',
+      runtime: Runtime.PYTHON_3_9,
     });
+    const key = new Key(stack, 'TestKey');
+    key.addAlias('alias/TestKey');
+    const bucket = new Bucket(stack, 'TestBucket', {
+      encryptionKey: key,
+    });
+    bucket.grantReadWrite(func);
 
-    test('Simple case', () => {
-      const func = new Function(stack, 'TestLambda', {
-        code: Code.fromInline(`def handler(event, context)\n    print(event)`),
-        handler: 'index.handler',
-        runtime: Runtime.PYTHON_3_9,
-      });
-      const key = new Key(stack, 'TestKey');
-      key.addAlias('alias/TestKey');
-      const bucket = new Bucket(stack, 'TestBucket', {
-        encryptionKey: key,
-      });
-      bucket.grantReadWrite(func);
+    const synthedApp = app.synth();
+    Aspects.of(app).add(
+      new ResourceExtractor({
+        extractDestinationStack: extractedStack,
+        stackArtifacts: synthedApp.stacks,
+        valueShareMethod: ResourceExtractorShareMethod.CFN_OUTPUT,
+        resourceTypesToExtract,
+      })
+    );
+    app.synth({ force: true });
 
-      const synthedApp = app.synth();
-      Aspects.of(app).add(
-        new ResourceExtractor({
-          extractDestinationStack: extractedStack,
-          stackArtifacts: synthedApp.stacks,
-          valueShareMethod: ResourceExtractorShareMethod.CFN_OUTPUT,
-          resourceTypesToExtract,
-        })
-      );
-      app.synth({ force: true });
+    const extractedTemplate = Template.fromStack(extractedStack);
+    const appTemplate = Template.fromStack(stack);
+    const roleLogicalId = Object.keys(
+      extractedTemplate.findResources('AWS::IAM::Role')
+    )[0];
 
-      const extractedTemplate = Template.fromStack(extractedStack);
-      const appTemplate = Template.fromStack(stack);
-      const roleLogicalId = Object.keys(
-        extractedTemplate.findResources('AWS::IAM::Role')
-      )[0];
+    extractedTemplate.hasOutput(`Export${appStackName}${roleLogicalId}`, {
+      Export: {
+        Name: `${appStackName}:${roleLogicalId}`,
+      },
+    });
+    appTemplate.hasResourceProperties('AWS::Lambda::Function', {
+      Role: {
+        'Fn::ImportValue': `${appStackName}:${roleLogicalId}`,
+      },
+    });
+  });
 
-      extractedTemplate.hasOutput(`Export${appStackName}${roleLogicalId}`, {
+  test('InstanceProfile case', () => {
+    const vpc = new Vpc(stack, 'TestVpc');
+    const instance = new Instance(stack, 'TestInstance', {
+      machineImage: MachineImage.latestAmazonLinux(),
+      instanceType: InstanceType.of(InstanceClass.MEMORY5, InstanceSize.LARGE),
+      vpc,
+    });
+    const key = new Key(stack, 'TestKey');
+    key.addAlias('alias/TestKey');
+    const bucket = new Bucket(stack, 'TestBucket', {
+      encryptionKey: key,
+    });
+    bucket.grantReadWrite(instance.role);
+
+    const synthedApp = app.synth();
+    Aspects.of(app).add(
+      new ResourceExtractor({
+        extractDestinationStack: extractedStack,
+        stackArtifacts: synthedApp.stacks,
+        valueShareMethod: ResourceExtractorShareMethod.CFN_OUTPUT,
+        resourceTypesToExtract,
+        additionalTransforms: {
+          'AWS::EC2::VPC': '*',
+        },
+      })
+    );
+    app.synth({ force: true });
+
+    const extractedTemplate = Template.fromStack(extractedStack);
+    const appTemplate = Template.fromStack(stack);
+    const instanceProfileLogicalId = Object.keys(
+      extractedTemplate.findResources('AWS::IAM::InstanceProfile')
+    )[0];
+
+    extractedTemplate.hasOutput(
+      `Export${appStackName}${instanceProfileLogicalId}`,
+      {
         Export: {
-          Name: `${appStackName}:${roleLogicalId}`,
+          Name: `${appStackName}:${instanceProfileLogicalId}`,
         },
-      });
-      appTemplate.hasResourceProperties('AWS::Lambda::Function', {
+      }
+    );
+    appTemplate.hasResourceProperties('AWS::EC2::Instance', {
+      IamInstanceProfile: {
+        'Fn::ImportValue': `${appStackName}:${instanceProfileLogicalId}`,
+      },
+    });
+  });
+
+  test("Ensure resources are't extracted more than once", () => {
+    const func = new Function(stack, 'TestLambda', {
+      code: Code.fromInline(`def handler(event, context)\n    print(event)`),
+      handler: 'index.handler',
+      runtime: Runtime.PYTHON_3_9,
+    });
+    const bucket = new Bucket(stack, 'TestBucket', {
+      autoDeleteObjects: true,
+      removalPolicy: RemovalPolicy.DESTROY,
+    });
+    bucket.grantReadWrite(func);
+
+    const synthedApp = app.synth();
+    Aspects.of(app).add(
+      new ResourceExtractor({
+        extractDestinationStack: extractedStack,
+        stackArtifacts: synthedApp.stacks,
+        valueShareMethod: ResourceExtractorShareMethod.CFN_OUTPUT,
+        resourceTypesToExtract,
+      })
+    );
+    app.synth({ force: true });
+
+    const extractedTemplate = Template.fromStack(extractedStack);
+    const appTemplate = Template.fromStack(stack);
+    // Extracted stack has IAM resources
+    extractedTemplate.resourceCountIs('AWS::IAM::Role', 2);
+    extractedTemplate.resourceCountIs('AWS::IAM::Policy', 1);
+    // Non-IAM resources present in app stack
+    appTemplate.resourceCountIs('AWS::S3::Bucket', 1);
+    appTemplate.resourceCountIs('AWS::Lambda::Function', 2);
+    // Custom resources are also using imports
+    appTemplate.resourcePropertiesCountIs(
+      'AWS::Lambda::Function',
+      {
+        Code: {
+          S3Bucket: {
+            'Fn::Sub': 'cdk-hnb659fds-assets-${AWS::AccountId}-${AWS::Region}',
+          },
+        },
         Role: {
-          'Fn::ImportValue': `${appStackName}:${roleLogicalId}`,
+          'Fn::ImportValue': Match.anyValue(),
         },
-      });
+      },
+      1
+    );
+  });
+
+  test('Exports work correctly', () => {
+    const secondStack = new Stack(app, 'Stack2');
+    const role = new Role(stack, 'ExportedRole', {
+      assumedBy: new ServicePrincipal('lambda.amazonaws.com'),
     });
 
-    test('InstanceProfile case', () => {
-      const vpc = new Vpc(stack, 'TestVpc');
-      const instance = new Instance(stack, 'TestInstance', {
-        machineImage: MachineImage.latestAmazonLinux(),
-        instanceType: InstanceType.of(
-          InstanceClass.MEMORY5,
-          InstanceSize.LARGE
-        ),
-        vpc,
-      });
-      const key = new Key(stack, 'TestKey');
-      key.addAlias('alias/TestKey');
-      const bucket = new Bucket(stack, 'TestBucket', {
-        encryptionKey: key,
-      });
-      bucket.grantReadWrite(instance.role);
-
-      const synthedApp = app.synth();
-      Aspects.of(app).add(
-        new ResourceExtractor({
-          extractDestinationStack: extractedStack,
-          stackArtifacts: synthedApp.stacks,
-          valueShareMethod: ResourceExtractorShareMethod.CFN_OUTPUT,
-          resourceTypesToExtract,
-          additionalTransforms: {
-            'AWS::EC2::VPC': '*',
-          },
-        })
-      );
-      app.synth({ force: true });
-
-      const extractedTemplate = Template.fromStack(extractedStack);
-      const appTemplate = Template.fromStack(stack);
-      const instanceProfileLogicalId = Object.keys(
-        extractedTemplate.findResources('AWS::IAM::InstanceProfile')
-      )[0];
-
-      extractedTemplate.hasOutput(
-        `Export${appStackName}${instanceProfileLogicalId}`,
-        {
-          Export: {
-            Name: `${appStackName}:${instanceProfileLogicalId}`,
-          },
-        }
-      );
-      appTemplate.hasResourceProperties('AWS::EC2::Instance', {
-        IamInstanceProfile: {
-          'Fn::ImportValue': `${appStackName}:${instanceProfileLogicalId}`,
-        },
-      });
+    new Function(secondStack, 'TestLambda', {
+      code: Code.fromInline(`def handler(event, context)\n    print(event)`),
+      handler: 'index.handler',
+      runtime: Runtime.PYTHON_3_9,
+      environment: {
+        ROLE: role.roleArn,
+      },
     });
 
-    test("Ensure resources are't extracted more than once", () => {
-      const func = new Function(stack, 'TestLambda', {
-        code: Code.fromInline(`def handler(event, context)\n    print(event)`),
-        handler: 'index.handler',
-        runtime: Runtime.PYTHON_3_9,
-      });
-      const bucket = new Bucket(stack, 'TestBucket', {
-        autoDeleteObjects: true,
-        removalPolicy: RemovalPolicy.DESTROY,
-      });
-      bucket.grantReadWrite(func);
+    const synthedApp = app.synth();
+    Aspects.of(app).add(
+      new ResourceExtractor({
+        extractDestinationStack: extractedStack,
+        stackArtifacts: synthedApp.stacks,
+        valueShareMethod: ResourceExtractorShareMethod.CFN_OUTPUT,
+        resourceTypesToExtract,
+      })
+    );
+    app.synth({ force: true });
 
-      const synthedApp = app.synth();
-      Aspects.of(app).add(
-        new ResourceExtractor({
-          extractDestinationStack: extractedStack,
-          stackArtifacts: synthedApp.stacks,
-          valueShareMethod: ResourceExtractorShareMethod.CFN_OUTPUT,
-          resourceTypesToExtract,
-        })
-      );
-      app.synth({ force: true });
-
-      const extractedTemplate = Template.fromStack(extractedStack);
-      const appTemplate = Template.fromStack(stack);
-      // Extracted stack has IAM resources
-      extractedTemplate.resourceCountIs('AWS::IAM::Role', 2);
-      extractedTemplate.resourceCountIs('AWS::IAM::Policy', 1);
-      // Non-IAM resources present in app stack
-      appTemplate.resourceCountIs('AWS::S3::Bucket', 1);
-      appTemplate.resourceCountIs('AWS::Lambda::Function', 2);
-      // Custom resources are also using imports
-      appTemplate.resourcePropertiesCountIs(
-        'AWS::Lambda::Function',
-        {
-          Code: {
-            S3Bucket: {
-              'Fn::Sub':
-                'cdk-hnb659fds-assets-${AWS::AccountId}-${AWS::Region}',
-            },
-          },
-          Role: {
-            'Fn::ImportValue': Match.anyValue(),
-          },
-        },
-        1
-      );
+    const extractedTemplate = Template.fromStack(extractedStack);
+    const appTemplate = Template.fromStack(stack);
+    // Extracted stack has IAM resources
+    extractedTemplate.resourceCountIs('AWS::IAM::Role', 2);
+    appTemplate.resourceCountIs('AWS::IAM::Role', 0);
+    appTemplate.hasOutput('*', {
+      Value: {
+        'Fn::ImportValue': Match.anyValue(),
+      },
     });
   });
 });
@@ -432,6 +466,42 @@ describe('Sharing Methods - SSM_PARAMETER', () => {
       Role: `dummy-value-for-/${appStackName}/${roleLogicalId}`,
     });
   });
+
+  test('Exports work correctly', () => {
+    const secondStack = new Stack(app, 'Stack2', { env });
+    const role = new Role(stack, 'ExportedRole', {
+      assumedBy: new ServicePrincipal('lambda.amazonaws.com'),
+    });
+
+    new Function(secondStack, 'TestLambda', {
+      code: Code.fromInline(`def handler(event, context)\n    print(event)`),
+      handler: 'index.handler',
+      runtime: Runtime.PYTHON_3_9,
+      environment: {
+        ROLE: role.roleArn,
+      },
+    });
+
+    const synthedApp = app.synth();
+    Aspects.of(app).add(
+      new ResourceExtractor({
+        extractDestinationStack: extractedStack,
+        stackArtifacts: synthedApp.stacks,
+        valueShareMethod: ResourceExtractorShareMethod.SSM_PARAMETER,
+        resourceTypesToExtract,
+      })
+    );
+    app.synth({ force: true });
+
+    const extractedTemplate = Template.fromStack(extractedStack);
+    const appTemplate = Template.fromStack(stack);
+    // Extracted stack has IAM resources
+    extractedTemplate.resourceCountIs('AWS::IAM::Role', 2);
+    appTemplate.resourceCountIs('AWS::IAM::Role', 0);
+    appTemplate.hasOutput('*', {
+      Value: Match.stringLikeRegexp('dummy-value-for-*'),
+    });
+  });
 });
 
 describe('Sharing Methods - API_LOOKUP', () => {
@@ -482,6 +552,42 @@ describe('Sharing Methods - API_LOOKUP', () => {
     appTemplate.resourceCountIs('AWS::Lambda::Function', 1);
     appTemplate.hasResourceProperties('AWS::Lambda::Function', {
       Role: `dummy-value-for-${appStackName}:${roleLogicalId}`,
+    });
+  });
+
+  test('Exports work correctly', () => {
+    const secondStack = new Stack(app, 'Stack2', { env });
+    const role = new Role(stack, 'ExportedRole', {
+      assumedBy: new ServicePrincipal('lambda.amazonaws.com'),
+    });
+
+    new Function(secondStack, 'TestLambda', {
+      code: Code.fromInline(`def handler(event, context)\n    print(event)`),
+      handler: 'index.handler',
+      runtime: Runtime.PYTHON_3_9,
+      environment: {
+        ROLE: role.roleArn,
+      },
+    });
+
+    const synthedApp = app.synth();
+    Aspects.of(app).add(
+      new ResourceExtractor({
+        extractDestinationStack: extractedStack,
+        stackArtifacts: synthedApp.stacks,
+        valueShareMethod: ResourceExtractorShareMethod.API_LOOKUP,
+        resourceTypesToExtract,
+      })
+    );
+    app.synth({ force: true });
+
+    const extractedTemplate = Template.fromStack(extractedStack);
+    const appTemplate = Template.fromStack(stack);
+    // Extracted stack has IAM resources
+    extractedTemplate.resourceCountIs('AWS::IAM::Role', 2);
+    appTemplate.resourceCountIs('AWS::IAM::Role', 0);
+    appTemplate.hasOutput('*', {
+      Value: Match.stringLikeRegexp('dummy-value-for-*'),
     });
   });
 });
