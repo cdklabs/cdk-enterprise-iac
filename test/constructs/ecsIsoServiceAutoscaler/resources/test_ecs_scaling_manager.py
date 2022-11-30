@@ -13,14 +13,28 @@ with patch("boto3.client"):
         _trigger_scaling_action,
     )
 
-
-def test_get_alarm_states(boto3_cw_alarm_response):
+def test_get_alarm_states(boto3_cw_alarm_not_ok_response):
     """
     Tests getting alarm state data from a mocked boto3 response. The expected
     response should be a list in the format of ["OK", "ALARM"].
     """
     with patch("ecs_scaling_manager.cw_client.describe_alarms") as mock:
-        mock.return_value = boto3_cw_alarm_response
+        mock.return_value = boto3_cw_alarm_not_ok_response
+        alarm_states = _get_alarm_states(alarm_name="Alarm")
+
+    assert mock.called
+    assert isinstance(alarm_states, list)
+    assert "OK" in alarm_states
+    assert "ALARM" not in alarm_states
+
+
+def test_get_alarm_states(boto3_cw_alarm_ok_response):
+    """
+    Tests getting alarm state data from a mocked boto3 response. The expected
+    response should be a list in the format of ["OK", "ALARM"].
+    """
+    with patch("ecs_scaling_manager.cw_client.describe_alarms") as mock:
+        mock.return_value = boto3_cw_alarm_ok_response
         alarm_states = _get_alarm_states(alarm_name="Alarm")
 
     assert mock.called
@@ -183,4 +197,3 @@ def test_trigger_scaling_action_out_to_limit():
 
     assert mock.called == True
     assert call_args.get("desiredCount") == 50
-

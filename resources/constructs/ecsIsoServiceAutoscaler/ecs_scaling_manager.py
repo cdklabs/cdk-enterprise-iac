@@ -1,5 +1,3 @@
-# Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
-# SPDX-License-Identifier: Apache-2.0
 import logging
 import os
 from datetime import datetime
@@ -34,13 +32,26 @@ def _get_alarm_states(alarm_name: str) -> List[Union[str, None]]:
     :param alarm_name: the alarm name to find states for
     :returns: list of alarm states, ex: ["OK", "ALARM"]
     """
-    alarm = cw_client.describe_alarms(AlarmNames=[alarm_name])
+    
+    composite_alarms = cw_client.describe_alarms(
+        AlarmNames=[alarm_name], 
+        AlarmTypes=['CompositeAlarm']
+    )
+    metric_alarms = cw_client.describe_alarms(
+        AlarmNames=[alarm_name], 
+        AlarmTypes=['MetricAlarm']
+    )
 
     alarm_states = []
-    metric_alarms = alarm.get("MetricAlarms", None)
-    if metric_alarms is not None:
-        alarm_states = [x.get("StateValue") for x in alarm["MetricAlarms"]]
-
+    metric_alarm_list = metric_alarms.get("MetricAlarms", [])
+    composite_alarm_list = composite_alarms.get("CompositeAlarms", [])
+    # Including multiple handling here incase we with to extend to 
+    #   manage alarm combinatorics here 
+    if metric_alarm_list:
+        alarm_states = [x.get("StateValue") for x in metric_alarm_list] 
+    if composite_alarm_list: 
+        alarm_states = [x.get("StateValue") for x in composite_alarm_list]
+        
     return alarm_states
 
 
@@ -126,6 +137,7 @@ def _trigger_scaling_action(
 
 def handler(event, context):
     alarm_states = _get_alarm_states(SCALE_ALARM_NAME)
+    logger.info(alarm_states)
     service = _get_ecs_service(ECS_CLUSTER_NAME, ECS_SERVICE_NAME)
 
     desired_count = service.get("desiredCount")
@@ -158,3 +170,5 @@ def handler(event, context):
             last_update=last_updated
         )
 
+if __name__ == "__main__":
+    handler({}, {})
