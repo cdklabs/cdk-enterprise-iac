@@ -100,6 +100,10 @@
       "type": "build"
     },
     {
+      "name": "natural-compare-lite",
+      "type": "build"
+    },
+    {
       "name": "npm-check-updates",
       "version": "^16",
       "type": "build"
