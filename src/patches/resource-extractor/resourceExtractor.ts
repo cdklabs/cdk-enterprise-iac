@@ -159,81 +159,82 @@ export class ResourceExtractor implements IAspect {
     const logicalId = node.stack.resolve(node.logicalId);
     const props = this.cfn.templates[stackName].Resources[logicalId].Properties;
 
-    /** Recreate resource in extracted stack and export value */
+    // Check if props include references to resources that _aren't_ being
+    // extracted
+    const flattenedProps = Flattener.flattenObject(props);
+    const propsToAdjust = Object.keys(flattenedProps).filter((key) =>
+      Object.keys(this.logicalIdsNotGettingExtracted).includes(
+        flattenedProps[key]
+      )
+    );
+
+    // If properties being extracted to another stack contain
+    // references to resources in the original stack, we need to adjust
+    let modifiedProps: Json = {};
+    if (propsToAdjust) {
+      modifiedProps = this.modifyExtractedResourceProperties({
+        props,
+        propsToAdjust,
+      });
+    }
+
+    // Add to extracted stack
     if (
       !this.extractDestinationStack.node.tryFindChild(
         node.stack.resolve(logicalId)
       )
     ) {
-      // Check if props include references to resources that _aren't_ being
-      // extracted
-      const flattenedProps = Flattener.flattenObject(props);
-      const propsToAdjust = Object.keys(flattenedProps).filter((key) =>
-        Object.keys(this.logicalIdsNotGettingExtracted).includes(
-          flattenedProps[key]
-        )
-      );
-
-      // If properties being extracted to another stack contain
-      // references to resources in the original stack, we need to adjust
-      let modifiedProps: Json = {};
-      if (propsToAdjust) {
-        modifiedProps = this.modifyExtractedResourceProperties({
-          props,
-          propsToAdjust,
-        });
-      }
-
-      // Add to extracted stack
-      const res = new CfnResource(this.extractDestinationStack, logicalId, {
+      new CfnResource(this.extractDestinationStack, logicalId, {
         type: node.cfnResourceType,
         properties: modifiedProps || props,
       });
+    }
 
-      // Look in all existing stacks for any refs to the resource being
-      // extracted
-      const foundRefs = Object.keys(this.cfn.flatTemplates).filter(
-        (key) => this.cfn.flatTemplates[key] === logicalId
-      );
+    // Look in the node's stack for any refs to the resource being extracted
+    const foundRefsAllStacks = Object.keys(this.cfn.flatTemplates).filter(
+      (key) => this.cfn.flatTemplates[key] === logicalId
+    );
+    const foundRefs = foundRefsAllStacks.filter(
+      (k) => k.split('.')[0] === stackName
+    );
 
-      // loop through resources in stack with Cfn intrinsic functions
-      // referencing extracted resources
-      for (const foundRef of foundRefs) {
-        // See if the found ref is also getting extracted. Ignore if so.
-        if (this.isRefAlsoGettingExtracted(foundRef)) continue;
+    // loop through resources in stack with Cfn intrinsic functions
+    // referencing extracted resources
+    for (const foundRef of foundRefs) {
+      // See if the found ref is also getting extracted. Ignore if so.
+      if (this.isRefAlsoGettingExtracted(foundRef)) continue;
 
-        // Get the CfnResource that is referencing this extracted resource
-        const foundRefNode = this.getResourceFromFoundRef(node, foundRef) as
-          | CfnResource
-          | CfnOutput;
+      // Get the CfnResource that is referencing this extracted resource
+      const foundRefNode = this.getResourceFromFoundRef(node, foundRef) as
+        | CfnResource
+        | CfnOutput;
 
-        // Figure out the pattern of how extracted resource is being referenced
-        // e.g. using `Fn::GetAtt` or `Ref`
-        const exportValue = this.cfn.determineExportValue(node, foundRef);
-        if (exportValue) {
-          // Generate export in ExportedStack, and return the `Fn::ImportValue`
-          // method to use when referencing in the App stack
-          const importValue = this.exportValue(
-            node.stack,
-            this.extractDestinationStack.resolve(res.logicalId),
-            exportValue
-          );
+      // Figure out the pattern of how extracted resource is being referenced
+      // e.g. using `Fn::GetAtt` or `Ref`
+      const exportValue = this.cfn.determineExportValue(node, foundRef);
+      if (exportValue) {
+        // Generate export in ExportedStack, and return the `Fn::ImportValue`
+        // method to use when referencing in the App stack
+        const importValue = this.exportValue(
+          node.stack,
+          this.extractDestinationStack.resolve(logicalId),
+          exportValue
+        );
 
-          // Override any ref to extracted resource
-          this.overrideFoundRefWithImportValue({
-            foundRefNode,
-            importValue,
-            flattenedKey: foundRef,
-          });
-        }
+        // Override any ref to extracted resource
+        this.overrideFoundRefWithImportValue({
+          foundRefNode,
+          importValue,
+          flattenedKey: foundRef,
+        });
+      }
 
-        // Remove any DependsOn references
-        if (foundRefNode instanceof CfnResource) {
-          this.deletionOverrideDependsOn({
-            foundRefNode,
-            flattenedKey: foundRef,
-          });
-        }
+      // Remove any DependsOn references
+      if (foundRefNode instanceof CfnResource) {
+        this.deletionOverrideDependsOn({
+          foundRefNode,
+          flattenedKey: foundRef,
+        });
       }
     }
 
