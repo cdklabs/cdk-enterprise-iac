@@ -229,6 +229,41 @@ describe('Extracting resources from stack', () => {
     appTemplate.resourceCountIs('AWS::EC2::Instance', 1);
     appTemplate.resourceCountIs('AWS::RDS::DBInstance', 1);
   });
+
+  test('Constructs can create resources with the same name', () => {
+    const secondStack = new Stack(app, 'Stack2');
+    new Bucket(stack, 'TestBucket1', {
+      autoDeleteObjects: true,
+      removalPolicy: RemovalPolicy.DESTROY,
+    });
+
+    new Bucket(secondStack, 'TestBucket2', {
+      autoDeleteObjects: true,
+      removalPolicy: RemovalPolicy.DESTROY,
+    });
+
+    const synthedApp = app.synth();
+    Aspects.of(app).add(
+      new ResourceExtractor({
+        extractDestinationStack: extractedStack,
+        stackArtifacts: synthedApp.stacks,
+        valueShareMethod: ResourceExtractorShareMethod.CFN_OUTPUT,
+        resourceTypesToExtract,
+      })
+    );
+    app.synth({ force: true });
+
+    const extractedTemplate = Template.fromStack(extractedStack);
+    const appTemplate = Template.fromStack(stack);
+    const appTemplate2 = Template.fromStack(secondStack);
+
+    // Extracted stack has IAM resources
+    extractedTemplate.resourceCountIs('AWS::IAM::Role', 1);
+
+    // Templates have synthesized and contain the buckets in the two stacks
+    appTemplate.resourceCountIs('AWS::S3::Bucket', 1);
+    appTemplate2.resourceCountIs('AWS::S3::Bucket', 1);
+  });
 });
 
 describe('Sharing Methods - CFN_OUTPUT', () => {
