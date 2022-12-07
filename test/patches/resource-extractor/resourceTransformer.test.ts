@@ -252,6 +252,58 @@ describe('toPartial scenarios', () => {
       },
     });
   });
+  test('ssm CfnParameter set name', () => {
+    const role = new Role(stack, 'testRole', {
+      assumedBy: new ServicePrincipal('lambda.amazonaws.com'),
+    });
+    const parameterName = 'Some-Provided-Name';
+    const parameter = new StringParameter(stack, 'TestParameter', {
+      stringValue: 'someTestString',
+      parameterName,
+    });
+    parameter.grantRead(role);
+    const synthedApp = app.synth();
+    Aspects.of(app).add(
+      new ResourceExtractor({
+        extractDestinationStack: extractedStack,
+        stackArtifacts: synthedApp.stacks,
+        valueShareMethod: ResourceExtractorShareMethod.CFN_OUTPUT,
+        resourceTypesToExtract: ['AWS::IAM::Role', 'AWS::IAM::Policy'],
+      })
+    );
+    app.synth({ force: true });
+
+    // const parameterNode = parameter.node.defaultChild as CfnParameter;
+    // const parameterLogicalID = stack.resolve(parameterNode.logicalId);
+
+    const extractedTemplate = Template.fromStack(extractedStack);
+    const appTemplate = Template.fromStack(stack);
+    console.log(appTemplate);
+    extractedTemplate.resourceCountIs('AWS::IAM::Role', 1);
+    extractedTemplate.hasResourceProperties('AWS::IAM::Policy', {
+      PolicyDocument: {
+        Statement: [
+          {
+            Resource: Match.objectLike({
+              'Fn::Join': [
+                '',
+                [
+                  'arn:',
+                  { Ref: 'AWS::Partition' },
+                  ':ssm:',
+                  { Ref: 'AWS::Region' },
+                  ':',
+                  { Ref: 'AWS::AccountId' },
+                  ':parameter/',
+                  `${parameterName.replace(/-/, '')}`,
+                ],
+              ],
+            }),
+          },
+        ],
+      },
+    });
+  });
 
   test('dynamodb CfnTable', () => {
     const role = new Role(stack, 'testRole', {
