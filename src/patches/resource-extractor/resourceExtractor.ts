@@ -440,18 +440,29 @@ export class ResourceExtractor implements IAspect {
    */
   private exportValue(stack: Stack, name: string, value: any): string {
     const stackName = stack.stackName;
-    const shareName = `${stackName}:${name}`;
+    let shareName = `${stackName}:${name}`;
+
+    // Intrinsic Function will resolve the value upon deployment
+    const intrinsic = stack.resolve(value);
+
+    // Support for multiple references to the same object
+    if ('Fn::GetAtt' in intrinsic) {
+      const attribute = intrinsic['Fn::GetAtt'][1];
+      shareName = shareName + `:${attribute}`;
+    }
 
     if (this.valueShareMethod == ResourceExtractorShareMethod.SSM_PARAMETER) {
-      const paramName = `/${shareName.replace(':', '/')}`;
-      const paramLogicalId = `p${name}`;
+      shareName = shareName.replace(':', '/').replace(':', '/');
+      const paramName = `/${shareName}`;
+      const paramLogicalId = `p${shareName}`;
+
       if (!this.extractDestinationStack.node.tryFindChild(paramLogicalId)) {
         new CfnResource(this.extractDestinationStack, paramLogicalId, {
           type: 'AWS::SSM::Parameter',
           properties: {
             Name: paramName,
             Type: 'String',
-            Value: stack.resolve(value),
+            Value: intrinsic,
           },
         });
       }
@@ -459,11 +470,9 @@ export class ResourceExtractor implements IAspect {
     } else {
       // CFN_OUTPUT and API_LOOKUP share the same method of exporting values
       if (
-        !this.extractDestinationStack.node.tryFindChild(
-          `Export${stackName}:${name}`
-        )
+        !this.extractDestinationStack.node.tryFindChild(`Export${shareName}`)
       ) {
-        return this.extractDestinationStack.exportValue(stack.resolve(value), {
+        return this.extractDestinationStack.exportValue(intrinsic, {
           name: shareName,
         });
       } else {
