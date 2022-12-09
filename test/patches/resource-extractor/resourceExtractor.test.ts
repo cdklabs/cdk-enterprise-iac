@@ -264,6 +264,56 @@ describe('Extracting resources from stack', () => {
     appTemplate.resourceCountIs('AWS::S3::Bucket', 1);
     appTemplate2.resourceCountIs('AWS::S3::Bucket', 1);
   });
+
+  test('Multiple values can be referenced from an Exported Resource', () => {
+    // Lambda function references two values from a KMS Key
+    const key = new Key(stack, 'TestKey');
+    new Function(stack, 'TestLambda', {
+      code: Code.fromInline(`def handler(event, context)\n    print(event)`),
+      handler: 'index.handler',
+      runtime: Runtime.PYTHON_3_9,
+      environment: {
+        KEY_ARN: key.keyArn,
+        KEY_ID: key.keyId,
+      },
+    });
+
+    const synthedApp = app.synth();
+    Aspects.of(app).add(
+      new ResourceExtractor({
+        extractDestinationStack: extractedStack,
+        stackArtifacts: synthedApp.stacks,
+        valueShareMethod: ResourceExtractorShareMethod.CFN_OUTPUT,
+        resourceTypesToExtract,
+      })
+    );
+    app.synth({ force: true });
+
+    const extractedTemplate = Template.fromStack(extractedStack);
+    const appTemplate = Template.fromStack(stack);
+    const kmsLogicalId = Object.keys(
+      extractedTemplate.findResources('AWS::KMS::Key')
+    )[0];
+
+    // Extracted stack has IAM resources
+    extractedTemplate.resourceCountIs('AWS::IAM::Role', 1);
+    extractedTemplate.resourceCountIs('AWS::KMS::Key', 1);
+
+    // Templates have synthesized and contains the function
+    appTemplate.resourceCountIs('AWS::Lambda::Function', 1);
+
+    // Extracted stack has multiple outputs for 1 resource (KMS Key)
+    extractedTemplate.hasOutput(`Export${appStackName}${kmsLogicalId}`, {
+      Export: {
+        Name: `${appStackName}:${kmsLogicalId}`,
+      },
+    });
+    extractedTemplate.hasOutput(`Export${appStackName}${kmsLogicalId}Arn`, {
+      Export: {
+        Name: `${appStackName}:${kmsLogicalId}:Arn`,
+      },
+    });
+  });
 });
 
 describe('Sharing Methods - CFN_OUTPUT', () => {
@@ -303,14 +353,14 @@ describe('Sharing Methods - CFN_OUTPUT', () => {
       extractedTemplate.findResources('AWS::IAM::Role')
     )[0];
 
-    extractedTemplate.hasOutput(`Export${appStackName}${roleLogicalId}`, {
+    extractedTemplate.hasOutput(`Export${appStackName}${roleLogicalId}Arn`, {
       Export: {
-        Name: `${appStackName}:${roleLogicalId}`,
+        Name: `${appStackName}:${roleLogicalId}:Arn`,
       },
     });
     appTemplate.hasResourceProperties('AWS::Lambda::Function', {
       Role: {
-        'Fn::ImportValue': `${appStackName}:${roleLogicalId}`,
+        'Fn::ImportValue': `${appStackName}:${roleLogicalId}:Arn`,
       },
     });
   });
@@ -498,7 +548,7 @@ describe('Sharing Methods - SSM_PARAMETER', () => {
     appTemplate.resourceCountIs('AWS::S3::Bucket', 1);
     appTemplate.resourceCountIs('AWS::Lambda::Function', 1);
     appTemplate.hasResourceProperties('AWS::Lambda::Function', {
-      Role: `dummy-value-for-/${appStackName}/${roleLogicalId}`,
+      Role: `dummy-value-for-/${appStackName}/${roleLogicalId}/Arn`,
     });
   });
 
@@ -586,7 +636,7 @@ describe('Sharing Methods - API_LOOKUP', () => {
     appTemplate.resourceCountIs('AWS::S3::Bucket', 1);
     appTemplate.resourceCountIs('AWS::Lambda::Function', 1);
     appTemplate.hasResourceProperties('AWS::Lambda::Function', {
-      Role: `dummy-value-for-${appStackName}:${roleLogicalId}`,
+      Role: `dummy-value-for-${appStackName}:${roleLogicalId}:Arn`,
     });
   });
 
