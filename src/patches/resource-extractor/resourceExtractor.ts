@@ -452,7 +452,7 @@ export class ResourceExtractor implements IAspect {
     }
 
     if (this.valueShareMethod == ResourceExtractorShareMethod.SSM_PARAMETER) {
-      shareName = shareName.replace(':', '/').replace(':', '/');
+      shareName = shareName.replace(/:/g, '/');
       const paramName = `/${shareName}`;
       const paramLogicalId = `p${shareName}`;
 
