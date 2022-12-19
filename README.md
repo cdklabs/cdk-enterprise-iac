@@ -85,7 +85,7 @@ app.synth()
 
 ### Resource extraction
 
-:warning: Resource extraction is in an experimental phase. Test and validate before using in production. Please open any issues found [here](https://github.com/cdklabs/cdk-enterprise-iac/)
+:warning: Resource extraction is in an experimental phase. Test and validate before using in production. Please open any issues found [here](https://github.com/cdklabs/cdk-enterprise-iac/).
 
 In many enterprises, there are separate teams with different IAM permissions than developers deploying CDK applications.
 
@@ -93,11 +93,11 @@ For example there might be a networking team with permissions to deploy `AWS::EC
 
 When a developer doesn't have permissions to deploy necessary resources in their CDK application, writing good code becomes difficult to manage when a cdk deploy will quickly error due to not being able to deploy something like an `AWS::IAM::Role` which is foundational to any project deployed into AWS.
 
-An enterprise should _allow_ builders to deploy these resources via CDK for [many reasons](https://github.com/aws/aws-cdk/wiki/Security-And-Safety-Dev-Guide#allowing-creation-of-iam-roles-without-privilege-escalation), and can use [Permissions Boundaries](https://docs.aws.amazon.com/IAM/latest/UserGuide/access_policies_boundaries.html) to prevent privilege escalation. For enterprises that haven't yet utilized Permissions Boundaries, the `ResourceExtractor` can make it easier for builders to write good CDK while complying with enterprise policies
+An enterprise should _allow_ builders to deploy these resources via CDK for [many reasons](https://github.com/aws/aws-cdk/wiki/Security-And-Safety-Dev-Guide#allowing-creation-of-iam-roles-without-privilege-escalation), and can use [Permissions Boundaries](https://docs.aws.amazon.com/IAM/latest/UserGuide/access_policies_boundaries.html) to prevent privilege escalation. For enterprises that haven't yet utilized Permissions Boundaries, the `ResourceExtractor` can make it easier for builders to write good CDK while complying with enterprise policies.
 
 Using the `ResourceExtractor` Aspect, developers can write their CDK code as though they had sufficient IAM permissions, but extract those resources into a separate stack for an external team to deploy on their behalf.
 
-Take the following example stack
+Take the following example stack:
 
 ```ts
 import { App, Aspects, RemovalPolicy, Stack } from 'aws-cdk-lib';
