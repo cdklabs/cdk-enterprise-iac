@@ -29,7 +29,7 @@ This could be simple things such as "All IAM roles must have a specific Permissi
 
 This could also be more restrictive such as strict separation of duties, only allowing certain teams the ability to deploy specific AWS resources (e.g. Networking team can deploy VPCs, Subnets, and route tables. Security team can deploy IAM resources. Developers can deploy Compute. DBAs can deploy Databases, etc.)
 
-Enterprises with very restrictive environment like these should re-evaluate their policies to make it easier for builders to safely deploy resources with less friction. However in many enterprises this is easier said than done, and builders are still expected to deliver.
+Enterprises with very restrictive environments like these would benefit from taking a closer look at their policies to see how they can allow builders to safely deploy resources with less friction. However in many enterprises this is easier said than done, and builders are still expected to deliver.
 
 This project is meant to reduce friction for builders working within these enterprise constraints while the enterprise determines what policies make the most sense for their organization, and is in no way prescriptive.
 
