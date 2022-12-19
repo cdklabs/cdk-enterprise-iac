@@ -27,7 +27,7 @@ Within large enterprises, builders can come up against enterprise imposed constr
 
 This could be simple things such as "All IAM roles must have a specific Permissions Boundary attached".
 
-This could also be more restrictive such as strict separation of duties, only allowing certain teams the ability to deploy specific AWS resources (e.g. Networking team can deploy VPCs, Subnets, etc. Security team can deploy IAM resources. Developers can deploy Compute. DBAs can deploy Databases)
+This could also be more restrictive such as strict separation of duties, only allowing certain teams the ability to deploy specific AWS resources (e.g. Networking team can deploy VPCs, Subnets, and route tables. Security team can deploy IAM resources. Developers can deploy Compute. DBAs can deploy Databases, etc.)
 
 Enterprises with very restrictive environment like these should re-evaluate their policies to make it easier for builders to safely deploy resources with less friction. However in many enterprises this is easier said than done, and builders are still expected to deliver.
 
