@@ -21,12 +21,10 @@ export class CfnStore {
   public readonly templates: Json = {};
   public readonly flatTemplates: FlatJson;
   public readonly extractedStackExports: FlatJson = {};
-  public readonly stackArtifacts: CloudFormationStackArtifact[];
 
   constructor(props: CfnStoreProps) {
-    this.stackArtifacts = props.stackArtifacts;
     /** Save CloudFormation templates for future lookup */
-    for (const item of this.stackArtifacts) {
+    for (const item of props.stackArtifacts) {
       this.templates[item.stackName] = item.template;
     }
     this.flatTemplates = Flattener.flattenObject(this.templates);
