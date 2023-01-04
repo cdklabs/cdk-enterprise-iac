@@ -96,6 +96,19 @@ export class CfnStore {
   }
 
   /**
+   *
+   * @param stackName Stack name
+   * @param logicalId the logical ID of the Resource to find
+   * @returns Json object of the Cloudformation resource properties
+   */
+  public getResourcePropertiesFromLogicalId(
+    stackName: string,
+    logicalId: string
+  ): Json {
+    return this.templates[stackName].Resources[logicalId].Properties;
+  }
+
+  /**
    * Performs a Describe Stack API call with the AWS SDK to determine what
    * the CloudFormation Exports are for a given Stack Name.
    *

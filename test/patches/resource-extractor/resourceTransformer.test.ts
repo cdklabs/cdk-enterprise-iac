@@ -204,6 +204,76 @@ describe('toPartial scenarios', () => {
     });
   });
 
+  test('s3 CfnBucket with set name', () => {
+    const func = new Function(stack, 'TestLambda', {
+      code: Code.fromInline(`def handler(event, context)\n    print(event)`),
+      handler: 'index.handler',
+      runtime: Runtime.PYTHON_3_9,
+    });
+    const bucketName = 'my-fancy-test-bucket';
+    const bucket = new Bucket(stack, 'TestBucket', {
+      bucketName,
+    });
+    bucket.grantReadWrite(func);
+
+    const synthedApp = app.synth();
+    Aspects.of(app).add(
+      new ResourceExtractor({
+        extractDestinationStack: extractedStack,
+        stackArtifacts: synthedApp.stacks,
+        valueShareMethod: ResourceExtractorShareMethod.CFN_OUTPUT,
+        resourceTypesToExtract,
+      })
+    );
+    app.synth({ force: true });
+
+    const extractedTemplate = Template.fromStack(extractedStack);
+    const bucketId = bucket.node.findAll().find((x: IConstruct) => {
+      return x instanceof CfnBucket;
+    });
+
+    extractedTemplate.resourcePropertiesCountIs(
+      'AWS::IAM::Policy',
+      {
+        PolicyDocument: {
+          Statement: Match.arrayWith([
+            Match.objectLike({
+              Action: Match.arrayWith(['s3:GetObject*']),
+              Resource: Match.arrayWith([
+                // Make sure IAM policy isn't trying to !GetAtt: [BucketLogicalId, Arn]
+                Match.not({
+                  'Fn::GetAtt': [
+                    stack.getLogicalId(bucketId as CfnElement),
+                    'Arn',
+                  ],
+                }),
+              ]),
+            }),
+          ]),
+        },
+      },
+      1
+    );
+    extractedTemplate.hasResourceProperties('AWS::IAM::Policy', {
+      PolicyDocument: {
+        Statement: Match.arrayWith([
+          Match.objectLike({
+            Action: Match.arrayWith(['s3:GetObject*']),
+            Resource: Match.arrayWith([
+              // Make sure IAM policy is using a partial generated resource Arn, derived from the logical id
+              Match.objectLike({
+                'Fn::Join': [
+                  '',
+                  ['arn:', { Ref: 'AWS::Partition' }, `:s3:::${bucketName}*`],
+                ],
+              }),
+            ]),
+          }),
+        ]),
+      },
+    });
+  });
+
   test('ssm CfnParameter', () => {
     const role = new Role(stack, 'testRole', {
       assumedBy: new ServicePrincipal('lambda.amazonaws.com'),
@@ -295,7 +365,7 @@ describe('toPartial scenarios', () => {
                   ':',
                   { Ref: 'AWS::AccountId' },
                   ':parameter/',
-                  `${parameterName.replace(/-/, '')}`,
+                  parameterName,
                 ],
               ],
             }),

@@ -16,9 +16,13 @@ import { CfnQueue } from 'aws-cdk-lib/aws-sqs';
 import { CfnParameter } from 'aws-cdk-lib/aws-ssm';
 import { CfnStateMachine } from 'aws-cdk-lib/aws-stepfunctions';
 import { CfnStore } from './cfnStore';
-import { FlatJson } from './types';
+import { FlatJson, Json } from './types';
 
-type Transformer = (stackName: string, logicalId: string) => string;
+type Transformer = (
+  stackName: string,
+  logicalId: string,
+  resourceProperties: Json
+) => string;
 
 export class MissingTransformError extends Error {
   constructor(resourceType: string) {
@@ -79,69 +83,132 @@ export class ResourceTransformer {
   private createDefaultTransforms(): { [key: string]: Transformer } {
     return {
       /** Standard */
-      [CfnTable.CFN_RESOURCE_TYPE_NAME]: (stackName, logicalId) => {
+      [CfnTable.CFN_RESOURCE_TYPE_NAME]: (
+        stackName,
+        logicalId,
+        _resourceProperties
+      ) => {
         const partial = `${stackName}-${logicalId}*`;
         const preamble = this.generateArnPreamble('dynamodb');
         return `${preamble}:table/${partial}`;
       },
-      [CfnDomainEss.CFN_RESOURCE_TYPE_NAME]: (_, logicalId) => {
+      [CfnDomainEss.CFN_RESOURCE_TYPE_NAME]: (
+        _,
+        logicalId,
+        _resourceProperties
+      ) => {
         const partial = `${logicalId.substring(0, 15).toLowerCase()}*`;
         const preamble = this.generateArnPreamble('es');
         return `${preamble}:domain/${partial}`;
       },
-      [CfnDomainOss.CFN_RESOURCE_TYPE_NAME]: (_, logicalId) => {
+      [CfnDomainOss.CFN_RESOURCE_TYPE_NAME]: (
+        _,
+        logicalId,
+        _resourceProperties
+      ) => {
         const partial = `${logicalId.substring(0, 15).toLowerCase()}*`;
         const preamble = this.generateArnPreamble('es');
         return `${preamble}:domain/${partial}`;
       },
-      [CfnTaskDefinition.CFN_RESOURCE_TYPE_NAME]: (stackName, logicalId) => {
+      [CfnTaskDefinition.CFN_RESOURCE_TYPE_NAME]: (
+        stackName,
+        logicalId,
+        _resourceProperties
+      ) => {
         const partial = `${stackName}${logicalId}*:*`.replace('-', '');
         const preamble = this.generateArnPreamble('ecs');
         return `${preamble}:task-definition/${partial}`;
       },
-      [CfnCluster.CFN_RESOURCE_TYPE_NAME]: (stackName, logicalId) => {
+      [CfnCluster.CFN_RESOURCE_TYPE_NAME]: (
+        stackName,
+        logicalId,
+        _resourceProperties
+      ) => {
         const partial = `${stackName}-${logicalId}*`;
         const preamble = this.generateArnPreamble('ecs');
         return `${preamble}:cluster/${partial}`;
       },
       /** Colon-resource name grouping */
-      [CfnLogGroup.CFN_RESOURCE_TYPE_NAME]: (stackName, logicalId) => {
+      [CfnLogGroup.CFN_RESOURCE_TYPE_NAME]: (
+        stackName,
+        logicalId,
+        _resourceProperties
+      ) => {
         const partial = `${stackName}-${logicalId}*:*`;
         const preamble = this.generateArnPreamble('logs');
         return `${preamble}:log-group:${partial}`;
       },
-      [CfnFunction.CFN_RESOURCE_TYPE_NAME]: (stackName, logicalId) => {
+      [CfnFunction.CFN_RESOURCE_TYPE_NAME]: (
+        stackName,
+        logicalId,
+        _resourceProperties
+      ) => {
         const partial = `${stackName}-${logicalId}`.substring(0, 50) + '*';
         const preamble = this.generateArnPreamble('lambda');
         return `${preamble}:function:${partial}`;
       },
-      [CfnStateMachine.CFN_RESOURCE_TYPE_NAME]: (_, logicalId) => {
+      [CfnStateMachine.CFN_RESOURCE_TYPE_NAME]: (
+        _,
+        logicalId,
+        _resourceProperties
+      ) => {
         const partial = `${logicalId}*`;
         const preamble = this.generateArnPreamble('states');
         return `${preamble}:stateMachine:${partial}`;
       },
       /** No resource name grouping */
-      [CfnQueue.CFN_RESOURCE_TYPE_NAME]: (stackName, logicalId) => {
+      [CfnQueue.CFN_RESOURCE_TYPE_NAME]: (
+        stackName,
+        logicalId,
+        _resourceProperties
+      ) => {
         const partial = `${stackName}-${logicalId}*`;
         const preamble = this.generateArnPreamble('sqs');
         return `${preamble}:${partial}`;
       },
-      [CfnBucket.CFN_RESOURCE_TYPE_NAME]: (stackName, logicalId) => {
-        const partial = `${stackName}-${logicalId}*`.toLowerCase();
+      [CfnBucket.CFN_RESOURCE_TYPE_NAME]: (
+        stackName,
+        logicalId,
+        resourceProperties
+      ) => {
+        let partial: string;
+        if (
+          resourceProperties !== undefined &&
+          'BucketName' in resourceProperties
+        ) {
+          partial = `${resourceProperties.BucketName}*`;
+        } else {
+          partial = `${stackName}-${logicalId}*`.toLowerCase();
+        }
         const preamble = this.generateArnPreamble('s3', false, false);
         return `${preamble}:${partial}`;
       },
-      [CfnTopic.CFN_RESOURCE_TYPE_NAME]: (stackName, logicalId) => {
+      [CfnTopic.CFN_RESOURCE_TYPE_NAME]: (
+        stackName,
+        logicalId,
+        _resourceProperties
+      ) => {
         const partial = `${stackName}-${logicalId}*`;
         const preamble = this.generateArnPreamble('sns');
         return `${preamble}:${partial}`;
       },
       /** Non-standard */
-      [CfnParameter.CFN_RESOURCE_TYPE_NAME]: (_, logicalId) => {
+      [CfnParameter.CFN_RESOURCE_TYPE_NAME]: (
+        _,
+        logicalId,
+        resourceProperties
+      ) => {
+        if ('Name' in resourceProperties) {
+          return resourceProperties.Name;
+        }
         const partial = `CFN-${logicalId}*`;
         return partial;
       },
-      [CfnApiKey.CFN_RESOURCE_TYPE_NAME]: (stackName, logicalId) => {
+      [CfnApiKey.CFN_RESOURCE_TYPE_NAME]: (
+        stackName,
+        logicalId,
+        _resourceProperties
+      ) => {
         const partial = `${stackName.substring(0, 6)}-${logicalId.substring(
           0,
           5
@@ -170,6 +237,10 @@ export class ResourceTransformer {
   public toPartial(logicalId: string) {
     const stackName = this.cfn.getStackNameFromLogicalId(logicalId);
     const resourceType = this.cfn.getResourceTypeFromLogicalId(logicalId);
+    const resourceProperties = this.cfn.getResourcePropertiesFromLogicalId(
+      stackName,
+      logicalId
+    );
 
     if (
       this.additionalTransforms &&
@@ -180,7 +251,11 @@ export class ResourceTransformer {
         .replace(ResourceTransform.LOGICAL_ID, logicalId);
     } else if (resourceType in this.defaultTransforms) {
       const transformResourceToPartial = this.defaultTransforms[resourceType];
-      return transformResourceToPartial(stackName, logicalId);
+      return transformResourceToPartial(
+        stackName,
+        logicalId,
+        resourceProperties
+      );
     } else {
       throw new MissingTransformError(resourceType);
     }
