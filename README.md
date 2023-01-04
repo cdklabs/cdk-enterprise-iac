@@ -5,7 +5,7 @@ SPDX-License-Identifier: Apache-2.0
 
 # CDK Enterprise IaC
 
-Utilities for using CDK within enterprise constraints
+Utilities for using CDK within enterprise constraints.
 
 ## Install
 
@@ -21,25 +21,83 @@ Python
 pip install cdklabs.cdk-enterprise-iac
 ```
 
+## Who this project is for
+
+Within large enterprises, builders can come up against enterprise imposed constraints when deploying on AWS.
+
+This could be simple things such as "All IAM roles must have a specific Permissions Boundary attached".
+
+This could also be more restrictive such as strict separation of duties, only allowing certain teams the ability to deploy specific AWS resources (e.g. Networking team can deploy VPCs, Subnets, and route tables. Security team can deploy IAM resources. Developers can deploy Compute. DBAs can deploy Databases, etc.)
+
+Enterprises with very restrictive environments like these would benefit from taking a closer look at their policies to see how they can allow builders to safely deploy resources with less friction. However in many enterprises this is easier said than done, and builders are still expected to deliver.
+
+This project is meant to reduce friction for builders working within these enterprise constraints while the enterprise determines what policies make the most sense for their organization, and is in no way prescriptive.
+
 ## Usage
 
 There are many tools available, all detailed in [`API.md`](./API.md).
 
-A few examples of these tools below
+A few examples of these tools below:
+
+### Adding permissions boundaries to all generated IAM roles
+
+Example for `AddPermissionBoundary` in Typescript project.
+
+```ts
+import * as cdk from 'aws-cdk-lib';
+import { MyStack } from '../lib/my-project-stack';
+import { Aspects } from 'aws-cdk-lib';
+import { AddPermissionBoundary } from '@cdklabs/cdk-enterprise-iac';
+
+const app = new cdk.App();
+new MyStack(app, 'MyStack');
+
+Aspects.of(app).add(
+  new AddPermissionBoundary({
+    permissionsBoundaryPolicyName: 'MyPermissionBoundaryName',
+    instanceProfilePrefix: 'MY_PREFIX_', // optional, Defaults to ''
+    policyPrefix: 'MY_POLICY_PREFIX_', // optional, Defaults to ''
+    rolePrefix: 'MY_ROLE_PREFIX_', // optional, Defaults to ''
+  })
+);
+```
+
+Example for `AddPermissionBoundary` in Python project.
+
+```python
+import aws_cdk as cdk
+from cdklabs.cdk_enterprise_iac import AddPermissionBoundary
+from test_py.test_py_stack import TestPyStack
+
+
+app = cdk.App()
+TestPyStack(app, "TestPyStack")
+
+cdk.Aspects.of(app).add(AddPermissionBoundary(
+    permissions_boundary_policy_name="MyPermissionBoundaryName",
+    instance_profile_prefix="MY_PREFIX_",  # optional, Defaults to ""
+    policy_prefix="MY_POLICY_PREFIX_",  # optional, Defaults to ""
+    role_prefix="MY_ROLE_PREFIX_"  # optional, Defaults to ""
+))
+
+app.synth()
+```
 
 ### Resource extraction
 
-:warning: Resource extraction is in an experimental phase. Test and validate before using in production. Please open any issues found [here](https://github.com/cdklabs/cdk-enterprise-iac/)
+:warning: Resource extraction is in an experimental phase. Test and validate before using in production. Please open any issues found [here](https://github.com/cdklabs/cdk-enterprise-iac/).
 
 In many enterprises, there are separate teams with different IAM permissions than developers deploying CDK applications.
 
-For example there might be a networking team with permissions to deploy `AWS::EC2::SecurityGroup` and `AWS::EC2::EIP`, or a security team with permissions to deploy `AWS::IAM::Role` and `AWS::IAM::Policy`, but the developers deploying the CDK don't have those permissions
+For example there might be a networking team with permissions to deploy `AWS::EC2::SecurityGroup` and `AWS::EC2::EIP`, or a security team with permissions to deploy `AWS::IAM::Role` and `AWS::IAM::Policy`, but the developers deploying the CDK don't have those permissions.
 
 When a developer doesn't have permissions to deploy necessary resources in their CDK application, writing good code becomes difficult to manage when a cdk deploy will quickly error due to not being able to deploy something like an `AWS::IAM::Role` which is foundational to any project deployed into AWS.
 
+An enterprise should _allow_ builders to deploy these resources via CDK for [many reasons](https://github.com/aws/aws-cdk/wiki/Security-And-Safety-Dev-Guide#allowing-creation-of-iam-roles-without-privilege-escalation), and can use [Permissions Boundaries](https://docs.aws.amazon.com/IAM/latest/UserGuide/access_policies_boundaries.html) to prevent privilege escalation. For enterprises that haven't yet utilized Permissions Boundaries, the `ResourceExtractor` can make it easier for builders to write good CDK while complying with enterprise policies.
+
 Using the `ResourceExtractor` Aspect, developers can write their CDK code as though they had sufficient IAM permissions, but extract those resources into a separate stack for an external team to deploy on their behalf.
 
-Take the following example stack
+Take the following example stack:
 
 ```ts
 import { App, Aspects, RemovalPolicy, Stack } from 'aws-cdk-lib';
@@ -288,49 +346,6 @@ In the context of extracting the IAM policy, we want to tell the `ResourceExtrac
 
 In this case rather than using a `Ref: LogicalIdForTheSecretTargetAttachment` we construct the ARN we want to use.
 
-### Adding permissions boundaries to all generated IAM roles
-
-Example for `AddPermissionBoundary` in Typescript project.
-
-```ts
-import * as cdk from 'aws-cdk-lib';
-import { MyStack } from '../lib/my-project-stack';
-import { Aspects } from 'aws-cdk-lib';
-import { AddPermissionBoundary } from '@cdklabs/cdk-enterprise-iac';
-
-const app = new cdk.App();
-new MyStack(app, 'MyStack');
-
-Aspects.of(app).add(
-  new AddPermissionBoundary({
-    permissionsBoundaryPolicyName: 'MyPermissionBoundaryName',
-    instanceProfilePrefix: 'MY_PREFIX_', // optional, Defaults to ''
-    policyPrefix: 'MY_POLICY_PREFIX_', // optional, Defaults to ''
-    rolePrefix: 'MY_ROLE_PREFIX_', // optional, Defaults to ''
-  })
-);
-```
-
-Example for `AddPermissionBoundary` in Python project.
-
-```python
-import aws_cdk as cdk
-from cdklabs.cdk_enterprise_iac import AddPermissionBoundary
-from test_py.test_py_stack import TestPyStack
-
-
-app = cdk.App()
-TestPyStack(app, "TestPyStack")
-
-cdk.Aspects.of(app).add(AddPermissionBoundary(
-    permissions_boundary_policy_name="MyPermissionBoundaryName",
-    instance_profile_prefix="MY_PREFIX_",  # optional, Defaults to ""
-    policy_prefix="MY_POLICY_PREFIX_",  # optional, Defaults to ""
-    role_prefix="MY_ROLE_PREFIX_"  # optional, Defaults to ""
-))
-
-app.synth()
-```
 
 Details in [API.md](API.md)
 
