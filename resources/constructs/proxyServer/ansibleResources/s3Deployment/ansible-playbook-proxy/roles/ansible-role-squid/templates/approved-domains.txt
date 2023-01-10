@@ -1,0 +1,2 @@
+.amazonaws.com
+.amazon.com

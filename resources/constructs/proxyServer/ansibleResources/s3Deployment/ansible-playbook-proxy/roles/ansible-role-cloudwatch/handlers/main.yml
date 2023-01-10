@@ -1,0 +1,4 @@
+- name: Restart awslogsd
+  ansible.builtin.service:
+    name: awslogsd
+    state: restarted
