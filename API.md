@@ -677,7 +677,7 @@ Ensure this role has appropriate privileges. Example IAM policy statements:
       {
         "Action": "cloudwatch:DescribeAlarms",
         "Effect": "Allow",
-        "Resource": "arn:${Partition}:cloudwatch:${Region}:${Account}:alarm:${AlarmName}"
+        "Resource": "*"
       },
       {
         "Action": [
