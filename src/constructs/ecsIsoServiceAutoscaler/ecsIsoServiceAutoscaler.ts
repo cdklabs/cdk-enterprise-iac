@@ -25,7 +25,7 @@ export interface EcsIsoServiceAutoscalerProps {
    *      {
    *        "Action": "cloudwatch:DescribeAlarms",
    *        "Effect": "Allow",
-   *        "Resource": "arn:${Partition}:cloudwatch:${Region}:${Account}:alarm:${AlarmName}"
+   *        "Resource": "*"
    *      },
    *      {
    *        "Action": [
@@ -169,7 +169,11 @@ export class EcsIsoServiceAutoscaler extends Construct {
         new PolicyStatement({
           actions: ['cloudwatch:DescribeAlarms'],
           effect: Effect.ALLOW,
-          resources: [props.scaleAlarm.alarmArn],
+          // Required to be * and can not scope down due to composite alarm role constraints listed here:
+          // https://docs.aws.amazon.com/AmazonCloudWatch/latest/monitoring/permissions-reference-cw.html
+          // "cloudwatch:DescribeAlarms permission must have a * scope. You can't return information about
+          // composite alarms if your cloudwatch:DescribeAlarms permission has a narrower scope."
+          resources: ['*'],
         })
       );
 

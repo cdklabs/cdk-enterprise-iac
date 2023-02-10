@@ -155,16 +155,7 @@ describe('EcsIsoServiceAutoscaler construct', () => {
           Statement: Match.arrayWith([
             Match.objectLike({
               Action: 'cloudwatch:DescribeAlarms',
-              Resource: {
-                'Fn::GetAtt': [
-                  stack
-                    .getLogicalId(
-                      alarm.node.findChild('Resource') as CfnElement
-                    )
-                    .toString(),
-                  'Arn',
-                ],
-              },
+              Resource: '*',
             }),
             Match.objectLike({
               Action: ['ecs:DescribeServices', 'ecs:UpdateService'],
