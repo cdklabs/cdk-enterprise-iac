@@ -96,6 +96,10 @@
       "type": "build"
     },
     {
+      "name": "json-schema",
+      "type": "build"
+    },
+    {
       "name": "natural-compare-lite",
       "type": "build"
     },
