@@ -226,5 +226,20 @@ describe('Permissions Boundary patch', () => {
           ),
       });
     });
+    test('Instance Profile works fine when no prefix needed', () => {
+      const role = new Role(stack, 'TestRole', {
+        assumedBy: new ServicePrincipal('ec2.amazonaws.com'),
+      });
+      new CfnInstanceProfile(stack, 'TestInstanceProfile', {
+        roles: [role.roleName],
+      });
+      Aspects.of(stack).add(
+        new AddPermissionBoundary({
+          permissionsBoundaryPolicyName: pbName,
+        })
+      );
+      const template = Template.fromStack(stack);
+      template.resourceCountIs('AWS::IAM::InstanceProfile', 1);
+    });
   });
 });
