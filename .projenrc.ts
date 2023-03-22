@@ -4,7 +4,6 @@ SPDX-License-Identifier: Apache-2.0
 */
 import { awscdk, JsonFile } from 'projen';
 import { NpmAccess } from 'projen/lib/javascript';
-import { WorkflowDockerPatch } from './projenrc/WorkflowDockerPatch';
 
 const project = new awscdk.AwsCdkConstructLibrary({
   author: 'Taylor Ondrey',
@@ -77,9 +76,6 @@ project.eslint?.addRules({
   ],
 });
 project.eslint?.addExtends('plugin:security/recommended');
-
-new WorkflowDockerPatch(project, { workflow: 'build' });
-new WorkflowDockerPatch(project, { workflow: 'release' });
 
 new JsonFile(project, 'test/integ/tsconfig.json', {
   obj: {
