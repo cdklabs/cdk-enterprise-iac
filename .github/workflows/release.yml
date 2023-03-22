@@ -24,6 +24,10 @@ jobs:
         run: |-
           git config user.name "github-actions"
           git config user.email "github-actions@github.com"
+      - name: Setup Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: 16.x
       - name: Install dependencies
         run: yarn install --check-files --frozen-lockfile
       - name: release
@@ -41,10 +45,6 @@ jobs:
         with:
           name: build-artifact
           path: dist
-    container:
-      image: jsii/superchain:1-buster-slim-node14
-      options: --group-add ${{ needs.get-docker-group.outputs.dockerId }}
-    needs: get-docker-group
   release_github:
     name: Publish to GitHub Releases
     needs: release
@@ -55,7 +55,7 @@ jobs:
     steps:
       - uses: actions/setup-node@v3
         with:
-          node-version: 14.x
+          node-version: 16.x
       - name: Download build artifacts
         uses: actions/download-artifact@v3
         with:
@@ -84,7 +84,7 @@ jobs:
     steps:
       - uses: actions/setup-node@v3
         with:
-          node-version: 14.x
+          node-version: 16.x
       - name: Download build artifacts
         uses: actions/download-artifact@v3
         with:
@@ -121,7 +121,7 @@ jobs:
           java-version: 11.x
       - uses: actions/setup-node@v3
         with:
-          node-version: 14.x
+          node-version: 16.x
       - name: Download build artifacts
         uses: actions/download-artifact@v3
         with:
@@ -157,7 +157,7 @@ jobs:
     steps:
       - uses: actions/setup-node@v3
         with:
-          node-version: 14.x
+          node-version: 16.x
       - uses: actions/setup-python@v4
         with:
           python-version: 3.x
@@ -192,7 +192,7 @@ jobs:
     steps:
       - uses: actions/setup-node@v3
         with:
-          node-version: 14.x
+          node-version: 16.x
       - uses: actions/setup-dotnet@v3
         with:
           dotnet-version: 3.x
@@ -216,11 +216,3 @@ jobs:
         env:
           NUGET_API_KEY: ${{ secrets.NUGET_API_KEY }}
         run: npx -p publib@latest publib-nuget
-  get-docker-group:
-    runs-on: ubuntu-latest
-    outputs:
-      dockerId: ${{ steps.get_docker_id.outputs.id }}
-    steps:
-      - name: Get docker id
-        id: get_docker_id
-        run: 'echo "id=$(cut -d: -f3 < <(getent group docker))" >> $GITHUB_OUTPUT'
