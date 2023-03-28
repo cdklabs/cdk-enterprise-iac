@@ -4,8 +4,9 @@ SPDX-License-Identifier: Apache-2.0
 */
 import { Aws } from 'aws-cdk-lib';
 import { CfnApiKey } from 'aws-cdk-lib/aws-apigateway';
+import { CfnAlarm } from 'aws-cdk-lib/aws-cloudwatch';
 import { CfnTable } from 'aws-cdk-lib/aws-dynamodb';
-import { CfnCluster, CfnTaskDefinition } from 'aws-cdk-lib/aws-ecs';
+import { CfnCluster, CfnService, CfnTaskDefinition } from 'aws-cdk-lib/aws-ecs';
 import { CfnDomain as CfnDomainEss } from 'aws-cdk-lib/aws-elasticsearch';
 import { CfnFunction } from 'aws-cdk-lib/aws-lambda';
 import { CfnLogGroup } from 'aws-cdk-lib/aws-logs';
@@ -128,6 +129,15 @@ export class ResourceTransformer {
         const preamble = this.generateArnPreamble('ecs');
         return `${preamble}:cluster/${partial}`;
       },
+      [CfnService.CFN_RESOURCE_TYPE_NAME]: (
+        stackName,
+        logicalId,
+        _resourceProperties
+      ) => {
+        const partial = `*/${stackName}-${logicalId}*`;
+        const preamble = this.generateArnPreamble('ecs');
+        return `${preamble}:service/${partial}`;
+      },
       /** Colon-resource name grouping */
       [CfnLogGroup.CFN_RESOURCE_TYPE_NAME]: (
         stackName,
@@ -155,6 +165,15 @@ export class ResourceTransformer {
         const partial = `${logicalId}*`;
         const preamble = this.generateArnPreamble('states');
         return `${preamble}:stateMachine:${partial}`;
+      },
+      [CfnAlarm.CFN_RESOURCE_TYPE_NAME]: (
+        stackName,
+        logicalId,
+        _resourceProperties
+      ) => {
+        const partial = `${stackName}-${logicalId}*`;
+        const preamble = this.generateArnPreamble('cloudwatch');
+        return `${preamble}:alarm:${partial}`;
       },
       /** No resource name grouping */
       [CfnQueue.CFN_RESOURCE_TYPE_NAME]: (
