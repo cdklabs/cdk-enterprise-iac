@@ -163,7 +163,7 @@ describe('EcsIsoServiceAutoscaler construct', () => {
                 Ref: stack.getLogicalId(serviceId as CfnElement).toString(),
               },
               Condition: {
-                StringEquals: {
+                StringLike: {
                   'ecs:cluster': {
                     'Fn::GetAtt': [
                       stack.getLogicalId(clusterId as CfnElement).toString(),
