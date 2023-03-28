@@ -39,6 +39,7 @@
   },
   "ignorePatterns": [
     "*.js",
+    "!.projenrc.ts",
     "*.d.ts",
     "node_modules/",
     "*.generated.ts",
@@ -64,6 +65,7 @@
         "devDependencies": [
           "**/test/**",
           "**/build-tools/**",
+          "**/projenrc/**",
           ".projenrc.ts",
           "projenrc/**/*.ts"
         ],
