@@ -151,8 +151,8 @@ export class PopulateWithConfig extends Construct {
           {
             routeTableId:
               subnet.subnetType == 'Isolated'
-                ? this._privateRouteTableId
-                : this._localRouteTableId,
+                ? this._localRouteTableId
+                : this._privateRouteTableId,
             subnetId: sub.ref,
           }
         );
