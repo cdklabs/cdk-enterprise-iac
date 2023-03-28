@@ -183,7 +183,7 @@ export class EcsIsoServiceAutoscaler extends Construct {
           effect: Effect.ALLOW,
           resources: [props.ecsService.serviceArn],
           conditions: {
-            StringEquals: {
+            StringLike: {
               'ecs:cluster': props.ecsCluster.clusterArn,
             },
           },

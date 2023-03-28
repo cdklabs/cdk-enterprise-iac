@@ -5,17 +5,26 @@ SPDX-License-Identifier: Apache-2.0
 import { App, Aspects, Aws, CfnElement, Duration, Stack } from 'aws-cdk-lib';
 import { Match, Template } from 'aws-cdk-lib/assertions';
 import { ApiKey, CfnApiKey } from 'aws-cdk-lib/aws-apigateway';
+import { Alarm, CfnAlarm } from 'aws-cdk-lib/aws-cloudwatch';
 import { UserPool } from 'aws-cdk-lib/aws-cognito';
 import { AttributeType, CfnTable, Table } from 'aws-cdk-lib/aws-dynamodb';
 import { InstanceType, Vpc } from 'aws-cdk-lib/aws-ec2';
 import {
+  AssetImage,
   CfnCluster,
+  CfnService,
   CfnTaskDefinition,
   Cluster,
   Compatibility,
+  FargateService,
   TaskDefinition,
 } from 'aws-cdk-lib/aws-ecs';
-import { Role, ServicePrincipal } from 'aws-cdk-lib/aws-iam';
+import {
+  Effect,
+  PolicyStatement,
+  Role,
+  ServicePrincipal,
+} from 'aws-cdk-lib/aws-iam';
 import { CfnFunction, Code, Function, Runtime } from 'aws-cdk-lib/aws-lambda';
 import { LogGroup } from 'aws-cdk-lib/aws-logs';
 import {
@@ -684,6 +693,64 @@ describe('toPartial scenarios', () => {
     });
   });
 
+  test('cloudwatch Alarm', () => {
+    const role = new Role(stack, 'TestRole', {
+      assumedBy: new ServicePrincipal('lambda.amazonaws.com'),
+    });
+    const queue = new Queue(stack, 'TestQueue');
+    const alarm = new Alarm(stack, 'TestAlarm', {
+      metric: queue.metricNumberOfMessagesReceived(),
+      evaluationPeriods: 1,
+      threshold: 10,
+    });
+
+    role.addToPolicy(
+      new PolicyStatement({
+        actions: ['cloudwatch:DescribeAlarms'],
+        effect: Effect.ALLOW,
+        resources: [alarm.alarmArn],
+      })
+    );
+
+    const synthedApp = app.synth();
+    Aspects.of(app).add(
+      new ResourceExtractor({
+        extractDestinationStack: extractedStack,
+        stackArtifacts: synthedApp.stacks,
+        valueShareMethod: ResourceExtractorShareMethod.CFN_OUTPUT,
+        resourceTypesToExtract: ['AWS::IAM::Role', 'AWS::IAM::Policy'],
+      })
+    );
+    app.synth({ force: true });
+
+    const alarmNode = alarm.node.defaultChild as CfnAlarm;
+    const alarmLogicalID = stack.resolve(alarmNode.logicalId);
+    const extractedTemplate = Template.fromStack(extractedStack);
+    extractedTemplate.resourceCountIs('AWS::IAM::Role', 1);
+    extractedTemplate.hasResourceProperties('AWS::IAM::Policy', {
+      PolicyDocument: {
+        Statement: [
+          {
+            Resource: {
+              'Fn::Join': [
+                '',
+                [
+                  'arn:',
+                  { Ref: 'AWS::Partition' },
+                  ':cloudwatch:',
+                  { Ref: 'AWS::Region' },
+                  ':',
+                  { Ref: 'AWS::AccountId' },
+                  `:alarm:${appStackName}-${alarmLogicalID}*`,
+                ],
+              ],
+            },
+          },
+        ],
+      },
+    });
+  });
+
   test('opensearch CfnDomain', () => {
     const role = new Role(stack, 'testRole', {
       assumedBy: new ServicePrincipal('es.amazonaws.com'),
@@ -832,6 +899,73 @@ describe('toPartial scenarios', () => {
                   ':',
                   { Ref: 'AWS::AccountId' },
                   `:cluster/${appStackName}-${clusterLogicalID}*`,
+                ],
+              ],
+            },
+          }),
+        ]),
+      },
+    });
+  });
+
+  test('ecs CfnService', () => {
+    const role = new Role(stack, 'TestRole', {
+      assumedBy: new ServicePrincipal('lambda.amazonaws.com'),
+    });
+    const cluster = new Cluster(stack, 'TestCluster');
+    const taskDefinition = new TaskDefinition(stack, 'TestTaskDef', {
+      compatibility: Compatibility.FARGATE,
+      cpu: '256',
+      memoryMiB: '512',
+    });
+    taskDefinition.addContainer('TestContainer', {
+      image: AssetImage.fromRegistry('alpine'),
+    });
+
+    const service = new FargateService(stack, 'TestService', {
+      cluster,
+      taskDefinition,
+    });
+
+    role.addToPolicy(
+      new PolicyStatement({
+        actions: ['ecs:DescribeServices', 'ecs:UpdateService'],
+        effect: Effect.ALLOW,
+        resources: [service.serviceArn],
+      })
+    );
+
+    const synthedApp = app.synth();
+    Aspects.of(app).add(
+      new ResourceExtractor({
+        extractDestinationStack: extractedStack,
+        stackArtifacts: synthedApp.stacks,
+        valueShareMethod: ResourceExtractorShareMethod.CFN_OUTPUT,
+        resourceTypesToExtract: ['AWS::IAM::Role', 'AWS::IAM::Policy'],
+      })
+    );
+    app.synth({ force: true });
+
+    const serviceNode = service.node.defaultChild as CfnService;
+    const serviceLogicalID = stack.resolve(serviceNode.logicalId);
+    const extractedTemplate = Template.fromStack(extractedStack);
+
+    extractedTemplate.resourceCountIs('AWS::IAM::Role', 2);
+    extractedTemplate.hasResourceProperties('AWS::IAM::Policy', {
+      PolicyDocument: {
+        Statement: Match.arrayWith([
+          Match.objectLike({
+            Resource: {
+              'Fn::Join': [
+                '',
+                [
+                  'arn:',
+                  { Ref: 'AWS::Partition' },
+                  ':ecs:',
+                  { Ref: 'AWS::Region' },
+                  ':',
+                  { Ref: 'AWS::AccountId' },
+                  `:service/*/${appStackName}-${serviceLogicalID}*`,
                 ],
               ],
             },
