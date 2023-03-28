@@ -4,6 +4,7 @@ SPDX-License-Identifier: Apache-2.0
 */
 import { Aws } from 'aws-cdk-lib';
 import { CfnApiKey } from 'aws-cdk-lib/aws-apigateway';
+import { CfnAlarm } from 'aws-cdk-lib/aws-cloudwatch';
 import { CfnTable } from 'aws-cdk-lib/aws-dynamodb';
 import { CfnCluster, CfnService, CfnTaskDefinition } from 'aws-cdk-lib/aws-ecs';
 import { CfnDomain as CfnDomainEss } from 'aws-cdk-lib/aws-elasticsearch';
@@ -15,7 +16,6 @@ import { CfnTopic } from 'aws-cdk-lib/aws-sns';
 import { CfnQueue } from 'aws-cdk-lib/aws-sqs';
 import { CfnParameter } from 'aws-cdk-lib/aws-ssm';
 import { CfnStateMachine } from 'aws-cdk-lib/aws-stepfunctions';
-import { CfnAlarm } from 'aws-cdk-lib/aws-cloudwatch';
 import { CfnStore } from './cfnStore';
 import { FlatJson, Json } from './types';
 
@@ -134,9 +134,9 @@ export class ResourceTransformer {
         logicalId,
         _resourceProperties
       ) => {
-        const partial = `*/${stackName}-${logicalId}*`
+        const partial = `*/${stackName}-${logicalId}*`;
         const preamble = this.generateArnPreamble('ecs');
-        return `${preamble}:service/${partial}`
+        return `${preamble}:service/${partial}`;
       },
       /** Colon-resource name grouping */
       [CfnLogGroup.CFN_RESOURCE_TYPE_NAME]: (
@@ -173,7 +173,7 @@ export class ResourceTransformer {
       ) => {
         const partial = `${stackName}-${logicalId}*`;
         const preamble = this.generateArnPreamble('cloudwatch');
-        return `${preamble}:alarm:${partial}`
+        return `${preamble}:alarm:${partial}`;
       },
       /** No resource name grouping */
       [CfnQueue.CFN_RESOURCE_TYPE_NAME]: (

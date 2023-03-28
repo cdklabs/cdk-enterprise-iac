@@ -19,7 +19,12 @@ import {
   FargateService,
   TaskDefinition,
 } from 'aws-cdk-lib/aws-ecs';
-import { Effect, PolicyStatement, Role, ServicePrincipal } from 'aws-cdk-lib/aws-iam';
+import {
+  Effect,
+  PolicyStatement,
+  Role,
+  ServicePrincipal,
+} from 'aws-cdk-lib/aws-iam';
 import { CfnFunction, Code, Function, Runtime } from 'aws-cdk-lib/aws-lambda';
 import { LogGroup } from 'aws-cdk-lib/aws-logs';
 import {
@@ -696,16 +701,16 @@ describe('toPartial scenarios', () => {
     const alarm = new Alarm(stack, 'TestAlarm', {
       metric: queue.metricNumberOfMessagesReceived(),
       evaluationPeriods: 1,
-      threshold: 10
+      threshold: 10,
     });
-    
+
     role.addToPolicy(
       new PolicyStatement({
         actions: ['cloudwatch:DescribeAlarms'],
         effect: Effect.ALLOW,
-        resources: [alarm.alarmArn]
+        resources: [alarm.alarmArn],
       })
-    )
+    );
 
     const synthedApp = app.synth();
     Aspects.of(app).add(
@@ -914,12 +919,12 @@ describe('toPartial scenarios', () => {
       memoryMiB: '512',
     });
     taskDefinition.addContainer('TestContainer', {
-      image: AssetImage.fromRegistry('alpine')
+      image: AssetImage.fromRegistry('alpine'),
     });
 
     const service = new FargateService(stack, 'TestService', {
       cluster,
-      taskDefinition
+      taskDefinition,
     });
 
     role.addToPolicy(
