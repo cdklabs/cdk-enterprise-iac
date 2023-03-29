@@ -356,8 +356,6 @@ describe('toPartial scenarios', () => {
     // const parameterLogicalID = stack.resolve(parameterNode.logicalId);
 
     const extractedTemplate = Template.fromStack(extractedStack);
-    const appTemplate = Template.fromStack(stack);
-    console.log(appTemplate);
     extractedTemplate.resourceCountIs('AWS::IAM::Role', 1);
     extractedTemplate.hasResourceProperties('AWS::IAM::Policy', {
       PolicyDocument: {

@@ -96,6 +96,20 @@ describe('CDKify a provided vpc', () => {
       },
       2
     );
+    template.resourcePropertiesCountIs(
+      'AWS::EC2::SubnetRouteTableAssociation',
+      {
+        RouteTableId: privateRouteTableId,
+      },
+      4
+    );
+    template.resourcePropertiesCountIs(
+      'AWS::EC2::SubnetRouteTableAssociation',
+      {
+        RouteTableId: localRouteTableId,
+      },
+      2
+    );
   });
   test('split vpc evenly with defaults', () => {
     new SplitVpcEvenly(stack, 'CDKifyVpc', {
