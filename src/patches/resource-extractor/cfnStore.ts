@@ -21,6 +21,7 @@ export class CfnStore {
   public readonly templates: Json = {};
   public readonly flatTemplates: FlatJson;
   public readonly extractedStackExports: FlatJson = {};
+  public readonly fnJoins: Json = {};
 
   constructor(props: CfnStoreProps) {
     /** Save CloudFormation templates for future lookup */
@@ -192,7 +193,11 @@ export class CfnStore {
     // Get the actual values from the flat templates map
     const listOfValues: string[] = [];
     items.forEach((item) => {
-      if (!item.includes('Fn::GetAtt.1')) {
+      if (Object.keys(this.fnJoins).includes(item)) {
+        listOfValues.push(this.fnJoins[item]);
+      } else if (item.split('.').slice(-1)[0] == 'Ref') {
+        listOfValues.push(Fn.ref(this.flatTemplates[item]));
+      } else if (!item.includes('Fn::GetAtt.1')) {
         listOfValues.push(this.flatTemplates[item]);
       }
     });

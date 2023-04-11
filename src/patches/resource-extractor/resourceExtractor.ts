@@ -318,15 +318,15 @@ export class ResourceExtractor implements IAspect {
       if (props.foundRefNode instanceof CfnOutput) {
         props.foundRefNode.value = newValue;
       } else if (props.flattenedKey.includes('Fn::Join')) {
-        // Get Fn::Join path and set flat template to true value
+        // Get Fn::Join path and save new value to fnJoins table
         const fnJoinFlatJsonPath =
           props.flattenedKey.split('.Fn::Join')[0] + '.Fn::Join';
         const fnJoinOverridePath = propertyOverridePath.split('.Fn::Join')[0];
-        this.cfn.flatTemplates[props.flattenedKey] = newValue;
+        this.cfn.fnJoins[props.flattenedKey] = newValue;
 
         // Rebuild Fn::Join object
-        const nv = this.cfn.rebuildFnJoin(fnJoinFlatJsonPath);
-        props.foundRefNode.addPropertyOverride(fnJoinOverridePath, nv);
+        const joined = this.cfn.rebuildFnJoin(fnJoinFlatJsonPath);
+        props.foundRefNode.addPropertyOverride(fnJoinOverridePath, joined);
       } else {
         props.foundRefNode.addPropertyOverride(propertyOverridePath, newValue);
       }
@@ -340,15 +340,15 @@ export class ResourceExtractor implements IAspect {
       if (props.foundRefNode instanceof CfnOutput) {
         props.foundRefNode.value = newValue;
       } else if (props.flattenedKey.includes('Fn::Join')) {
-        // Get Fn::Join path and set flat template to true value
+        // Get Fn::Join path and save new value to fnJoins table
         const fnJoinFlatJsonPath =
           props.flattenedKey.split('.Fn::Join')[0] + '.Fn::Join';
         const fnJoinOverridePath = propertyOverridePath.split('.Fn::Join')[0];
-        this.cfn.flatTemplates[props.flattenedKey] = newValue;
+        this.cfn.fnJoins[props.flattenedKey] = newValue;
 
         // Rebuild Fn::Join object
-        const nv = this.cfn.rebuildFnJoin(fnJoinFlatJsonPath);
-        props.foundRefNode.addPropertyOverride(fnJoinOverridePath, nv);
+        const joined = this.cfn.rebuildFnJoin(fnJoinFlatJsonPath);
+        props.foundRefNode.addPropertyOverride(fnJoinOverridePath, joined);
       } else {
         props.foundRefNode.addPropertyOverride(propertyOverridePath, newValue);
       }
@@ -364,15 +364,15 @@ export class ResourceExtractor implements IAspect {
       if (props.foundRefNode instanceof CfnOutput) {
         props.foundRefNode.value = newValue;
       } else if (props.flattenedKey.includes('Fn::Join')) {
-        // Get Fn::Join path and set flat template to true value
+        // Get Fn::Join path and save new value to fnJoins table
         const fnJoinFlatJsonPath =
           props.flattenedKey.split('.Fn::Join')[0] + '.Fn::Join';
         const fnJoinOverridePath = propertyOverridePath.split('.Fn::Join')[0];
-        this.cfn.flatTemplates[props.flattenedKey] = newValue;
+        this.cfn.fnJoins[props.flattenedKey] = newValue;
 
         // Rebuild Fn::Join object
-        const nv = this.cfn.rebuildFnJoin(fnJoinFlatJsonPath);
-        props.foundRefNode.addPropertyOverride(fnJoinOverridePath, nv);
+        const joined = this.cfn.rebuildFnJoin(fnJoinFlatJsonPath);
+        props.foundRefNode.addPropertyOverride(fnJoinOverridePath, joined);
       } else {
         props.foundRefNode.addPropertyOverride(propertyOverridePath, newValue);
       }

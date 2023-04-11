@@ -2,7 +2,14 @@
 Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
 SPDX-License-Identifier: Apache-2.0
 */
-import { App, Aspects, CfnElement, RemovalPolicy, Stack } from 'aws-cdk-lib';
+import {
+  App,
+  Aspects,
+  Aws,
+  CfnElement,
+  RemovalPolicy,
+  Stack,
+} from 'aws-cdk-lib';
 import { Match, Template, Annotations } from 'aws-cdk-lib/assertions';
 import {
   Instance,
@@ -157,7 +164,7 @@ describe('Extracting resources from stack', () => {
       handler: 'index.handler',
       runtime: Runtime.PYTHON_3_9,
       environment: {
-        JOINED: `arn:${role.roleName}:foo:${role.roleArn}:bar`,
+        JOINED: `arn:${role.roleName}:foo:${role.roleArn}:bar:${Aws.REGION}`,
       },
     });
     testFunc.grantInvoke(role);
@@ -199,7 +206,10 @@ describe('Extracting resources from stack', () => {
                 {
                   'Fn::ImportValue': Match.anyValue(),
                 },
-                ':bar',
+                ':bar:',
+                {
+                  Ref: 'AWS::Region',
+                },
               ],
             ],
           },
