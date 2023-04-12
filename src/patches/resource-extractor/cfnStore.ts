@@ -3,7 +3,7 @@ Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
 SPDX-License-Identifier: Apache-2.0
 */
 import * as cp from 'child_process';
-import { CfnResource } from 'aws-cdk-lib';
+import { CfnResource, Fn } from 'aws-cdk-lib';
 import { CloudFormationStackArtifact } from 'aws-cdk-lib/cx-api';
 import { CloudFormation } from 'aws-sdk';
 import { Flattener } from './flattener';
@@ -21,6 +21,7 @@ export class CfnStore {
   public readonly templates: Json = {};
   public readonly flatTemplates: FlatJson;
   public readonly extractedStackExports: FlatJson = {};
+  public readonly fnJoins: Json = {};
 
   constructor(props: CfnStoreProps) {
     /** Save CloudFormation templates for future lookup */
@@ -166,5 +167,42 @@ export class CfnStore {
       }
     }
     return exports;
+  }
+
+  /**
+   * Rebuilds an `Fn::Join` statement from the Flat Json path. This is
+   * necessary because CDK does not correctly inject values back into
+   * `Fn::Join` blocks. The rebuilt object is injected back into the spot where
+   * the original `Fn::Join` was at. By using this method, we can get around
+   * the problem where `addPropertyOverride` does not work for Fn::Join lists.
+   *
+   * @param fnJoinFlatJsonPath
+   * @returns string of Fn::Join (may be string or Json string depending on
+   * if CloudFormation needs to reference values or if the entire string can
+   * be hardcoded back)
+   */
+  public rebuildFnJoin(fnJoinFlatJsonPath: string): string {
+    // Find the items that this fnJoin references
+    const items = Object.keys(this.flatTemplates).filter((key) =>
+      key.includes(`${fnJoinFlatJsonPath}.1`)
+    );
+
+    // Sort the items so that they are rebuilt in the right order
+    items.sort();
+
+    // Get the actual values from the flat templates map
+    const listOfValues: string[] = [];
+    items.forEach((item) => {
+      if (Object.keys(this.fnJoins).includes(item)) {
+        listOfValues.push(this.fnJoins[item]);
+      } else if (item.split('.').slice(-1)[0] == 'Ref') {
+        listOfValues.push(Fn.ref(this.flatTemplates[item]));
+      } else if (!item.includes('Fn::GetAtt.1')) {
+        listOfValues.push(this.flatTemplates[item]);
+      }
+    });
+
+    // Return the rebuilt Join statement
+    return Fn.join(this.flatTemplates[`${fnJoinFlatJsonPath}.0`], listOfValues);
   }
 }

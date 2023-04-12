@@ -317,6 +317,16 @@ export class ResourceExtractor implements IAspect {
       const newValue = props.foundRefNode.stack.resolve(props.importValue);
       if (props.foundRefNode instanceof CfnOutput) {
         props.foundRefNode.value = newValue;
+      } else if (props.flattenedKey.includes('Fn::Join')) {
+        // Get Fn::Join path and save new value to fnJoins table
+        const fnJoinFlatJsonPath =
+          props.flattenedKey.split('.Fn::Join')[0] + '.Fn::Join';
+        const fnJoinOverridePath = propertyOverridePath.split('.Fn::Join')[0];
+        this.cfn.fnJoins[props.flattenedKey] = newValue;
+
+        // Rebuild Fn::Join object
+        const joined = this.cfn.rebuildFnJoin(fnJoinFlatJsonPath);
+        props.foundRefNode.addPropertyOverride(fnJoinOverridePath, joined);
       } else {
         props.foundRefNode.addPropertyOverride(propertyOverridePath, newValue);
       }
@@ -329,6 +339,16 @@ export class ResourceExtractor implements IAspect {
       );
       if (props.foundRefNode instanceof CfnOutput) {
         props.foundRefNode.value = newValue;
+      } else if (props.flattenedKey.includes('Fn::Join')) {
+        // Get Fn::Join path and save new value to fnJoins table
+        const fnJoinFlatJsonPath =
+          props.flattenedKey.split('.Fn::Join')[0] + '.Fn::Join';
+        const fnJoinOverridePath = propertyOverridePath.split('.Fn::Join')[0];
+        this.cfn.fnJoins[props.flattenedKey] = newValue;
+
+        // Rebuild Fn::Join object
+        const joined = this.cfn.rebuildFnJoin(fnJoinFlatJsonPath);
+        props.foundRefNode.addPropertyOverride(fnJoinOverridePath, joined);
       } else {
         props.foundRefNode.addPropertyOverride(propertyOverridePath, newValue);
       }
@@ -343,6 +363,16 @@ export class ResourceExtractor implements IAspect {
         `dummy-value-for-${importValue}`;
       if (props.foundRefNode instanceof CfnOutput) {
         props.foundRefNode.value = newValue;
+      } else if (props.flattenedKey.includes('Fn::Join')) {
+        // Get Fn::Join path and save new value to fnJoins table
+        const fnJoinFlatJsonPath =
+          props.flattenedKey.split('.Fn::Join')[0] + '.Fn::Join';
+        const fnJoinOverridePath = propertyOverridePath.split('.Fn::Join')[0];
+        this.cfn.fnJoins[props.flattenedKey] = newValue;
+
+        // Rebuild Fn::Join object
+        const joined = this.cfn.rebuildFnJoin(fnJoinFlatJsonPath);
+        props.foundRefNode.addPropertyOverride(fnJoinOverridePath, joined);
       } else {
         props.foundRefNode.addPropertyOverride(propertyOverridePath, newValue);
       }

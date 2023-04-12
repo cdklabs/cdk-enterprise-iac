@@ -2,7 +2,14 @@
 Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
 SPDX-License-Identifier: Apache-2.0
 */
-import { App, Aspects, CfnElement, RemovalPolicy, Stack } from 'aws-cdk-lib';
+import {
+  App,
+  Aspects,
+  Aws,
+  CfnElement,
+  RemovalPolicy,
+  Stack,
+} from 'aws-cdk-lib';
 import { Match, Template, Annotations } from 'aws-cdk-lib/assertions';
 import {
   Instance,
@@ -144,6 +151,69 @@ describe('Extracting resources from stack', () => {
       Role: {
         'Fn::ImportValue': Match.anyValue(),
         'Fn::GetAtt': Match.absent(),
+      },
+    });
+  });
+
+  test('Dynamically build string with exported values', () => {
+    const role = new Role(stack, 'TestRole', {
+      assumedBy: new ServicePrincipal('lambda.amazonaws.com'),
+    });
+    const testFunc = new Function(stack, 'TestFunction', {
+      code: Code.fromInline("print('hello_world')"),
+      handler: 'index.handler',
+      runtime: Runtime.PYTHON_3_9,
+      environment: {
+        JOINED: `arn:${role.roleName}:foo:${role.roleArn}:bar:${Aws.REGION}`,
+      },
+    });
+    testFunc.grantInvoke(role);
+
+    const synthedApp = app.synth();
+
+    Aspects.of(app).add(
+      new ResourceExtractor({
+        extractDestinationStack: extractedStack,
+        stackArtifacts: synthedApp.stacks,
+        valueShareMethod: ResourceExtractorShareMethod.CFN_OUTPUT,
+        resourceTypesToExtract,
+      })
+    );
+    app.synth({ force: true });
+
+    const extractedTemplate = Template.fromStack(extractedStack);
+    const appTemplate = Template.fromStack(stack);
+
+    // Extracted stack has IAM resources
+    extractedTemplate.resourceCountIs('AWS::IAM::Role', 2);
+    extractedTemplate.resourceCountIs('AWS::IAM::Policy', 1);
+    // Non-IAM resources present in app stack
+    appTemplate.resourceCountIs('AWS::Lambda::Function', 1);
+    // Lambda function has correct environment variable that has been joined
+    // using Fn::Join since we need to import values from Outputs
+    appTemplate.hasResourceProperties('AWS::Lambda::Function', {
+      Environment: {
+        Variables: {
+          JOINED: {
+            'Fn::Join': [
+              '',
+              [
+                'arn:',
+                {
+                  'Fn::ImportValue': Match.anyValue(),
+                },
+                ':foo:',
+                {
+                  'Fn::ImportValue': Match.anyValue(),
+                },
+                ':bar:',
+                {
+                  Ref: 'AWS::Region',
+                },
+              ],
+            ],
+          },
+        },
       },
     });
   });
@@ -552,6 +622,52 @@ describe('Sharing Methods - SSM_PARAMETER', () => {
     });
   });
 
+  test('Dynamically build string with exported values', () => {
+    const role = new Role(stack, 'TestRole', {
+      assumedBy: new ServicePrincipal('lambda.amazonaws.com'),
+    });
+    const testFunc = new Function(stack, 'TestFunction', {
+      code: Code.fromInline("print('hello_world')"),
+      handler: 'index.handler',
+      runtime: Runtime.PYTHON_3_9,
+      environment: {
+        JOINED: `arn:${role.roleName}:foo:${role.roleArn}:bar`,
+      },
+    });
+    testFunc.grantInvoke(role);
+
+    const synthedApp = app.synth();
+    Aspects.of(app).add(
+      new ResourceExtractor({
+        extractDestinationStack: extractedStack,
+        stackArtifacts: synthedApp.stacks,
+        valueShareMethod: ResourceExtractorShareMethod.SSM_PARAMETER,
+        resourceTypesToExtract,
+      })
+    );
+    app.synth({ force: true });
+
+    const extractedTemplate = Template.fromStack(extractedStack);
+    const appTemplate = Template.fromStack(stack);
+
+    // Extracted stack has IAM resources
+    extractedTemplate.resourceCountIs('AWS::IAM::Role', 2);
+    extractedTemplate.resourceCountIs('AWS::IAM::Policy', 1);
+    // Non-IAM resources present in app stack
+    appTemplate.resourceCountIs('AWS::Lambda::Function', 1);
+    // Lambda function has correct environment variable that has been joined
+    // using the Fn.Join function, which combines the result of all strings
+    appTemplate.hasResourceProperties('AWS::Lambda::Function', {
+      Environment: {
+        Variables: {
+          JOINED: Match.stringLikeRegexp(
+            'arn:dummy-value-for-(.*?):foo:dummy-value-for-(.*?):bar'
+          ),
+        },
+      },
+    });
+  });
+
   test('Exports work correctly', () => {
     const secondStack = new Stack(app, 'Stack2', { env });
     const role = new Role(stack, 'ExportedRole', {
@@ -637,6 +753,52 @@ describe('Sharing Methods - API_LOOKUP', () => {
     appTemplate.resourceCountIs('AWS::Lambda::Function', 1);
     appTemplate.hasResourceProperties('AWS::Lambda::Function', {
       Role: `dummy-value-for-${appStackName}:${roleLogicalId}:Arn`,
+    });
+  });
+
+  test('Dynamically build string with exported values', () => {
+    const role = new Role(stack, 'TestRole', {
+      assumedBy: new ServicePrincipal('lambda.amazonaws.com'),
+    });
+    const testFunc = new Function(stack, 'TestFunction', {
+      code: Code.fromInline("print('hello_world')"),
+      handler: 'index.handler',
+      runtime: Runtime.PYTHON_3_9,
+      environment: {
+        JOINED: `arn:${role.roleName}:foo:${role.roleArn}:bar`,
+      },
+    });
+    testFunc.grantInvoke(role);
+
+    const synthedApp = app.synth();
+    Aspects.of(app).add(
+      new ResourceExtractor({
+        extractDestinationStack: extractedStack,
+        stackArtifacts: synthedApp.stacks,
+        valueShareMethod: ResourceExtractorShareMethod.API_LOOKUP,
+        resourceTypesToExtract,
+      })
+    );
+    app.synth({ force: true });
+
+    const extractedTemplate = Template.fromStack(extractedStack);
+    const appTemplate = Template.fromStack(stack);
+
+    // Extracted stack has IAM resources
+    extractedTemplate.resourceCountIs('AWS::IAM::Role', 2);
+    extractedTemplate.resourceCountIs('AWS::IAM::Policy', 1);
+    // Non-IAM resources present in app stack
+    appTemplate.resourceCountIs('AWS::Lambda::Function', 1);
+    // Lambda function has correct environment variable that has been joined
+    // using the Fn.Join function, which combines the result of all strings
+    appTemplate.hasResourceProperties('AWS::Lambda::Function', {
+      Environment: {
+        Variables: {
+          JOINED: Match.stringLikeRegexp(
+            'arn:dummy-value-for-(.*?):foo:dummy-value-for-(.*?):bar'
+          ),
+        },
+      },
     });
   });
 
