@@ -157,7 +157,19 @@ export class ResourceExtractor implements IAspect {
   private processCfnResource(node: CfnResource): void {
     const stackName = node.stack.stackName;
     const logicalId = node.stack.resolve(node.logicalId);
-    const props = this.cfn.templates[stackName].Resources[logicalId].Properties;
+    const cfnResourceJson = this.cfn.templates[stackName].Resources[logicalId];
+    const props = cfnResourceJson.Properties;
+
+    // Create a new object that contains other allowed top level properties
+    // other than `Type` and `Properties` so that we can ensure that they
+    // are correctly set on the extracted object
+    const allowedTopLevelKeys = ['UpdateReplacePolicy', 'DeletionPolicy'];
+    const topLevelProps = Object.keys(cfnResourceJson)
+      .filter((k) => allowedTopLevelKeys.includes(k))
+      .reduce((obj, key) => {
+        obj[key] = cfnResourceJson[key];
+        return obj;
+      }, {} as Json);
 
     // Check if props include references to resources that _aren't_ being
     // extracted
@@ -184,9 +196,12 @@ export class ResourceExtractor implements IAspect {
         node.stack.resolve(logicalId)
       )
     ) {
-      new CfnResource(this.extractDestinationStack, logicalId, {
+      const r = new CfnResource(this.extractDestinationStack, logicalId, {
         type: node.cfnResourceType,
         properties: modifiedProps || props,
+      });
+      Object.keys(topLevelProps).forEach((k) => {
+        r.addOverride(k, topLevelProps[k]);
       });
     }
 

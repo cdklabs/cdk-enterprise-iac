@@ -155,6 +155,33 @@ describe('Extracting resources from stack', () => {
     });
   });
 
+  test('Allowed top level properties are extracted correctly', () => {
+    const role = new Role(stack, 'TestRole', {
+      assumedBy: new ServicePrincipal('lambda.amazonaws.com'),
+    });
+    role.applyRemovalPolicy(RemovalPolicy.RETAIN);
+
+    const synthedApp = app.synth();
+    Aspects.of(app).add(
+      new ResourceExtractor({
+        extractDestinationStack: extractedStack,
+        stackArtifacts: synthedApp.stacks,
+        valueShareMethod: ResourceExtractorShareMethod.CFN_OUTPUT,
+        resourceTypesToExtract,
+      })
+    );
+    app.synth({ force: true });
+
+    const extractedTemplate = Template.fromStack(extractedStack);
+
+    // Extracted stack has IAM resources
+    extractedTemplate.resourceCountIs('AWS::IAM::Role', 1);
+    extractedTemplate.hasResource('AWS::IAM::Role', {
+      DeletionPolicy: 'Retain',
+      UpdateReplacePolicy: 'Retain',
+    });
+  });
+
   test('Dynamically build string with exported values', () => {
     const role = new Role(stack, 'TestRole', {
       assumedBy: new ServicePrincipal('lambda.amazonaws.com'),
