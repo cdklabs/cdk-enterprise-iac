@@ -9,7 +9,8 @@ repos:
       - id: check-json
         exclude: |
           (?x)(
-              ^.eslintrc.json
+              ^.eslintrc.json|
+              tsconfig*
           )
       - id: trailing-whitespace
         exclude: ^API.md||.github/
