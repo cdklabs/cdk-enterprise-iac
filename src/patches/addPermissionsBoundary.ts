@@ -65,16 +65,21 @@ export class AddPermissionBoundary implements IAspect {
     cdkProp?: string
   ): void {
     if (!cdkProp?.startsWith(prefix)) {
+      let policySuffix;
       if (cdkProp != undefined) {
-        const policySuffix = !Token.isUnresolved(cdkProp)
+        policySuffix = !Token.isUnresolved(cdkProp)
           ? (cdkProp as string)
           : getResourceId(node.node.path);
-
-        node.addPropertyOverride(
-          cfnProp,
-          `${prefix}${policySuffix.replace(/\s/g, '')}`.substring(0, length - 1)
-        );
+      } else if (cdkProp == undefined && prefix != '') {
+        policySuffix = getResourceId(node.node.path);
+      } else {
+        return;
       }
+
+      node.addPropertyOverride(
+        cfnProp,
+        `${prefix}${policySuffix.replace(/\s/g, '')}`.substring(0, length - 1)
+      );
     }
   }
 

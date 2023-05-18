@@ -3,7 +3,7 @@ Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
 SPDX-License-Identifier: Apache-2.0
 */
 import { Aspects, RemovalPolicy, Stack } from 'aws-cdk-lib';
-import { Template } from 'aws-cdk-lib/assertions';
+import { Template, Match } from 'aws-cdk-lib/assertions';
 import {
   CfnInstanceProfile,
   ManagedPolicy,
@@ -240,6 +240,27 @@ describe('Permissions Boundary patch', () => {
       );
       const template = Template.fromStack(stack);
       template.resourceCountIs('AWS::IAM::InstanceProfile', 1);
+    });
+    test('Instance Profile name added when none provided', () => {
+      const instanceProfilePrefix = 'INSTANCE_PROFILE_PREFIX_';
+      const role = new Role(stack, 'TestRole', {
+        assumedBy: new ServicePrincipal('ec2.amazonaws.com'),
+      });
+      new CfnInstanceProfile(stack, 'TestInstanceProfile', {
+        roles: [role.roleName],
+      });
+      Aspects.of(stack).add(
+        new AddPermissionBoundary({
+          permissionsBoundaryPolicyName: pbName,
+          instanceProfilePrefix,
+        })
+      );
+      const template = Template.fromStack(stack);
+      template.hasResourceProperties('AWS::IAM::InstanceProfile', {
+        InstanceProfileName: Match.stringLikeRegexp(
+          `${instanceProfilePrefix}*`
+        ),
+      });
     });
   });
 });
