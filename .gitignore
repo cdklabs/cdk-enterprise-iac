@@ -61,4 +61,7 @@ junit.xml
 .jsii
 tsconfig.json
 !/API.md
+.jsii.tabl.json
+!/rosetta/default.ts-fixture
+!/.github/workflows/upgrade-cdklabs-projen-project-types-main.yml
 !/test/integ/tsconfig.json

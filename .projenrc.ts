@@ -2,23 +2,27 @@
 Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
 SPDX-License-Identifier: Apache-2.0
 */
-import { awscdk, JsonFile } from 'projen';
-import { NpmAccess } from 'projen/lib/javascript';
+import {
+  CdklabsConstructLibrary,
+  JsiiLanguage,
+} from 'cdklabs-projen-project-types';
+import { DependencyType, JsonFile } from 'projen';
 
-const project = new awscdk.AwsCdkConstructLibrary({
+const project = new CdklabsConstructLibrary({
+  setNodeEngineVersion: false,
+  stability: 'experimental',
+  private: false,
   author: 'Taylor Ondrey',
   authorAddress: 'ondreyt@amazon.com',
   projenrcTs: true,
   cdkVersion: '2.41.0',
+  rosettaOptions: {
+    strict: false,
+  },
   defaultReleaseBranch: 'main',
   name: '@cdklabs/cdk-enterprise-iac',
   repositoryUrl: 'https://github.com/cdklabs/cdk-enterprise-iac.git',
-  devDeps: [
-    'eslint-plugin-security',
-    '@aws-cdk/integ-tests-alpha@2.41.0-alpha.0',
-    '@aws-cdk/integ-runner@^2',
-    'natural-compare-lite',
-  ],
+  devDeps: ['eslint-plugin-security', 'natural-compare-lite'],
   deps: ['aws-sdk@^2.1230.0'],
   bundledDeps: ['aws-sdk'],
   gitignore: [
@@ -33,20 +37,11 @@ const project = new awscdk.AwsCdkConstructLibrary({
     '*.bak',
   ],
   eslintOptions: { prettier: true, dirs: ['src', 'projenrc'] },
-  autoApproveOptions: {
-    allowedUsernames: ['cdklabs-automation'],
-    secret: 'GITHUB_TOKEN',
-  },
-  autoApproveUpgrades: true,
-  depsUpgradeOptions: {
-    workflowOptions: {
-      labels: ['auto-approve'],
-      container: {
-        image: 'jsii/superchain:1-buster-slim-node14',
-      },
-    },
-  },
-  npmAccess: NpmAccess.PUBLIC,
+  jsiiTargetLanguages: [
+    JsiiLanguage.PYTHON,
+    JsiiLanguage.DOTNET,
+    JsiiLanguage.JAVA,
+  ],
   publishToPypi: {
     distName: 'cdklabs.cdk-enterprise-iac',
     module: 'cdklabs.cdk_enterprise_iac',
@@ -77,14 +72,14 @@ project.eslint?.addRules({
 });
 project.eslint?.addExtends('plugin:security/recommended');
 
+project.deps.addDependency(
+  '@aws-cdk/integ-tests-alpha@2.41.0-alpha.0',
+  DependencyType.TEST
+);
 new JsonFile(project, 'test/integ/tsconfig.json', {
   obj: {
     extends: '../../tsconfig.dev.json',
     include: ['./**/integ.*.ts'],
   },
 });
-project.setScript(
-  'integ',
-  'npx tsc -p test/integ && npx integ-runner --update-on-failed'
-);
 project.synth();
