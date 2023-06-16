@@ -74,8 +74,4 @@ new JsonFile(project, 'test/integ/tsconfig.json', {
     include: ['./**/integ.*.ts'],
   },
 });
-project.setScript(
-  'integ',
-  'npx tsc -p test/integ && npx integ-runner --update-on-failed'
-);
 project.synth();

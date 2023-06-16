@@ -14,7 +14,7 @@
     "docgen": "npx projen docgen",
     "eject": "npx projen eject",
     "eslint": "npx projen eslint",
-    "integ": "npx tsc -p test/integ && npx integ-runner --update-on-failed",
+    "integ": "npx projen integ",
     "integ:update": "npx projen integ:update",
     "package": "npx projen package",
     "package-all": "npx projen package-all",
