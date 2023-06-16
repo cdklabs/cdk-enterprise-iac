@@ -2,12 +2,15 @@
 Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
 SPDX-License-Identifier: Apache-2.0
 */
-import { CdklabsConstructLibrary } from 'cdklabs-projen-project-types';
+import {
+  CdklabsConstructLibrary,
+  JsiiLanguage,
+} from 'cdklabs-projen-project-types';
 import { DependencyType, JsonFile } from 'projen';
 
 const project = new CdklabsConstructLibrary({
   setNodeEngineVersion: false,
-  stability: 'stable',
+  stability: 'experimental',
   private: false,
   author: 'Taylor Ondrey',
   authorAddress: 'ondreyt@amazon.com',
@@ -34,6 +37,11 @@ const project = new CdklabsConstructLibrary({
     '*.bak',
   ],
   eslintOptions: { prettier: true, dirs: ['src', 'projenrc'] },
+  jsiiTargetLanguages: [
+    JsiiLanguage.PYTHON,
+    JsiiLanguage.DOTNET,
+    JsiiLanguage.JAVA,
+  ],
   publishToPypi: {
     distName: 'cdklabs.cdk-enterprise-iac',
     module: 'cdklabs.cdk_enterprise_iac',
