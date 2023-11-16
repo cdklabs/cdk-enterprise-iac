@@ -21,25 +21,11 @@
       "type": "build"
     },
     {
-      "name": "aws-cdk-lib",
-      "version": "2.41.0",
-      "type": "build"
-    },
-    {
       "name": "cdklabs-projen-project-types",
       "type": "build"
     },
     {
-      "name": "constructs",
-      "version": "10.0.5",
-      "type": "build"
-    },
-    {
       "name": "eslint-config-prettier",
-      "type": "build"
-    },
-    {
-      "name": "eslint-import-resolver-node",
       "type": "build"
     },
     {
@@ -96,11 +82,6 @@
     },
     {
       "name": "natural-compare-lite",
-      "type": "build"
-    },
-    {
-      "name": "npm-check-updates",
-      "version": "^16",
       "type": "build"
     },
     {
