@@ -4876,29 +4876,29 @@ Optional IAM role to attach to the created lambda to adjust the desired count on
 Ensure this role has appropriate privileges. Example IAM policy statements:
 ```json
 {
-  "PolicyDocument": {
-    "Statement": [
-      {
-        "Action": "cloudwatch:DescribeAlarms",
-        "Effect": "Allow",
-        "Resource": "*"
-      },
-      {
-        "Action": [
-          "ecs:DescribeServices",
-          "ecs:UpdateService"
-        ],
-        "Condition": {
-          "StringEquals": {
-            "ecs:cluster": "arn:${Partition}:ecs:${Region}:${Account}:cluster/${ClusterName}"
-          }
-        },
-        "Effect": "Allow",
-        "Resource": "arn:${Partition}:ecs:${Region}:${Account}:service/${ClusterName}/${ServiceName}"
-      }
-    ],
-    "Version": "2012-10-17"
-  }
+ "PolicyDocument": {
+   "Statement": [
+     {
+       "Action": "cloudwatch:DescribeAlarms",
+       "Effect": "Allow",
+       "Resource": "*"
+     },
+     {
+       "Action": [
+         "ecs:DescribeServices",
+         "ecs:UpdateService"
+       ],
+       "Condition": {
+         "StringEquals": {
+           "ecs:cluster": "arn:${Partition}:ecs:${Region}:${Account}:cluster/${ClusterName}"
+         }
+       },
+       "Effect": "Allow",
+       "Resource": "arn:${Partition}:ecs:${Region}:${Account}:service/${ClusterName}/${ServiceName}"
+     }
+   ],
+   "Version": "2012-10-17"
+ }
 }
 ```
 
@@ -5750,6 +5750,7 @@ This Aspect takes a CDK application, all synthesized CloudFormationStackArtifact
  const stack = new Stack(app, 'MyStack');
  extractedStack = new Stack(app, 'ExtractedStack');
  const synthedApp = app.synth();
+
  Aspects.of(app).add(new ResourceExtractor({
    extractDestinationStack: extractedStack,
    stackArtifacts: synthedApp.stacks,
