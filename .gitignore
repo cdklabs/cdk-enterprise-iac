@@ -40,7 +40,6 @@ jspm_packages/
 !**/*.integ.snapshot/**/asset.*/*.d.ts
 !**/*.integ.snapshot/**/asset.*/**
 *.bak
-!/.projenrc.js
 /test-reports/
 junit.xml
 /coverage/
@@ -65,3 +64,4 @@ tsconfig.json
 !/.github/workflows/upgrade-main.yml
 !/.github/workflows/upgrade-dev-deps-main.yml
 !/test/integ/tsconfig.json
+!/.projenrc.ts
