@@ -77,7 +77,7 @@ describe('toPartial scenarios', () => {
     const func = new Function(stack, 'TestLambda', {
       code: Code.fromInline(`def handler(event, context)\n    print(event)`),
       handler: 'index.handler',
-      runtime: Runtime.PYTHON_3_9,
+      runtime: Runtime.PYTHON_3_11,
     });
     const logGroup = new LogGroup(stack, 'TestLogGroup');
     logGroup.grantWrite(func);
@@ -144,7 +144,7 @@ describe('toPartial scenarios', () => {
     const func = new Function(stack, 'TestLambda', {
       code: Code.fromInline(`def handler(event, context)\n    print(event)`),
       handler: 'index.handler',
-      runtime: Runtime.PYTHON_3_9,
+      runtime: Runtime.PYTHON_3_11,
     });
     const bucket = new Bucket(stack, 'TestBucket');
     bucket.grantReadWrite(func);
@@ -217,7 +217,7 @@ describe('toPartial scenarios', () => {
     const func = new Function(stack, 'TestLambda', {
       code: Code.fromInline(`def handler(event, context)\n    print(event)`),
       handler: 'index.handler',
-      runtime: Runtime.PYTHON_3_9,
+      runtime: Runtime.PYTHON_3_11,
     });
     const bucketName = 'my-fancy-test-bucket';
     const bucket = new Bucket(stack, 'TestBucket', {
@@ -444,7 +444,7 @@ describe('toPartial scenarios', () => {
       {
         code: Code.fromInline(`def handler(event, context)\n    print(event)`),
         handler: 'index.handler',
-        runtime: Runtime.PYTHON_3_9,
+        runtime: Runtime.PYTHON_3_11,
       }
     );
     func.grantInvoke(role);
@@ -499,7 +499,7 @@ describe('toPartial scenarios', () => {
     const func = new Function(stack, 'SimpleFunc', {
       code: Code.fromInline(`def handler(event, context)\n    print(event)`),
       handler: 'index.handler',
-      runtime: Runtime.PYTHON_3_9,
+      runtime: Runtime.PYTHON_3_11,
     });
     func.grantInvoke(role);
     const synthedApp = app.synth();
@@ -982,7 +982,7 @@ describe('toPartial scenarios', () => {
     const func = new Function(stack, 'TestLambda', {
       code: Code.fromInline(`def handler(event, context)\n    print(event)`),
       handler: 'index.handler',
-      runtime: Runtime.PYTHON_3_9,
+      runtime: Runtime.PYTHON_3_11,
     });
     db.secret?.grantRead(func);
 

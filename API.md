@@ -110,7 +110,7 @@ const appStack = new Stack(app, 'MyAppStack');
 const func = new Function(appStack, 'TestLambda', {
   code: Code.fromAsset(path.join(__dirname, 'lambda-handler')),
   handler: 'index.handler',
-  runtime: Runtime.PYTHON_3_9,
+  runtime: Runtime.PYTHON_3_11,
 });
 const bucket = new Bucket(appStack, 'TestBucket', {
   autoDeleteObjects: true,
@@ -165,7 +165,7 @@ const extractedStack = new Stack(app, 'ExtractedStack');
 const func = new Function(appStack, 'TestLambda', {
   code: Code.fromAsset(path.join(__dirname, 'lambda-handler')),
   handler: 'index.handler',
-  runtime: Runtime.PYTHON_3_9,
+  runtime: Runtime.PYTHON_3_11,
 });
 const bucket = new Bucket(appStack, 'TestBucket', {
   autoDeleteObjects: true,
@@ -321,7 +321,7 @@ const db = new DatabaseInstance(stack, 'TestDb', {
 const func = new Function(stack, 'TestLambda', {
   code: Code.fromAsset(path.join(__dirname, 'lambda-handler')),
   handler: 'index.handler',
-  runtime: Runtime.PYTHON_3_9,
+  runtime: Runtime.PYTHON_3_11,
 });
 db.secret?.grantRead(func)
 
@@ -469,7 +469,7 @@ const appStack = new Stack(app, 'MyAppStack');
 const func = new Function(appStack, 'TestLambda', {
   code: Code.fromAsset(path.join(__dirname, 'lambda-handler')),
   handler: 'index.handler',
-  runtime: Runtime.PYTHON_3_9,
+  runtime: Runtime.PYTHON_3_11,
 });
 const bucket = new Bucket(appStack, 'TestBucket', {
   autoDeleteObjects: true,
@@ -524,7 +524,7 @@ const extractedStack = new Stack(app, 'ExtractedStack');
 const func = new Function(appStack, 'TestLambda', {
   code: Code.fromAsset(path.join(__dirname, 'lambda-handler')),
   handler: 'index.handler',
-  runtime: Runtime.PYTHON_3_9,
+  runtime: Runtime.PYTHON_3_11,
 });
 const bucket = new Bucket(appStack, 'TestBucket', {
   autoDeleteObjects: true,
@@ -680,7 +680,7 @@ const db = new DatabaseInstance(stack, 'TestDb', {
 const func = new Function(stack, 'TestLambda', {
   code: Code.fromAsset(path.join(__dirname, 'lambda-handler')),
   handler: 'index.handler',
-  runtime: Runtime.PYTHON_3_9,
+  runtime: Runtime.PYTHON_3_11,
 });
 db.secret?.grantRead(func)
 
