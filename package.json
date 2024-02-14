@@ -66,7 +66,7 @@
     "jsii-rosetta": "^5.3.15",
     "natural-compare-lite": "^1.4.0",
     "prettier": "^2.8.8",
-    "projen": "^0.79.17",
+    "projen": "^0.79.21",
     "standard-version": "^9",
     "ts-jest": "^27",
     "ts-node": "^10.9.2",
