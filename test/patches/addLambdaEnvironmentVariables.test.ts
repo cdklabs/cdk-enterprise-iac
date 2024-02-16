@@ -17,7 +17,7 @@ describe('Add environment variables to all Lambda functions', () => {
   test('adds environment variable to multiple lambdas', () => {
     new Function(stack, 'TestFunction1', {
       code: Code.fromInline('def handler(event, context)\n    print(event)'),
-      runtime: Runtime.PYTHON_3_9,
+      runtime: Runtime.PYTHON_3_11,
       handler: 'index.handler',
     });
 
@@ -25,7 +25,7 @@ describe('Add environment variables to all Lambda functions', () => {
       code: Code.fromInline(
         'def handler(event, context)\n    print("something")'
       ),
-      runtime: Runtime.PYTHON_3_9,
+      runtime: Runtime.PYTHON_3_11,
       handler: 'index.handler',
     });
 
@@ -51,7 +51,7 @@ describe('Add environment variables to all Lambda functions', () => {
   test("adds environment variable to multiple lambdas, and doesn't remove existing", () => {
     new Function(stack, 'TestFunction1', {
       code: Code.fromInline('def handler(event, context)\n    print(event)'),
-      runtime: Runtime.PYTHON_3_9,
+      runtime: Runtime.PYTHON_3_11,
       handler: 'index.handler',
       environment: {
         originalKey: 'originalVar',
@@ -62,7 +62,7 @@ describe('Add environment variables to all Lambda functions', () => {
       code: Code.fromInline(
         'def handler(event, context)\n    print("something")'
       ),
-      runtime: Runtime.PYTHON_3_9,
+      runtime: Runtime.PYTHON_3_11,
       handler: 'index.handler',
     });
 

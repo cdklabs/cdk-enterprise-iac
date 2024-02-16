@@ -57,7 +57,7 @@ describe('Annotations for experimental mode', () => {
     const func = new Function(stack, 'TestLambda', {
       code: Code.fromInline(`def handler(event, context)\n    print(event)`),
       handler: 'index.handler',
-      runtime: Runtime.PYTHON_3_9,
+      runtime: Runtime.PYTHON_3_11,
     });
     const bucket = new Bucket(stack, 'TestBucket');
     bucket.grantReadWrite(func);
@@ -92,7 +92,7 @@ describe('Extracting resources from stack', () => {
     const func = new Function(stack, 'TestLambda', {
       code: Code.fromInline(`def handler(event, context)\n    print(event)`),
       handler: 'index.handler',
-      runtime: Runtime.PYTHON_3_9,
+      runtime: Runtime.PYTHON_3_11,
     });
     const bucket = new Bucket(stack, 'TestBucket');
     bucket.grantReadWrite(func);
@@ -125,7 +125,7 @@ describe('Extracting resources from stack', () => {
     const testFunc = new Function(stack, 'TestFunction', {
       code: Code.fromInline("print('hello_world')"),
       handler: 'index.handler',
-      runtime: Runtime.PYTHON_3_9,
+      runtime: Runtime.PYTHON_3_11,
     });
     testFunc.grantInvoke(role);
     const synthedApp = app.synth();
@@ -189,7 +189,7 @@ describe('Extracting resources from stack', () => {
     const testFunc = new Function(stack, 'TestFunction', {
       code: Code.fromInline("print('hello_world')"),
       handler: 'index.handler',
-      runtime: Runtime.PYTHON_3_9,
+      runtime: Runtime.PYTHON_3_11,
       environment: {
         JOINED: `arn:${role.roleName}:foo:${role.roleArn}:bar:${Aws.REGION}`,
       },
@@ -249,7 +249,7 @@ describe('Extracting resources from stack', () => {
     const func = new Function(stack, 'TestLambda', {
       code: Code.fromInline(`def handler(event, context)\n    print(event)`),
       handler: 'index.handler',
-      runtime: Runtime.PYTHON_3_9,
+      runtime: Runtime.PYTHON_3_11,
     });
     const bucket = new Bucket(stack, 'TestBucket');
     bucket.grantReadWrite(func);
@@ -368,7 +368,7 @@ describe('Extracting resources from stack', () => {
     new Function(stack, 'TestLambda', {
       code: Code.fromInline(`def handler(event, context)\n    print(event)`),
       handler: 'index.handler',
-      runtime: Runtime.PYTHON_3_9,
+      runtime: Runtime.PYTHON_3_11,
       environment: {
         KEY_ARN: key.keyArn,
         KEY_ID: key.keyId,
@@ -424,7 +424,7 @@ describe('Sharing Methods - CFN_OUTPUT', () => {
     const func = new Function(stack, 'TestLambda', {
       code: Code.fromInline(`def handler(event, context)\n    print(event)`),
       handler: 'index.handler',
-      runtime: Runtime.PYTHON_3_9,
+      runtime: Runtime.PYTHON_3_11,
     });
     const key = new Key(stack, 'TestKey');
     key.addAlias('alias/TestKey');
@@ -515,7 +515,7 @@ describe('Sharing Methods - CFN_OUTPUT', () => {
     const func = new Function(stack, 'TestLambda', {
       code: Code.fromInline(`def handler(event, context)\n    print(event)`),
       handler: 'index.handler',
-      runtime: Runtime.PYTHON_3_9,
+      runtime: Runtime.PYTHON_3_11,
     });
     const bucket = new Bucket(stack, 'TestBucket', {
       autoDeleteObjects: true,
@@ -568,7 +568,7 @@ describe('Sharing Methods - CFN_OUTPUT', () => {
     new Function(secondStack, 'TestLambda', {
       code: Code.fromInline(`def handler(event, context)\n    print(event)`),
       handler: 'index.handler',
-      runtime: Runtime.PYTHON_3_9,
+      runtime: Runtime.PYTHON_3_11,
       environment: {
         ROLE: role.roleArn,
       },
@@ -614,7 +614,7 @@ describe('Sharing Methods - SSM_PARAMETER', () => {
     const func = new Function(stack, 'TestLambda', {
       code: Code.fromInline(`def handler(event, context)\n    print(event)`),
       handler: 'index.handler',
-      runtime: Runtime.PYTHON_3_9,
+      runtime: Runtime.PYTHON_3_11,
     });
     const bucket = new Bucket(stack, 'TestBucket');
     bucket.grantReadWrite(func);
@@ -656,7 +656,7 @@ describe('Sharing Methods - SSM_PARAMETER', () => {
     const testFunc = new Function(stack, 'TestFunction', {
       code: Code.fromInline("print('hello_world')"),
       handler: 'index.handler',
-      runtime: Runtime.PYTHON_3_9,
+      runtime: Runtime.PYTHON_3_11,
       environment: {
         JOINED: `arn:${role.roleName}:foo:${role.roleArn}:bar`,
       },
@@ -704,7 +704,7 @@ describe('Sharing Methods - SSM_PARAMETER', () => {
     new Function(secondStack, 'TestLambda', {
       code: Code.fromInline(`def handler(event, context)\n    print(event)`),
       handler: 'index.handler',
-      runtime: Runtime.PYTHON_3_9,
+      runtime: Runtime.PYTHON_3_11,
       environment: {
         ROLE: role.roleArn,
       },
@@ -748,7 +748,7 @@ describe('Sharing Methods - API_LOOKUP', () => {
     const func = new Function(stack, 'TestLambda', {
       code: Code.fromInline(`def handler(event, context)\n    print(event)`),
       handler: 'index.handler',
-      runtime: Runtime.PYTHON_3_9,
+      runtime: Runtime.PYTHON_3_11,
     });
     const bucket = new Bucket(stack, 'TestBucket');
     bucket.grantReadWrite(func);
@@ -790,7 +790,7 @@ describe('Sharing Methods - API_LOOKUP', () => {
     const testFunc = new Function(stack, 'TestFunction', {
       code: Code.fromInline("print('hello_world')"),
       handler: 'index.handler',
-      runtime: Runtime.PYTHON_3_9,
+      runtime: Runtime.PYTHON_3_11,
       environment: {
         JOINED: `arn:${role.roleName}:foo:${role.roleArn}:bar`,
       },
@@ -838,7 +838,7 @@ describe('Sharing Methods - API_LOOKUP', () => {
     new Function(secondStack, 'TestLambda', {
       code: Code.fromInline(`def handler(event, context)\n    print(event)`),
       handler: 'index.handler',
-      runtime: Runtime.PYTHON_3_9,
+      runtime: Runtime.PYTHON_3_11,
       environment: {
         ROLE: role.roleArn,
       },
