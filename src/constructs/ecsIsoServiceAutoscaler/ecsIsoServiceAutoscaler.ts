@@ -140,7 +140,7 @@ export class EcsIsoServiceAutoscaler extends Construct {
           )
         ),
         handler: 'ecs_scaling_manager.handler',
-        runtime: Runtime.PYTHON_3_7,
+        runtime: Runtime.PYTHON_3_11,
         role: props.role || undefined,
         environment: {
           ECS_CLUSTER_NAME: props.ecsCluster.clusterName,

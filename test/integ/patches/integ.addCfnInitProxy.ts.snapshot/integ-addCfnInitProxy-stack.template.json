@@ -18,9 +18,6 @@
   "TestVpcPublicSubnet1SubnetA7DB1EDF": {
    "Type": "AWS::EC2::Subnet",
    "Properties": {
-    "VpcId": {
-     "Ref": "TestVpcE77CE678"
-    },
     "AvailabilityZone": {
      "Fn::Select": [
       0,
@@ -44,21 +41,24 @@
       "Key": "Name",
       "Value": "integ-addCfnInitProxy-stack/TestVpc/PublicSubnet1"
      }
-    ]
+    ],
+    "VpcId": {
+     "Ref": "TestVpcE77CE678"
+    }
    }
   },
   "TestVpcPublicSubnet1RouteTable4CBFF871": {
    "Type": "AWS::EC2::RouteTable",
    "Properties": {
-    "VpcId": {
-     "Ref": "TestVpcE77CE678"
-    },
     "Tags": [
      {
       "Key": "Name",
       "Value": "integ-addCfnInitProxy-stack/TestVpc/PublicSubnet1"
      }
-    ]
+    ],
+    "VpcId": {
+     "Ref": "TestVpcE77CE678"
+    }
    }
   },
   "TestVpcPublicSubnet1RouteTableAssociation7D1DECD9": {
@@ -75,12 +75,12 @@
   "TestVpcPublicSubnet1DefaultRoute6C0F0315": {
    "Type": "AWS::EC2::Route",
    "Properties": {
-    "RouteTableId": {
-     "Ref": "TestVpcPublicSubnet1RouteTable4CBFF871"
-    },
     "DestinationCidrBlock": "0.0.0.0/0",
     "GatewayId": {
      "Ref": "TestVpcIGW9DD53F70"
+    },
+    "RouteTableId": {
+     "Ref": "TestVpcPublicSubnet1RouteTable4CBFF871"
     }
    },
    "DependsOn": [
@@ -102,14 +102,14 @@
   "TestVpcPublicSubnet1NATGatewayA323E3EC": {
    "Type": "AWS::EC2::NatGateway",
    "Properties": {
-    "SubnetId": {
-     "Ref": "TestVpcPublicSubnet1SubnetA7DB1EDF"
-    },
     "AllocationId": {
      "Fn::GetAtt": [
       "TestVpcPublicSubnet1EIP4884338C",
       "AllocationId"
      ]
+    },
+    "SubnetId": {
+     "Ref": "TestVpcPublicSubnet1SubnetA7DB1EDF"
     },
     "Tags": [
      {
@@ -126,9 +126,6 @@
   "TestVpcPublicSubnet2Subnet80A14523": {
    "Type": "AWS::EC2::Subnet",
    "Properties": {
-    "VpcId": {
-     "Ref": "TestVpcE77CE678"
-    },
     "AvailabilityZone": {
      "Fn::Select": [
       1,
@@ -152,21 +149,24 @@
       "Key": "Name",
       "Value": "integ-addCfnInitProxy-stack/TestVpc/PublicSubnet2"
      }
-    ]
+    ],
+    "VpcId": {
+     "Ref": "TestVpcE77CE678"
+    }
    }
   },
   "TestVpcPublicSubnet2RouteTable75B88314": {
    "Type": "AWS::EC2::RouteTable",
    "Properties": {
-    "VpcId": {
-     "Ref": "TestVpcE77CE678"
-    },
     "Tags": [
      {
       "Key": "Name",
       "Value": "integ-addCfnInitProxy-stack/TestVpc/PublicSubnet2"
      }
-    ]
+    ],
+    "VpcId": {
+     "Ref": "TestVpcE77CE678"
+    }
    }
   },
   "TestVpcPublicSubnet2RouteTableAssociationB386A819": {
@@ -183,12 +183,12 @@
   "TestVpcPublicSubnet2DefaultRoute054DAE0A": {
    "Type": "AWS::EC2::Route",
    "Properties": {
-    "RouteTableId": {
-     "Ref": "TestVpcPublicSubnet2RouteTable75B88314"
-    },
     "DestinationCidrBlock": "0.0.0.0/0",
     "GatewayId": {
      "Ref": "TestVpcIGW9DD53F70"
+    },
+    "RouteTableId": {
+     "Ref": "TestVpcPublicSubnet2RouteTable75B88314"
     }
    },
    "DependsOn": [
@@ -210,14 +210,14 @@
   "TestVpcPublicSubnet2NATGatewayA9858C31": {
    "Type": "AWS::EC2::NatGateway",
    "Properties": {
-    "SubnetId": {
-     "Ref": "TestVpcPublicSubnet2Subnet80A14523"
-    },
     "AllocationId": {
      "Fn::GetAtt": [
       "TestVpcPublicSubnet2EIP83F7944C",
       "AllocationId"
      ]
+    },
+    "SubnetId": {
+     "Ref": "TestVpcPublicSubnet2Subnet80A14523"
     },
     "Tags": [
      {
@@ -234,9 +234,6 @@
   "TestVpcPrivateSubnet1SubnetCC65D771": {
    "Type": "AWS::EC2::Subnet",
    "Properties": {
-    "VpcId": {
-     "Ref": "TestVpcE77CE678"
-    },
     "AvailabilityZone": {
      "Fn::Select": [
       0,
@@ -260,21 +257,24 @@
       "Key": "Name",
       "Value": "integ-addCfnInitProxy-stack/TestVpc/PrivateSubnet1"
      }
-    ]
+    ],
+    "VpcId": {
+     "Ref": "TestVpcE77CE678"
+    }
    }
   },
   "TestVpcPrivateSubnet1RouteTable469B0105": {
    "Type": "AWS::EC2::RouteTable",
    "Properties": {
-    "VpcId": {
-     "Ref": "TestVpcE77CE678"
-    },
     "Tags": [
      {
       "Key": "Name",
       "Value": "integ-addCfnInitProxy-stack/TestVpc/PrivateSubnet1"
      }
-    ]
+    ],
+    "VpcId": {
+     "Ref": "TestVpcE77CE678"
+    }
    }
   },
   "TestVpcPrivateSubnet1RouteTableAssociationFFD4DFF7": {
@@ -291,21 +291,18 @@
   "TestVpcPrivateSubnet1DefaultRoute32E7B814": {
    "Type": "AWS::EC2::Route",
    "Properties": {
-    "RouteTableId": {
-     "Ref": "TestVpcPrivateSubnet1RouteTable469B0105"
-    },
     "DestinationCidrBlock": "0.0.0.0/0",
     "NatGatewayId": {
      "Ref": "TestVpcPublicSubnet1NATGatewayA323E3EC"
+    },
+    "RouteTableId": {
+     "Ref": "TestVpcPrivateSubnet1RouteTable469B0105"
     }
    }
   },
   "TestVpcPrivateSubnet2SubnetDE0C64A2": {
    "Type": "AWS::EC2::Subnet",
    "Properties": {
-    "VpcId": {
-     "Ref": "TestVpcE77CE678"
-    },
     "AvailabilityZone": {
      "Fn::Select": [
       1,
@@ -329,21 +326,24 @@
       "Key": "Name",
       "Value": "integ-addCfnInitProxy-stack/TestVpc/PrivateSubnet2"
      }
-    ]
+    ],
+    "VpcId": {
+     "Ref": "TestVpcE77CE678"
+    }
    }
   },
   "TestVpcPrivateSubnet2RouteTableCEF29F7C": {
    "Type": "AWS::EC2::RouteTable",
    "Properties": {
-    "VpcId": {
-     "Ref": "TestVpcE77CE678"
-    },
     "Tags": [
      {
       "Key": "Name",
       "Value": "integ-addCfnInitProxy-stack/TestVpc/PrivateSubnet2"
      }
-    ]
+    ],
+    "VpcId": {
+     "Ref": "TestVpcE77CE678"
+    }
    }
   },
   "TestVpcPrivateSubnet2RouteTableAssociation18250AB4": {
@@ -360,12 +360,12 @@
   "TestVpcPrivateSubnet2DefaultRouteA7EB6930": {
    "Type": "AWS::EC2::Route",
    "Properties": {
-    "RouteTableId": {
-     "Ref": "TestVpcPrivateSubnet2RouteTableCEF29F7C"
-    },
     "DestinationCidrBlock": "0.0.0.0/0",
     "NatGatewayId": {
      "Ref": "TestVpcPublicSubnet2NATGatewayA9858C31"
+    },
+    "RouteTableId": {
+     "Ref": "TestVpcPrivateSubnet2RouteTableCEF29F7C"
     }
    }
   },
@@ -383,13 +383,129 @@
   "TestVpcVPCGWF1827B84": {
    "Type": "AWS::EC2::VPCGatewayAttachment",
    "Properties": {
-    "VpcId": {
-     "Ref": "TestVpcE77CE678"
-    },
     "InternetGatewayId": {
      "Ref": "TestVpcIGW9DD53F70"
+    },
+    "VpcId": {
+     "Ref": "TestVpcE77CE678"
     }
    }
+  },
+  "TestVpcRestrictDefaultSecurityGroupCustomResourceB02B826A": {
+   "Type": "Custom::VpcRestrictDefaultSG",
+   "Properties": {
+    "ServiceToken": {
+     "Fn::GetAtt": [
+      "CustomVpcRestrictDefaultSGCustomResourceProviderHandlerDC833E5E",
+      "Arn"
+     ]
+    },
+    "DefaultSecurityGroupId": {
+     "Fn::GetAtt": [
+      "TestVpcE77CE678",
+      "DefaultSecurityGroup"
+     ]
+    },
+    "Account": {
+     "Ref": "AWS::AccountId"
+    }
+   },
+   "UpdateReplacePolicy": "Delete",
+   "DeletionPolicy": "Delete"
+  },
+  "CustomVpcRestrictDefaultSGCustomResourceProviderRole26592FE0": {
+   "Type": "AWS::IAM::Role",
+   "Properties": {
+    "AssumeRolePolicyDocument": {
+     "Version": "2012-10-17",
+     "Statement": [
+      {
+       "Action": "sts:AssumeRole",
+       "Effect": "Allow",
+       "Principal": {
+        "Service": "lambda.amazonaws.com"
+       }
+      }
+     ]
+    },
+    "ManagedPolicyArns": [
+     {
+      "Fn::Sub": "arn:${AWS::Partition}:iam::aws:policy/service-role/AWSLambdaBasicExecutionRole"
+     }
+    ],
+    "Policies": [
+     {
+      "PolicyName": "Inline",
+      "PolicyDocument": {
+       "Version": "2012-10-17",
+       "Statement": [
+        {
+         "Effect": "Allow",
+         "Action": [
+          "ec2:AuthorizeSecurityGroupIngress",
+          "ec2:AuthorizeSecurityGroupEgress",
+          "ec2:RevokeSecurityGroupIngress",
+          "ec2:RevokeSecurityGroupEgress"
+         ],
+         "Resource": [
+          {
+           "Fn::Join": [
+            "",
+            [
+             "arn:",
+             {
+              "Ref": "AWS::Partition"
+             },
+             ":ec2:",
+             {
+              "Ref": "AWS::Region"
+             },
+             ":",
+             {
+              "Ref": "AWS::AccountId"
+             },
+             ":security-group/",
+             {
+              "Fn::GetAtt": [
+               "TestVpcE77CE678",
+               "DefaultSecurityGroup"
+              ]
+             }
+            ]
+           ]
+          }
+         ]
+        }
+       ]
+      }
+     }
+    ]
+   }
+  },
+  "CustomVpcRestrictDefaultSGCustomResourceProviderHandlerDC833E5E": {
+   "Type": "AWS::Lambda::Function",
+   "Properties": {
+    "Code": {
+     "S3Bucket": {
+      "Fn::Sub": "cdk-hnb659fds-assets-${AWS::AccountId}-${AWS::Region}"
+     },
+     "S3Key": "7f18a11296f35510ee16538afec983ed6312e12afbf81b777089a9f8e34e2474.zip"
+    },
+    "Timeout": 900,
+    "MemorySize": 128,
+    "Handler": "__entrypoint__.handler",
+    "Role": {
+     "Fn::GetAtt": [
+      "CustomVpcRestrictDefaultSGCustomResourceProviderRole26592FE0",
+      "Arn"
+     ]
+    },
+    "Runtime": "nodejs18.x",
+    "Description": "Lambda function for removing all inbound/outbound rules from the VPC default security group"
+   },
+   "DependsOn": [
+    "CustomVpcRestrictDefaultSGCustomResourceProviderRole26592FE0"
+   ]
   },
   "TestInstanceInstanceSecurityGroupFC9BD332": {
    "Type": "AWS::EC2::SecurityGroup",
@@ -422,17 +538,7 @@
        "Action": "sts:AssumeRole",
        "Effect": "Allow",
        "Principal": {
-        "Service": {
-         "Fn::Join": [
-          "",
-          [
-           "ec2.",
-           {
-            "Ref": "AWS::URLSuffix"
-           }
-          ]
-         ]
-        }
+        "Service": "ec2.amazonaws.com"
        }
       }
      ],

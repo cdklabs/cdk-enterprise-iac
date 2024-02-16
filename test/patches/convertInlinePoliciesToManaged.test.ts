@@ -29,7 +29,7 @@ describe('Updating Resource Types', () => {
     const func = new Function(stack, 'TestLambda', {
       code: Code.fromInline(`def handler(event, context)\n    print(event)`),
       handler: 'index.handler',
-      runtime: Runtime.PYTHON_3_9,
+      runtime: Runtime.PYTHON_3_11,
     });
     const bucket = new Bucket(stack, 'TestBucket');
     bucket.grantReadWrite(func);
@@ -75,7 +75,7 @@ describe('Updating Resource Types', () => {
     const func = new Function(stack, 'TestLambda', {
       code: Code.fromInline(`def handler(event, context)\n    print(event)`),
       handler: 'index.handler',
-      runtime: Runtime.PYTHON_3_9,
+      runtime: Runtime.PYTHON_3_11,
     });
     const bucket = new Bucket(stack, 'TestBucket');
     bucket.grantReadWrite(func);

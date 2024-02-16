@@ -15,7 +15,7 @@ const project = new CdklabsConstructLibrary({
   author: 'Taylor Ondrey',
   authorAddress: 'ondreyt@amazon.com',
   projenrcTs: true,
-  cdkVersion: '2.41.0',
+  cdkVersion: '2.103.1',
   rosettaOptions: {
     strict: false,
   },
@@ -73,7 +73,7 @@ project.eslint?.addRules({
 project.eslint?.addExtends('plugin:security/recommended');
 
 project.deps.addDependency(
-  '@aws-cdk/integ-tests-alpha@2.41.0-alpha.0',
+  '@aws-cdk/integ-tests-alpha@2.103.1-alpha.0',
   DependencyType.TEST
 );
 new JsonFile(project, 'test/integ/tsconfig.json', {
