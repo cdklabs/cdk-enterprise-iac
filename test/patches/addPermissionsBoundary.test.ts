@@ -120,6 +120,25 @@ describe('Permissions Boundary patch', () => {
         RoleName: `Bananas_Default-${idWithSpaces.replace(/\s/g, '')}-Resource`,
       });
     });
+    test('Role name is not altered if it already complies with naming convention', () => {
+      const rolePrefix = 'Cust_';
+      const roleName = `${rolePrefix}MyRole`;
+      new Role(stack, 'Role', {
+        roleName,
+        assumedBy: new ServicePrincipal('ec2.amazonaws.com'),
+      });
+
+      Aspects.of(stack).add(
+        new AddPermissionBoundary({
+          permissionsBoundaryPolicyName: pbName,
+          rolePrefix,
+        })
+      );
+      const template = Template.fromStack(stack);
+      template.hasResourceProperties('AWS::IAM::Role', {
+        RoleName: roleName,
+      });
+    });
   });
   describe('Policies', () => {
     const policyPrefix = 'POLICY_PREFIX_';
