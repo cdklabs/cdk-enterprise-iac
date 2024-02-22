@@ -7,7 +7,6 @@ import {
   CfnInstanceProfile,
   CfnManagedPolicy,
   CfnPolicy,
-  CfnRole,
 } from 'aws-cdk-lib/aws-iam';
 import { IConstruct } from 'constructs';
 import { getResourceId } from '../utils/utils';
@@ -97,34 +96,14 @@ export class AddPermissionBoundary implements IAspect {
           'PermissionsBoundary',
           permissionsBoundaryPolicyArn
         );
-        this.checkAndOverride(
-          node,
-          this._rolePrefix,
-          64,
-          'RoleName',
-          cfnResourceNode.logicalId
-        );
+        const roleName =
+          // eslint-disable-next-line dot-notation
+          cfnResourceNode['cfnProperties'].roleName ||
+          cfnResourceNode.logicalId;
+        this.checkAndOverride(node, this._rolePrefix, 64, 'RoleName', roleName);
       }
     }
-    if (node instanceof CfnRole) {
-      const permissionsBoundaryPolicyArn = Stack.of(node).formatArn({
-        service: 'iam',
-        resource: 'policy',
-        region: '',
-        resourceName: this._permissionsBoundaryPolicyName,
-      });
-      node.addPropertyOverride(
-        'PermissionsBoundary',
-        permissionsBoundaryPolicyArn
-      );
-      this.checkAndOverride(
-        node,
-        this._rolePrefix,
-        64,
-        'RoleName',
-        node.roleName
-      );
-    } else if (node instanceof CfnPolicy) {
+    if (node instanceof CfnPolicy) {
       this.checkAndOverride(
         node,
         this._policyPrefix,
