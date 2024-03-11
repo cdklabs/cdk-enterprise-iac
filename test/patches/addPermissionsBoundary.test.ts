@@ -69,9 +69,50 @@ describe('Permissions Boundary patch', () => {
         })
       );
       const template = Template.fromStack(stack);
-      template.hasResourceProperties('AWS::IAM::Role', {
-        RoleName: `${rolePrefix}${roleName}`.substring(0, 64 - 1),
+      let roles = template.findResources('AWS::IAM::Role',
+      );
+      const names: string[] = [];
+      let i = 0;
+      for (const templateRole of Object.keys(roles)) {
+        const role = roles[templateRole].Properties.RoleName as string
+        names[i] = role
+        i++
+      }
+      expect(names.length).toBe(1);
+      expect(names[0].startsWith(rolePrefix)).toBe(true);
+      expect(names[0].length).toBe(64);
+    });
+    test('Role Prefix is prepended and is unique', () => {
+      let firstRoleName =
+        'my-awesome-role-that-has-quite-a-long-name-seriously-it-is-so-long-it-exceeds-64-characters-1';
+      let secondRoleName =
+        'my-awesome-role-that-has-quite-a-long-name-seriously-it-is-so-long-it-exceeds-64-characters-2';
+      const rolePrefix = 'MY_PREFIX';
+      new Role(stack, 'testFirstRole', {
+        assumedBy: new ServicePrincipal('ec2.amazonaws.com'),
+        roleName: firstRoleName,
       });
+      new Role(stack, 'testSecondRole', {
+        assumedBy: new ServicePrincipal('ec2.amazonaws.com'),
+        roleName: secondRoleName,
+      });
+      Aspects.of(stack).add(
+        new AddPermissionBoundary({
+          permissionsBoundaryPolicyName: pbName,
+          rolePrefix,
+        })
+      );
+      const template = Template.fromStack(stack);
+      let roles = template.findResources('AWS::IAM::Role',
+      );
+      const names: { [index: string]: boolean } = {};
+      for (const roleName of Object.keys(roles)) {
+        const role = roles[roleName].Properties.RoleName as string
+        expect(role.startsWith(rolePrefix)).toBe(true)
+        if (names[role])
+          throw new Error('Duplicate role name found')
+        names[role] = true
+      }
     });
     test('Roles without RoleName are handled', () => {
       new Bucket(stack, 'TestBucket', {
@@ -116,9 +157,17 @@ describe('Permissions Boundary patch', () => {
         })
       );
       const template = Template.fromStack(stack);
-      template.hasResourceProperties('AWS::IAM::Role', {
-        RoleName: `Bananas_Default-${idWithSpaces.replace(/\s/g, '')}-Resource`,
-      });
+      let roles = template.findResources('AWS::IAM::Role',
+      );
+      const names: string[] = [];
+      let i = 0;
+      for (const templateRole of Object.keys(roles)) {
+        const role = roles[templateRole].Properties.RoleName as string
+        names[i] = role
+        i++
+      }
+      expect(names[0].indexOf(' ')).toBe(-1)
+      expect(names[0].startsWith('Bananas_')).toBe(true)
     });
     test('Role name is not altered if it already complies with naming convention', () => {
       const rolePrefix = 'Cust_';
@@ -161,12 +210,18 @@ describe('Permissions Boundary patch', () => {
         })
       );
       const template = Template.fromStack(stack);
-      template.hasResourceProperties('AWS::IAM::ManagedPolicy', {
-        ManagedPolicyName: `${policyPrefix}${managedPolicyName}`.substring(
-          0,
-          128 - 1
-        ),
-      });
+      let polices = template.findResources('AWS::IAM::ManagedPolicy',
+      );
+      const names: string[] = [];
+      let i = 0;
+      for (const templatePolicy of Object.keys(polices)) {
+        const policy = polices[templatePolicy].Properties.ManagedPolicyName as string
+        names[i] = policy
+        i++
+      }
+      expect(names.length).toBe(1)
+      expect(names[0].startsWith(policyPrefix)).toBe(true)
+      expect(names[0].length).toBe(128)
     });
     test('Managed Policy name is not altered if it already complies with naming convention', () => {
       const managedPolicyName = `${policyPrefix}MyPolicy`;
@@ -214,9 +269,18 @@ describe('Permissions Boundary patch', () => {
         })
       );
       const template = Template.fromStack(stack);
-      template.hasResourceProperties('AWS::IAM::Policy', {
-        PolicyName: `${policyPrefix}${policyName}`.substring(0, 128 - 1),
-      });
+      let polices = template.findResources('AWS::IAM::Policy',
+      );
+      const names: string[] = [];
+      let i = 0;
+      for (const templatePolicy of Object.keys(polices)) {
+        const policy = polices[templatePolicy].Properties.PolicyName as string
+        names[i] = policy
+        i++
+      }
+      expect(names.length).toBe(1)
+      expect(names[0].startsWith(policyPrefix)).toBe(true)
+      expect(names[0].length).toBe(128)
     });
 
     test('Instance Profile prefix is added and does not exceed limit', () => {
@@ -236,14 +300,27 @@ describe('Permissions Boundary patch', () => {
           instanceProfilePrefix,
         })
       );
+      // const template = Template.fromStack(stack);
+      // template.hasResourceProperties('AWS::IAM::InstanceProfile', {
+      //   InstanceProfileName:
+      //     `${instanceProfilePrefix}${instanceProfileName}`.substring(
+      //       0,
+      //       128 - 1
+      //     ),
+      // });
       const template = Template.fromStack(stack);
-      template.hasResourceProperties('AWS::IAM::InstanceProfile', {
-        InstanceProfileName:
-          `${instanceProfilePrefix}${instanceProfileName}`.substring(
-            0,
-            128 - 1
-          ),
-      });
+      let profiles = template.findResources('AWS::IAM::InstanceProfile',
+      );
+      const names: string[] = [];
+      let i = 0;
+      for (const templateInstanceProfile of Object.keys(profiles)) {
+        const profile = profiles[templateInstanceProfile].Properties.InstanceProfileName as string
+        names[i] = profile
+        i++
+      }
+      expect(names.length).toBe(1)
+      expect(names[0].startsWith(instanceProfilePrefix)).toBe(true)
+      expect(names[0].length).toBe(128)
     });
     test('Instance Profile works fine when no prefix needed', () => {
       const role = new Role(stack, 'TestRole', {

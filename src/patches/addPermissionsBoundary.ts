@@ -10,6 +10,7 @@ import {
 } from 'aws-cdk-lib/aws-iam';
 import { IConstruct } from 'constructs';
 import { getResourceId } from '../utils/utils';
+import {v4 as uuidv4} from 'uuid';
 
 /**
  * Properties to pass to the AddPermissionBoundary
@@ -74,10 +75,14 @@ export class AddPermissionBoundary implements IAspect {
       } else {
         return;
       }
-
+      const uniqness_length = 8
+      let suffix = `${policySuffix.replace(/\s/g, '')}`.substring(0, length - uniqness_length - prefix.length);
+      let uuid = uuidv4();
+      let charUniqness8 = uuid.substring( uuid.length - uniqness_length, uuid.length );
+      let newSuffix = prefix + suffix + charUniqness8;
       node.addPropertyOverride(
         cfnProp,
-        `${prefix}${policySuffix.replace(/\s/g, '')}`.substring(0, length - 1)
+        `${newSuffix}`.substring(0, length),
       );
     }
   }
