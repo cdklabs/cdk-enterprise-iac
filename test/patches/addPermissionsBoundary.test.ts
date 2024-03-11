@@ -300,14 +300,6 @@ describe('Permissions Boundary patch', () => {
           instanceProfilePrefix,
         })
       );
-      // const template = Template.fromStack(stack);
-      // template.hasResourceProperties('AWS::IAM::InstanceProfile', {
-      //   InstanceProfileName:
-      //     `${instanceProfilePrefix}${instanceProfileName}`.substring(
-      //       0,
-      //       128 - 1
-      //     ),
-      // });
       const template = Template.fromStack(stack);
       let profiles = template.findResources('AWS::IAM::InstanceProfile',
       );
