@@ -2,6 +2,7 @@
 Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
 SPDX-License-Identifier: Apache-2.0
 */
+import { createHash } from 'crypto';
 import { CfnResource, IAspect, Stack, Token } from 'aws-cdk-lib';
 import {
   CfnInstanceProfile,
@@ -10,7 +11,6 @@ import {
 } from 'aws-cdk-lib/aws-iam';
 import { IConstruct } from 'constructs';
 import { getResourceId } from '../utils/utils';
-import { createHash } from 'crypto';
 
 /**
  * Properties to pass to the AddPermissionBoundary
@@ -75,17 +75,20 @@ export class AddPermissionBoundary implements IAspect {
       } else {
         return;
       }
-      const uniqness_length = 8
-      let suffix = `${policySuffix.replace(/\s/g, '')}`.substring(0, length - uniqness_length - prefix.length);
-      const hash = createHash('shake256')
-      hash.update( node.node.path )
-      let hash_value = hash.copy().digest('hex')
-      const charUniqness8 = hash_value.substring(hash_value.length - 8, hash_value.length)
-      let newSuffix = prefix + suffix + charUniqness8;
-      node.addPropertyOverride(
-        cfnProp,
-        `${newSuffix}`.substring(0, length),
+      const uniqness_length = 8;
+      let suffix = `${policySuffix.replace(/\s/g, '')}`.substring(
+        0,
+        length - uniqness_length - prefix.length
       );
+      const hash = createHash('shake256');
+      hash.update(node.node.path);
+      let hash_value = hash.copy().digest('hex');
+      const charUniqness8 = hash_value.substring(
+        hash_value.length - 8,
+        hash_value.length
+      );
+      let newSuffix = prefix + suffix + charUniqness8;
+      node.addPropertyOverride(cfnProp, `${newSuffix}`.substring(0, length));
     }
   }
 
