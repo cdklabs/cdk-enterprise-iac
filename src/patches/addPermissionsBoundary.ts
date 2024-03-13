@@ -10,7 +10,7 @@ import {
 } from 'aws-cdk-lib/aws-iam';
 import { IConstruct } from 'constructs';
 import { getResourceId } from '../utils/utils';
-import {v4 as uuidv4} from 'uuid';
+import { createHash } from 'crypto';
 
 /**
  * Properties to pass to the AddPermissionBoundary
@@ -77,8 +77,10 @@ export class AddPermissionBoundary implements IAspect {
       }
       const uniqness_length = 8
       let suffix = `${policySuffix.replace(/\s/g, '')}`.substring(0, length - uniqness_length - prefix.length);
-      let uuid = uuidv4();
-      let charUniqness8 = uuid.substring( uuid.length - uniqness_length, uuid.length );
+      const hash = createHash('shake256')
+      hash.update( node.node.path )
+      let hash_value = hash.copy().digest('hex')
+      const charUniqness8 = hash_value.substring(hash_value.length - 8, hash_value.length)
       let newSuffix = prefix + suffix + charUniqness8;
       node.addPropertyOverride(
         cfnProp,
