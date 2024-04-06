@@ -384,7 +384,7 @@
       },
       "steps": [
         {
-          "exec": "npx npm-check-updates@16 --upgrade --target=minor --peer --dep=dev --filter=@types/jest,cdklabs-projen-project-types,eslint-config-prettier,eslint-import-resolver-typescript,eslint-plugin-import,eslint-plugin-prettier,eslint-plugin-security,jest,jsii-diff,jsii-docgen,jsii-pacmak,jsii-rosetta,jsii,natural-compare-lite,prettier,projen,ts-jest,ts-node,typescript,@aws-cdk/integ-runner,@aws-cdk/integ-tests-alpha"
+          "exec": "npx npm-check-updates@16 --upgrade --target=minor --peer --dep=dev --filter=@types/jest,cdklabs-projen-project-types,eslint-config-prettier,eslint-import-resolver-typescript,eslint-plugin-import,eslint-plugin-prettier,eslint-plugin-security,jest,jsii-diff,jsii-docgen,jsii-pacmak,jsii-rosetta,natural-compare-lite,prettier,projen,ts-jest,ts-node,typescript"
         },
         {
           "exec": "yarn install --check-files"
