@@ -39,12 +39,12 @@
     "@cdklabs/tskb" "^0.0.3"
 
 "@aws-cdk/integ-runner@latest":
-  version "2.135.0-alpha.0"
-  resolved "https://registry.yarnpkg.com/@aws-cdk/integ-runner/-/integ-runner-2.135.0-alpha.0.tgz#c46f3e07f232489a6168d9cba93d1b4e1acaab8f"
-  integrity sha512-7p8VE3HwfAFyPGAkLSo8IneNvd8o3Imgvpohxf43U380M3z7E0LAHJhBo/i5WoHkIRu+wha+tDiGHt74gnXccA==
+  version "2.136.0-alpha.0"
+  resolved "https://registry.yarnpkg.com/@aws-cdk/integ-runner/-/integ-runner-2.136.0-alpha.0.tgz#b67cefd2fd87965db157168cfaafde932977bba5"
+  integrity sha512-XOUuD2ylWmEajhpOz4eyp0xbaFECNV/VYVheZ027MWHd5aXGIv46UuH0mIekpoOhTwXGNe3u5EVQSyoWmCmcAw==
   dependencies:
     "@aws-cdk/aws-service-spec" "0.0.61"
-    aws-cdk "2.135.0"
+    aws-cdk "2.136.0"
   optionalDependencies:
     fsevents "2.3.2"
 
@@ -1249,10 +1249,10 @@ aws-cdk-lib@2.103.1:
     table "^6.8.1"
     yaml "1.10.2"
 
-aws-cdk@2.135.0:
-  version "2.135.0"
-  resolved "https://registry.yarnpkg.com/aws-cdk/-/aws-cdk-2.135.0.tgz#a44574104ac543b38f0e0652b971d77e625a9073"
-  integrity sha512-id/kBxDvXQhcPYhkP/3fwhaKN0uD3raz1Z4RZcO9jJ4UoQV2RElQl+dYdmIrwNSoNVhtZeV1O4IdEtBHUhdShQ==
+aws-cdk@2.136.0:
+  version "2.136.0"
+  resolved "https://registry.yarnpkg.com/aws-cdk/-/aws-cdk-2.136.0.tgz#ebb9521f569b6222e9bca332ba96eb9a31623299"
+  integrity sha512-MVSE+AERoP0D1qXlkhKQOzs22QVulGleX1yJTkWzoYhEyseEmR8EiFJcmyEhJku/swmY0KDpVlT9R62dRG5+JQ==
   optionalDependencies:
     fsevents "2.3.2"
 
