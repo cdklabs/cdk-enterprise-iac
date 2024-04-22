@@ -4717,6 +4717,7 @@ const addPermissionBoundaryProps: AddPermissionBoundaryProps = { ... }
 | <code><a href="#@cdklabs/cdk-enterprise-iac.AddPermissionBoundaryProps.property.permissionsBoundaryPolicyName">permissionsBoundaryPolicyName</a></code> | <code>string</code> | Name of Permissions Boundary Policy to add to all IAM roles. |
 | <code><a href="#@cdklabs/cdk-enterprise-iac.AddPermissionBoundaryProps.property.instanceProfilePrefix">instanceProfilePrefix</a></code> | <code>string</code> | A prefix to prepend to the name of the IAM InstanceProfiles (Default: ''). |
 | <code><a href="#@cdklabs/cdk-enterprise-iac.AddPermissionBoundaryProps.property.policyPrefix">policyPrefix</a></code> | <code>string</code> | A prefix to prepend to the name of the IAM Policies and ManagedPolicies (Default: ''). |
+| <code><a href="#@cdklabs/cdk-enterprise-iac.AddPermissionBoundaryProps.property.rolePath">rolePath</a></code> | <code>string</code> | An IAM path to add to all IAM roles (Default: ''). |
 | <code><a href="#@cdklabs/cdk-enterprise-iac.AddPermissionBoundaryProps.property.rolePrefix">rolePrefix</a></code> | <code>string</code> | A prefix to prepend to the name of IAM Roles (Default: ''). |
 
 ---
@@ -4754,6 +4755,18 @@ public readonly policyPrefix: string;
 - *Type:* string
 
 A prefix to prepend to the name of the IAM Policies and ManagedPolicies (Default: '').
+
+---
+
+##### `rolePath`<sup>Optional</sup> <a name="rolePath" id="@cdklabs/cdk-enterprise-iac.AddPermissionBoundaryProps.property.rolePath"></a>
+
+```typescript
+public readonly rolePath: string;
+```
+
+- *Type:* string
+
+An IAM path to add to all IAM roles (Default: '').
 
 ---
 

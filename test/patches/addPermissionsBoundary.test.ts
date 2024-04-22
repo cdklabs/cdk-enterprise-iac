@@ -12,9 +12,9 @@ import {
   Role,
   ServicePrincipal,
 } from 'aws-cdk-lib/aws-iam';
+import { ARecord, HostedZone, RecordTarget } from 'aws-cdk-lib/aws-route53';
 import { Bucket } from 'aws-cdk-lib/aws-s3';
 import { AddPermissionBoundary } from '../../src/patches/addPermissionsBoundary';
-import { ARecord, HostedZone, RecordTarget } from 'aws-cdk-lib/aws-route53';
 
 let stack: Stack;
 
