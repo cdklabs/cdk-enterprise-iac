@@ -10,10 +10,6 @@ import { enterpriseDnsResolver } from '../../../src/constructs/enterpriseDnsReso
 
 let stack: Stack;
 
-// beforeEach(() => {
-//   stack = new Stack()
-// })
-
 describe('Enterprise DNS resolver', () => {
   stack = new Stack();
   const enterpriseDnsIpAddresses = ['1.1.1.1', '2.2.2.2', '3.3.3.3', '4.4.4.4'];
