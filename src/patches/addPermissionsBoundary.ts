@@ -35,6 +35,10 @@ export interface AddPermissionBoundaryProps {
    * A prefix to prepend to the name of the IAM InstanceProfiles (Default: '').
    */
   readonly instanceProfilePrefix?: string;
+  /**
+   * An IAM path to add to all IAM roles (Default: '').
+   */
+  readonly rolePath?: string;
 }
 
 /**
@@ -49,12 +53,14 @@ export class AddPermissionBoundary implements IAspect {
   private _rolePrefix: string;
   private _policyPrefix: string;
   private _instanceProfilePrefix: string;
+  private _rolePath: string;
 
   constructor(props: AddPermissionBoundaryProps) {
     this._permissionsBoundaryPolicyName = props.permissionsBoundaryPolicyName;
     this._rolePrefix = props.rolePrefix || '';
     this._policyPrefix = props.policyPrefix || '';
     this._instanceProfilePrefix = props.instanceProfilePrefix || '';
+    this._rolePath = props.rolePath || '';
   }
 
   public checkAndOverride(
@@ -106,6 +112,9 @@ export class AddPermissionBoundary implements IAspect {
           'PermissionsBoundary',
           permissionsBoundaryPolicyArn
         );
+        if (this._rolePath) {
+          node.addPropertyOverride('Path', this._rolePath);
+        }
         const roleName =
           // eslint-disable-next-line dot-notation
           cfnResourceNode['cfnProperties'].roleName ||
