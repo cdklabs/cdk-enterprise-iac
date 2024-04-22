@@ -2,6 +2,7 @@
 Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
 SPDX-License-Identifier: Apache-2.0
 */
+import { createHash } from 'crypto';
 import { CfnResource, IAspect, Stack, Token } from 'aws-cdk-lib';
 import {
   CfnInstanceProfile,
@@ -74,11 +75,20 @@ export class AddPermissionBoundary implements IAspect {
       } else {
         return;
       }
-
-      node.addPropertyOverride(
-        cfnProp,
-        `${prefix}${policySuffix.replace(/\s/g, '')}`.substring(0, length - 1)
+      const uniqness_length = 8;
+      let suffix = `${policySuffix.replace(/\s/g, '')}`.substring(
+        0,
+        length - uniqness_length - prefix.length
       );
+      const hash = createHash('shake256');
+      hash.update(node.node.path);
+      let hash_value = hash.copy().digest('hex');
+      const charUniqness8 = hash_value.substring(
+        hash_value.length - 8,
+        hash_value.length
+      );
+      let newSuffix = prefix + suffix + charUniqness8;
+      node.addPropertyOverride(cfnProp, `${newSuffix}`.substring(0, length));
     }
   }
 

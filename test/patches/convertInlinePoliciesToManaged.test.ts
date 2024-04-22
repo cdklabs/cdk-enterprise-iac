@@ -60,9 +60,22 @@ describe('Updating Resource Types', () => {
     );
     Aspects.of(stack).add(new ConvertInlinePoliciesToManaged());
     const template = Template.fromStack(stack);
-    template.hasResourceProperties('AWS::IAM::ManagedPolicy', {
-      ManagedPolicyName: `${policyPrefix}${policyName}`.substring(0, 128 - 1),
-    });
+    let polices = template.findResources('AWS::IAM::ManagedPolicy');
+    console.log(`polices: ${polices}`);
+    const names: string[] = [];
+    let i = 0;
+    for (const templatePolicy of Object.keys(polices)) {
+      const tmpPolicy = polices[templatePolicy].Properties
+        .ManagedPolicyName as string;
+      names[i] = tmpPolicy;
+      i++;
+    }
+    expect(names.length).toBe(1);
+    expect(names[0].startsWith(policyPrefix)).toBe(true);
+    const uniqness_length = 8;
+    expect(names[0].length).toBe(
+      policyPrefix.length + policyName.length + uniqness_length
+    );
   });
 
   test('ManagedPolicy works with resource extractor', () => {
