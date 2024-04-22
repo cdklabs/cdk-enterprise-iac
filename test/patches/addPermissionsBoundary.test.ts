@@ -58,9 +58,8 @@ describe('Permissions Boundary patch', () => {
       const roleName =
         'my-awesome-role-that-has-quite-a-long-name-seriously-it-is-so-long-it-exceeds-64-characters';
       const rolePrefix = 'MY_PREFIX';
-      new Role(stack, 'testRole', {
+      new Role(stack, roleName, {
         assumedBy: new ServicePrincipal('ec2.amazonaws.com'),
-        roleName,
       });
       Aspects.of(stack).add(
         new AddPermissionBoundary({
@@ -87,13 +86,11 @@ describe('Permissions Boundary patch', () => {
       let secondRoleName =
         'my-awesome-role-that-has-quite-a-long-name-seriously-it-is-so-long-it-exceeds-64-characters-2';
       const rolePrefix = 'MY_PREFIX';
-      new Role(stack, 'testFirstRole', {
+      new Role(stack, firstRoleName, {
         assumedBy: new ServicePrincipal('ec2.amazonaws.com'),
-        roleName: firstRoleName,
       });
-      new Role(stack, 'testSecondRole', {
+      new Role(stack, secondRoleName, {
         assumedBy: new ServicePrincipal('ec2.amazonaws.com'),
-        roleName: secondRoleName,
       });
       Aspects.of(stack).add(
         new AddPermissionBoundary({
