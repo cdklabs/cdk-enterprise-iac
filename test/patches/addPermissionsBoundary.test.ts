@@ -12,6 +12,7 @@ import {
   Role,
   ServicePrincipal,
 } from 'aws-cdk-lib/aws-iam';
+import { ARecord, HostedZone, RecordTarget } from 'aws-cdk-lib/aws-route53';
 import { Bucket } from 'aws-cdk-lib/aws-s3';
 import { AddPermissionBoundary } from '../../src/patches/addPermissionsBoundary';
 
@@ -180,6 +181,32 @@ describe('Permissions Boundary patch', () => {
       template.hasResourceProperties('AWS::IAM::Role', {
         RoleName: roleName,
       });
+    });
+    test('Role paths get added', () => {
+      const zone = new HostedZone(stack, 'TestHostedZone', {
+        zoneName: 'example.com',
+      });
+      // test case provided in feature request
+      new ARecord(stack, 'ARecord', {
+        zone,
+        target: RecordTarget.fromIpAddresses('1.2.3.4', '5.6.7.8'),
+        deleteExisting: true,
+      });
+      const rolePath = '/bananas/apples/';
+      Aspects.of(stack).add(
+        new AddPermissionBoundary({
+          permissionsBoundaryPolicyName: pbName,
+          rolePath,
+        })
+      );
+      const template = Template.fromStack(stack);
+      template.resourcePropertiesCountIs(
+        'AWS::IAM::Role',
+        {
+          Path: rolePath,
+        },
+        1
+      );
     });
   });
   describe('Policies', () => {
