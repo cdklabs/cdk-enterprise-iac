@@ -78,6 +78,37 @@ describe('Updating Resource Types', () => {
     );
   });
 
+  test('Function dependencies on policy are maintained', () => {
+    const fn = new Function(stack, 'TestLambda', {
+      code: Code.fromInline(`def handler(event, context)\n    print(event)`),
+      handler: 'index.handler',
+      runtime: Runtime.PYTHON_3_11,
+    });
+    fn.addToRolePolicy(
+      new iam.PolicyStatement({
+        actions: ['s3:*'],
+        resources: ['*'],
+      })
+    );
+
+    Aspects.of(app).add(new ConvertInlinePoliciesToManaged());
+    app.synth();
+    const template = Template.fromStack(stack);
+    console.log((template as any).template.Resources);
+    console.log(
+      (template as any).template.Resources
+        .TestLambdaServiceRoleDefaultPolicy0F2D5E78
+    );
+    let functions = template.findResources('AWS::Lambda::Function');
+    let i = 0;
+    for (const name of Object.keys(functions)) {
+      const deps = functions[name].DependsOn;
+      expect(deps.length).toBe(2);
+      i++;
+    }
+    expect(i).toBeGreaterThan(0);
+  });
+
   test('ManagedPolicy works with resource extractor', () => {
     const extractedStack = new Stack(app, 'TestExtractedStack');
     const resourceTypesToExtract = [
