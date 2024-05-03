@@ -94,11 +94,6 @@ describe('Updating Resource Types', () => {
     Aspects.of(app).add(new ConvertInlinePoliciesToManaged());
     app.synth();
     const template = Template.fromStack(stack);
-    console.log((template as any).template.Resources);
-    console.log(
-      (template as any).template.Resources
-        .TestLambdaServiceRoleDefaultPolicy0F2D5E78
-    );
     let functions = template.findResources('AWS::Lambda::Function');
     let i = 0;
     for (const name of Object.keys(functions)) {
