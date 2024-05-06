@@ -2,8 +2,8 @@
 Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
 SPDX-License-Identifier: Apache-2.0
 */
-import { IAspect, aws_iam as iam } from 'aws-cdk-lib';
-import { IConstruct } from 'constructs';
+import { Stack, IAspect, aws_iam as iam } from 'aws-cdk-lib';
+import { Construct, IConstruct } from 'constructs';
 
 /**
  * Patch for turning all Policies into ConvertInlinePoliciesToManaged
@@ -22,17 +22,20 @@ import { IConstruct } from 'constructs';
 export class ConvertInlinePoliciesToManaged implements IAspect {
   public visit(node: IConstruct): void {
     if (node instanceof iam.CfnPolicy) {
-      const logicalId = node.stack.resolve(node.logicalId);
-      const policyDocument = node.stack.resolve(node.policyDocument);
-      const parent = node.node?.scope?.node;
-      parent?.tryRemoveChild(node.node.id);
+      const policy = node as iam.CfnPolicy;
+      const logicalId = Stack.of(policy).resolve(policy.logicalId);
+      const policyDocument = Stack.of(policy).resolve(policy.policyDocument);
+      const parent = policy.node.scope as Construct;
+      parent.node.tryRemoveChild(policy.node.id);
 
-      const resource = new iam.CfnManagedPolicy(node.stack, logicalId, {
-        managedPolicyName: node.stack.resolve(node.policyName),
-        groups: node.groups,
-        roles: node.roles,
+      const resource = new iam.CfnManagedPolicy(parent, logicalId, {
+        managedPolicyName: Stack.of(policy).resolve(policy.policyName),
+        groups: policy.groups,
+        roles: policy.roles,
         policyDocument,
       });
+      resource.overrideLogicalId(logicalId);
+
       const overrides = (node as any).rawOverrides;
       if (overrides?.Properties?.PolicyName) {
         resource.addPropertyOverride(
