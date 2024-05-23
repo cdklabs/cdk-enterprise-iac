@@ -11,5 +11,6 @@ export * from './patches/addCfnInitProxy';
 export * from './patches/convertInlinePoliciesToManaged';
 export * from './constructs/populateProvidedVpc/populateProvidedVpc';
 export * from './constructs/ecsIsoServiceAutoscaler/ecsIsoServiceAutoscaler';
+export * from './constructs/enterpriseDnsResolver/enterpriseDnsResolver';
 export * from './patches/resource-extractor/resourceExtractor';
 export { ResourceTransform } from './patches/resource-extractor/resourceTransformer';

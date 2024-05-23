@@ -6,7 +6,7 @@ import { Stack } from 'aws-cdk-lib';
 import { Match, Template } from 'aws-cdk-lib/assertions';
 import { Vpc } from 'aws-cdk-lib/aws-ec2';
 
-import { enterpriseDnsResolver } from '../../../src/constructs/enterpriseDnsResolver/enterpriseDnsResolver';
+import { EnterpriseDnsResolver } from '../../../src/constructs/enterpriseDnsResolver/enterpriseDnsResolver';
 
 let stack: Stack;
 
@@ -15,7 +15,7 @@ describe('Enterprise DNS resolver', () => {
   const enterpriseDnsIpAddresses = ['1.1.1.1', '2.2.2.2', '3.3.3.3', '4.4.4.4'];
   const vpc = new Vpc(stack, 'TestVpc', { maxAzs: 2 });
 
-  new enterpriseDnsResolver(stack, 'EnterpriseDnsResolver', {
+  new EnterpriseDnsResolver(stack, 'EnterpriseDnsResolver', {
     vpc,
     enterpriseDnsIpAddresses,
   });

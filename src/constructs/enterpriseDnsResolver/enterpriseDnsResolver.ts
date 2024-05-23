@@ -10,7 +10,7 @@ import {
 } from 'aws-cdk-lib/aws-route53resolver';
 import { Construct } from 'constructs';
 
-export interface enterpriseDnsResolverProps {
+export interface EnterpriseDnsResolverProps {
   /**
    * Vpc or IVpc to associate resolver rules with
    */
@@ -21,11 +21,11 @@ export interface enterpriseDnsResolverProps {
   readonly enterpriseDnsIpAddresses: string[];
 }
 
-export class enterpriseDnsResolver extends Construct {
+export class EnterpriseDnsResolver extends Construct {
   private readonly _vpc: Vpc | IVpc;
   private readonly _enterpriseDnsIpAddresses: string[];
 
-  constructor(scope: Construct, id: string, props: enterpriseDnsResolverProps) {
+  constructor(scope: Construct, id: string, props: EnterpriseDnsResolverProps) {
     super(scope, id);
 
     this._vpc = props.vpc;
