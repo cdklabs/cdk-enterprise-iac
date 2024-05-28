@@ -4321,6 +4321,105 @@ public readonly ecsScalingManagerFunction: Function;
 ---
 
 
+### EnterpriseDnsResolver <a name="EnterpriseDnsResolver" id="@cdklabs/cdk-enterprise-iac.EnterpriseDnsResolver"></a>
+
+#### Initializers <a name="Initializers" id="@cdklabs/cdk-enterprise-iac.EnterpriseDnsResolver.Initializer"></a>
+
+```typescript
+import { EnterpriseDnsResolver } from '@cdklabs/cdk-enterprise-iac'
+
+new EnterpriseDnsResolver(scope: Construct, id: string, props: EnterpriseDnsResolverProps)
+```
+
+| **Name** | **Type** | **Description** |
+| --- | --- | --- |
+| <code><a href="#@cdklabs/cdk-enterprise-iac.EnterpriseDnsResolver.Initializer.parameter.scope">scope</a></code> | <code>constructs.Construct</code> | *No description.* |
+| <code><a href="#@cdklabs/cdk-enterprise-iac.EnterpriseDnsResolver.Initializer.parameter.id">id</a></code> | <code>string</code> | *No description.* |
+| <code><a href="#@cdklabs/cdk-enterprise-iac.EnterpriseDnsResolver.Initializer.parameter.props">props</a></code> | <code><a href="#@cdklabs/cdk-enterprise-iac.EnterpriseDnsResolverProps">EnterpriseDnsResolverProps</a></code> | *No description.* |
+
+---
+
+##### `scope`<sup>Required</sup> <a name="scope" id="@cdklabs/cdk-enterprise-iac.EnterpriseDnsResolver.Initializer.parameter.scope"></a>
+
+- *Type:* constructs.Construct
+
+---
+
+##### `id`<sup>Required</sup> <a name="id" id="@cdklabs/cdk-enterprise-iac.EnterpriseDnsResolver.Initializer.parameter.id"></a>
+
+- *Type:* string
+
+---
+
+##### `props`<sup>Required</sup> <a name="props" id="@cdklabs/cdk-enterprise-iac.EnterpriseDnsResolver.Initializer.parameter.props"></a>
+
+- *Type:* <a href="#@cdklabs/cdk-enterprise-iac.EnterpriseDnsResolverProps">EnterpriseDnsResolverProps</a>
+
+---
+
+#### Methods <a name="Methods" id="Methods"></a>
+
+| **Name** | **Description** |
+| --- | --- |
+| <code><a href="#@cdklabs/cdk-enterprise-iac.EnterpriseDnsResolver.toString">toString</a></code> | Returns a string representation of this construct. |
+
+---
+
+##### `toString` <a name="toString" id="@cdklabs/cdk-enterprise-iac.EnterpriseDnsResolver.toString"></a>
+
+```typescript
+public toString(): string
+```
+
+Returns a string representation of this construct.
+
+#### Static Functions <a name="Static Functions" id="Static Functions"></a>
+
+| **Name** | **Description** |
+| --- | --- |
+| <code><a href="#@cdklabs/cdk-enterprise-iac.EnterpriseDnsResolver.isConstruct">isConstruct</a></code> | Checks if `x` is a construct. |
+
+---
+
+##### ~~`isConstruct`~~ <a name="isConstruct" id="@cdklabs/cdk-enterprise-iac.EnterpriseDnsResolver.isConstruct"></a>
+
+```typescript
+import { EnterpriseDnsResolver } from '@cdklabs/cdk-enterprise-iac'
+
+EnterpriseDnsResolver.isConstruct(x: any)
+```
+
+Checks if `x` is a construct.
+
+###### `x`<sup>Required</sup> <a name="x" id="@cdklabs/cdk-enterprise-iac.EnterpriseDnsResolver.isConstruct.parameter.x"></a>
+
+- *Type:* any
+
+Any object.
+
+---
+
+#### Properties <a name="Properties" id="Properties"></a>
+
+| **Name** | **Type** | **Description** |
+| --- | --- | --- |
+| <code><a href="#@cdklabs/cdk-enterprise-iac.EnterpriseDnsResolver.property.node">node</a></code> | <code>constructs.Node</code> | The tree node. |
+
+---
+
+##### `node`<sup>Required</sup> <a name="node" id="@cdklabs/cdk-enterprise-iac.EnterpriseDnsResolver.property.node"></a>
+
+```typescript
+public readonly node: Node;
+```
+
+- *Type:* constructs.Node
+
+The tree node.
+
+---
+
+
 ### PopulateWithConfig <a name="PopulateWithConfig" id="@cdklabs/cdk-enterprise-iac.PopulateWithConfig"></a>
 
 Populate a provided VPC with subnets based on a provided configuration.
@@ -4966,6 +5065,49 @@ public readonly scaleOutIncrement: number;
 - *Default:* 1
 
 The number of tasks that will scale out on scale out alarm status.
+
+---
+
+### EnterpriseDnsResolverProps <a name="EnterpriseDnsResolverProps" id="@cdklabs/cdk-enterprise-iac.EnterpriseDnsResolverProps"></a>
+
+#### Initializer <a name="Initializer" id="@cdklabs/cdk-enterprise-iac.EnterpriseDnsResolverProps.Initializer"></a>
+
+```typescript
+import { EnterpriseDnsResolverProps } from '@cdklabs/cdk-enterprise-iac'
+
+const enterpriseDnsResolverProps: EnterpriseDnsResolverProps = { ... }
+```
+
+#### Properties <a name="Properties" id="Properties"></a>
+
+| **Name** | **Type** | **Description** |
+| --- | --- | --- |
+| <code><a href="#@cdklabs/cdk-enterprise-iac.EnterpriseDnsResolverProps.property.enterpriseDnsIpAddresses">enterpriseDnsIpAddresses</a></code> | <code>string[]</code> | List of IPs for enterprise DNS servers. |
+| <code><a href="#@cdklabs/cdk-enterprise-iac.EnterpriseDnsResolverProps.property.vpc">vpc</a></code> | <code>aws-cdk-lib.aws_ec2.Vpc \| aws-cdk-lib.aws_ec2.IVpc</code> | Vpc or IVpc to associate resolver rules with. |
+
+---
+
+##### `enterpriseDnsIpAddresses`<sup>Required</sup> <a name="enterpriseDnsIpAddresses" id="@cdklabs/cdk-enterprise-iac.EnterpriseDnsResolverProps.property.enterpriseDnsIpAddresses"></a>
+
+```typescript
+public readonly enterpriseDnsIpAddresses: string[];
+```
+
+- *Type:* string[]
+
+List of IPs for enterprise DNS servers.
+
+---
+
+##### `vpc`<sup>Required</sup> <a name="vpc" id="@cdklabs/cdk-enterprise-iac.EnterpriseDnsResolverProps.property.vpc"></a>
+
+```typescript
+public readonly vpc: Vpc | IVpc;
+```
+
+- *Type:* aws-cdk-lib.aws_ec2.Vpc | aws-cdk-lib.aws_ec2.IVpc
+
+Vpc or IVpc to associate resolver rules with.
 
 ---
 
