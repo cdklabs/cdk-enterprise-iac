@@ -17,8 +17,8 @@
   },
   "extends": [
     "plugin:import/typescript",
-    "plugin:prettier/recommended",
-    "plugin:security/recommended"
+    "plugin:security/recommended",
+    "plugin:prettier/recommended"
   ],
   "settings": {
     "import/parsers": {
