@@ -72,7 +72,7 @@ project.eslint?.addRules({
     { singleQuote: true, semi: true, trailingComma: 'es5' },
   ],
 });
-project.eslint?.addExtends('plugin:security/recommended');
+project.eslint?.addExtends('plugin:security/recommended-legacy');
 
 project.deps.addDependency(
   '@aws-cdk/integ-tests-alpha@2.103.1-alpha.0',
