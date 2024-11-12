@@ -134,7 +134,7 @@
     },
     {
       "name": "aws-sdk",
-      "version": "^2.1230.0",
+      "version": "2.1692.0",
       "type": "runtime"
     },
     {
