@@ -17,7 +17,7 @@
   },
   "extends": [
     "plugin:import/typescript",
-    "plugin:security/recommended",
+    "plugin:security/recommended-legacy",
     "plugin:prettier/recommended"
   ],
   "settings": {

@@ -23,8 +23,10 @@ const project = new CdklabsConstructLibrary({
   name: '@cdklabs/cdk-enterprise-iac',
   repositoryUrl: 'https://github.com/cdklabs/cdk-enterprise-iac.git',
   devDeps: ['eslint-plugin-security', 'natural-compare-lite'],
-  deps: ['aws-sdk@^2.1230.0'],
+  deps: ['aws-sdk@2.1692.0'], // no need for this to be updated
   bundledDeps: ['aws-sdk'],
+  jsiiVersion: '5.5.x',
+  typescriptVersion: '5.5.x',
   gitignore: [
     '.vscode/',
     '*.d.ts',
@@ -70,7 +72,7 @@ project.eslint?.addRules({
     { singleQuote: true, semi: true, trailingComma: 'es5' },
   ],
 });
-project.eslint?.addExtends('plugin:security/recommended');
+project.eslint?.addExtends('plugin:security/recommended-legacy');
 
 project.deps.addDependency(
   '@aws-cdk/integ-tests-alpha@2.103.1-alpha.0',
