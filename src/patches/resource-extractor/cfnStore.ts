@@ -5,7 +5,7 @@ SPDX-License-Identifier: Apache-2.0
 import * as cp from 'child_process';
 import { CfnResource, Fn } from 'aws-cdk-lib';
 import { CloudFormationStackArtifact } from 'aws-cdk-lib/cx-api';
-import { CloudFormation } from 'aws-sdk';
+import type { CloudFormation } from 'aws-sdk';
 import { Flattener } from './flattener';
 import { ResourceExtractorShareMethod } from './resourceExtractor';
 import { FlatJson, Json } from './types';
