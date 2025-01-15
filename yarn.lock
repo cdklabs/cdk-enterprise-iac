@@ -2076,9 +2076,9 @@ ejs@^3.1.10:
     jake "^10.8.5"
 
 electron-to-chromium@^1.5.73:
-  version "1.5.80"
-  resolved "https://registry.yarnpkg.com/electron-to-chromium/-/electron-to-chromium-1.5.80.tgz#ca7a8361d7305f0ec9e203ce4e633cbb8a8ef1b1"
-  integrity sha512-LTrKpW0AqIuHwmlVNV+cjFYTnXtM9K37OGhpe0ZI10ScPSxqVSryZHIY3WnCS5NSYbBODRTZyhRMS2h5FAEqAw==
+  version "1.5.82"
+  resolved "https://registry.yarnpkg.com/electron-to-chromium/-/electron-to-chromium-1.5.82.tgz#b9116ac6d6b6346c2baa49f14c1272ba2ce1ccdb"
+  integrity sha512-Zq16uk1hfQhyGx5GpwPAYDwddJuSGhtRhgOA2mCxANYaDT79nAeGnaXogMGng4KqLaJUVnOnuL0+TDop9nLOiA==
 
 emittery@^0.13.1:
   version "0.13.1"
@@ -5479,9 +5479,9 @@ typescript@5.5.x, typescript@~5.5:
   integrity sha512-Mtq29sKDAEYP7aljRgtPOpTvOfbwRWlS6dPRzwjdE+C0R4brX/GUyhHSecbHMFLNBLcJIPt9nl9yG5TZ1weH+Q==
 
 typescript@next:
-  version "5.8.0-dev.20250113"
-  resolved "https://registry.yarnpkg.com/typescript/-/typescript-5.8.0-dev.20250113.tgz#c85bdabe7739f8d09d5fa95edaefe7500daff8c0"
-  integrity sha512-P0/9dr0Rwfs+XMXz2OyX9rVUu84x0qKUlTMDytq5GentLY1ebkyOHQSxvVeU/7L3hzrLFvdM4tVnuQJme1Webw==
+  version "5.8.0-dev.20250114"
+  resolved "https://registry.yarnpkg.com/typescript/-/typescript-5.8.0-dev.20250114.tgz#56dc89f810f2f8f840a42187d212f45a64313f13"
+  integrity sha512-DGtuEPL692JPjTQHFmP810EklYi8ndHgCWt61kRjQfaO25LFpxuB9ZNVs79u15t9JpkeIB6WLKpjY/JiRCzYMw==
 
 typescript@~5.7:
   version "5.7.3"
