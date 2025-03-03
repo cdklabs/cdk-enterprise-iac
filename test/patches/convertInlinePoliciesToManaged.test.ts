@@ -2,7 +2,14 @@
 Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
 SPDX-License-Identifier: Apache-2.0
 */
-import { App, Aspects, Stack, aws_iam as iam } from 'aws-cdk-lib';
+import {
+  App,
+  Aspects,
+  Stack,
+  aws_iam as iam,
+  aws_ecr as ecr,
+  RemovalPolicy,
+} from 'aws-cdk-lib';
 import { Template } from 'aws-cdk-lib/assertions';
 import { Code, Function, Runtime } from 'aws-cdk-lib/aws-lambda';
 import { Bucket } from 'aws-cdk-lib/aws-s3';
@@ -41,6 +48,26 @@ describe('Updating Resource Types', () => {
     appTemplate.resourceCountIs('AWS::IAM::Policy', 0);
     appTemplate.resourceCountIs('AWS::IAM::ManagedPolicy', 1);
   });
+
+  test('Inline Direct in Role', () => {
+    new ecr.Repository(stack, 'Repo', {
+      autoDeleteImages: true,
+      removalPolicy: RemovalPolicy.DESTROY,
+    });
+
+    Aspects.of(app).add(new ConvertInlinePoliciesToManaged());
+    app.synth();
+
+    const appTemplate = Template.fromStack(stack);
+    console.log(appTemplate);
+    let roles = appTemplate.findResources('AWS::IAM::Role');
+    for (const k in roles) {
+      const role = roles[k];
+      console.log(role);
+    }
+    expect(false).toBe(true);
+  });
+
   test('Passes along any overrides to ManagedPolicy', () => {
     const policyName = 'some-policy';
     const policy = new iam.Policy(stack, 'MyPolicy', {
