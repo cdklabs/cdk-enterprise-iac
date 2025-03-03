@@ -86,8 +86,9 @@ export class AddPermissionBoundary implements IAspect {
         0,
         length - uniqness_length - prefix.length
       );
+      const region = Stack.of(node).region;
       const hash = createHash('shake256');
-      hash.update(node.node.path);
+      hash.update(`${node.node.path}-${region}`);
       let hash_value = hash.copy().digest('hex');
       const charUniqness8 = hash_value.substring(
         hash_value.length - 8,
