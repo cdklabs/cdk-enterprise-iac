@@ -1694,6 +1694,9 @@ All aspects can visit an IConstruct.
 
 This Aspect takes a CDK application, all synthesized CloudFormationStackArtifact, a value share method, and a list of Cloudformation resources that should be pulled out of the main CDK application, which should be synthesized to a cloudformation template that an external team (e.g. security team) to deploy, and adjusting the CDK application to reference pre-created resources already pulled out.
 
+> NOTE: The AWS CLI must be installed and available for the Resource
+Extractor to work.
+
 *Example*
 
 ```typescript
