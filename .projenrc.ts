@@ -7,6 +7,7 @@ import {
   JsiiLanguage,
 } from 'cdklabs-projen-project-types';
 import { DependencyType, JsonFile } from 'projen';
+import { NodePackageManager } from 'projen/lib/javascript';
 
 const project = new CdklabsConstructLibrary({
   setNodeEngineVersion: false,
@@ -59,6 +60,14 @@ const project = new CdklabsConstructLibrary({
     mavenEndpoint: 'https://s01.oss.sonatype.org',
   },
   release: true,
+  packageManager: NodePackageManager.YARN_CLASSIC,
+  versionrcOptions: {
+    preset: 'conventionalcommits',
+  },
+});
+
+project.addFields({
+  packageManager: 'yarn@1.22.19+sha1.4ba7fc5c6e704fce2066ecbfb0b0d8976fe62447',
 });
 
 project.package.addField('prettier', {
