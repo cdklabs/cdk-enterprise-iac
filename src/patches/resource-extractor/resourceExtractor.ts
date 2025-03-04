@@ -68,6 +68,9 @@ export interface ResourceExtractorProps {
  * cloudformation template that an external team (e.g. security team) to deploy,
  * and adjusting the CDK application to reference pre-created resources already pulled out
  *
+ * > NOTE: The AWS CLI must be installed and available for the Resource
+ * Extractor to work.
+ *
  * @example
     const app = App()
     const stack = new Stack(app, 'MyStack');

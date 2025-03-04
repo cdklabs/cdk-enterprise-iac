@@ -3,9 +3,9 @@ Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
 SPDX-License-Identifier: Apache-2.0
 */
 import * as cp from 'child_process';
+import type { Stack } from '@aws-sdk/client-cloudformation';
 import { CfnResource, Fn } from 'aws-cdk-lib';
 import { CloudFormationStackArtifact } from 'aws-cdk-lib/cx-api';
-import type { CloudFormation } from 'aws-sdk';
 import { Flattener } from './flattener';
 import { ResourceExtractorShareMethod } from './resourceExtractor';
 import { FlatJson, Json } from './types';
@@ -115,35 +115,30 @@ export class CfnStore {
    * @param region the AWS region to target
    * @returns CloudFormation Stack object
    */
-  private describeStack(
-    stackName: string,
-    region: string
-  ): CloudFormation.Stack | undefined {
-    let stack: CloudFormation.Stack | undefined;
+  private describeStack(stackName: string, region: string): Stack | undefined {
+    let stack: Stack | undefined;
     try {
       const output = cp.spawnSync(
-        'node',
+        'aws',
         [
-          '-e',
-          `
-            const sdk = require('aws-sdk');
-            const cfn = new sdk.CloudFormation({
-              apiVersion: '2016-11-15',
-              region: '${region}'
-            });
-            cfn.describeStacks({StackName: '${stackName}'})
-                .promise()
-                .then((data) => {
-                  const j = JSON.stringify(data);
-                  console.log(j);
-                }
-            );
-          `,
+          'cloudformation',
+          'describe-stacks',
+          '--stack-name',
+          stackName,
+          '--region',
+          region,
+          '--output',
+          'json',
         ],
         { encoding: 'utf8' }
       );
+
+      if (output.status !== 0) {
+        return undefined;
+      }
+
       const response = JSON.parse(output.stdout);
-      const stacks: CloudFormation.Stack[] = response.Stacks;
+      const stacks: Stack[] = response.Stacks;
 
       stack = stacks[0];
     } catch {}
@@ -158,7 +153,7 @@ export class CfnStore {
    * @param stack
    * @returns
    */
-  private createExportMap(stack: CloudFormation.Stack): FlatJson {
+  private createExportMap(stack: Stack): FlatJson {
     const exports: FlatJson = {};
     const outputs = stack.Outputs ?? [];
     for (const output of outputs) {

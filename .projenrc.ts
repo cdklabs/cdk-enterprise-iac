@@ -7,6 +7,7 @@ import {
   JsiiLanguage,
 } from 'cdklabs-projen-project-types';
 import { DependencyType, JsonFile } from 'projen';
+import { NodePackageManager } from 'projen/lib/javascript';
 
 const project = new CdklabsConstructLibrary({
   setNodeEngineVersion: false,
@@ -22,9 +23,11 @@ const project = new CdklabsConstructLibrary({
   defaultReleaseBranch: 'main',
   name: '@cdklabs/cdk-enterprise-iac',
   repositoryUrl: 'https://github.com/cdklabs/cdk-enterprise-iac.git',
-  devDeps: ['eslint-plugin-security', 'natural-compare-lite'],
-  deps: ['aws-sdk@2.1692.0'], // no need for this to be updated
-  bundledDeps: ['aws-sdk'],
+  devDeps: [
+    'eslint-plugin-security',
+    'natural-compare-lite',
+    '@aws-sdk/client-cloudformation@3.600.0',
+  ],
   jsiiVersion: '5.5.x',
   typescriptVersion: '5.5.x',
   gitignore: [
@@ -59,6 +62,11 @@ const project = new CdklabsConstructLibrary({
     mavenEndpoint: 'https://s01.oss.sonatype.org',
   },
   release: true,
+  packageManager: NodePackageManager.YARN_CLASSIC,
+});
+
+project.addFields({
+  packageManager: 'yarn@1.22.19+sha1.4ba7fc5c6e704fce2066ecbfb0b0d8976fe62447',
 });
 
 project.package.addField('prettier', {
