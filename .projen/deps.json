@@ -1,6 +1,11 @@
 {
   "dependencies": [
     {
+      "name": "@aws-sdk/client-cloudformation",
+      "version": "3.600.0",
+      "type": "build"
+    },
+    {
       "name": "@types/jest",
       "type": "build"
     },
@@ -128,11 +133,6 @@
       "name": "constructs",
       "version": "^10.0.5",
       "type": "peer"
-    },
-    {
-      "name": "aws-sdk",
-      "version": "2.1692.0",
-      "type": "runtime"
     },
     {
       "name": "@aws-cdk/integ-tests-alpha",

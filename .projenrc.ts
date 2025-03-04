@@ -23,8 +23,11 @@ const project = new CdklabsConstructLibrary({
   defaultReleaseBranch: 'main',
   name: '@cdklabs/cdk-enterprise-iac',
   repositoryUrl: 'https://github.com/cdklabs/cdk-enterprise-iac.git',
-  devDeps: ['eslint-plugin-security', 'natural-compare-lite'],
-  deps: ['aws-sdk@2.1692.0'], // no need for this to be updated
+  devDeps: [
+    'eslint-plugin-security',
+    'natural-compare-lite',
+    '@aws-sdk/client-cloudformation@3.600.0',
+  ],
   jsiiVersion: '5.5.x',
   typescriptVersion: '5.5.x',
   gitignore: [

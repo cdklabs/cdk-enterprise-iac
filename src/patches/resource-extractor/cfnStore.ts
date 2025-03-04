@@ -2,10 +2,10 @@
 Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
 SPDX-License-Identifier: Apache-2.0
 */
-import * as cp from 'child_process';
+import { Stack } from '@aws-sdk/client-cloudformation';
 import { CfnResource, Fn } from 'aws-cdk-lib';
 import { CloudFormationStackArtifact } from 'aws-cdk-lib/cx-api';
-import type { CloudFormation } from 'aws-sdk';
+import * as cp from 'child_process';
 import { Flattener } from './flattener';
 import { ResourceExtractorShareMethod } from './resourceExtractor';
 import { FlatJson, Json } from './types';
@@ -115,11 +115,8 @@ export class CfnStore {
    * @param region the AWS region to target
    * @returns CloudFormation Stack object
    */
-  private describeStack(
-    stackName: string,
-    region: string
-  ): CloudFormation.Stack | undefined {
-    let stack: CloudFormation.Stack | undefined;
+  private describeStack(stackName: string, region: string): Stack | undefined {
+    let stack: Stack | undefined;
     try {
       const output = cp.spawnSync(
         'aws',
@@ -141,7 +138,7 @@ export class CfnStore {
       }
 
       const response = JSON.parse(output.stdout);
-      const stacks: CloudFormation.Stack[] = response.Stacks;
+      const stacks: Stack[] = response.Stacks;
 
       stack = stacks[0];
     } catch {}
@@ -156,7 +153,7 @@ export class CfnStore {
    * @param stack
    * @returns
    */
-  private createExportMap(stack: CloudFormation.Stack): FlatJson {
+  private createExportMap(stack: Stack): FlatJson {
     const exports: FlatJson = {};
     const outputs = stack.Outputs ?? [];
     for (const output of outputs) {
