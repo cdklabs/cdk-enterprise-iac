@@ -2,10 +2,10 @@
 Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
 SPDX-License-Identifier: Apache-2.0
 */
+import * as cp from 'child_process';
 import type { Stack } from '@aws-sdk/client-cloudformation';
 import { CfnResource, Fn } from 'aws-cdk-lib';
 import { CloudFormationStackArtifact } from 'aws-cdk-lib/cx-api';
-import * as cp from 'child_process';
 import { Flattener } from './flattener';
 import { ResourceExtractorShareMethod } from './resourceExtractor';
 import { FlatJson, Json } from './types';

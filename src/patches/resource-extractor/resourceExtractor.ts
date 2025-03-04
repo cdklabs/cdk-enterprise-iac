@@ -67,7 +67,7 @@ export interface ResourceExtractorProps {
  * pulled out of the main CDK application, which should be synthesized to a
  * cloudformation template that an external team (e.g. security team) to deploy,
  * and adjusting the CDK application to reference pre-created resources already pulled out
- * 
+ *
  * > NOTE: The AWS CLI must be installed and available for the Resource
  * Extractor to work.
  *
