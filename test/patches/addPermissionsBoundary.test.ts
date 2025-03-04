@@ -2,7 +2,7 @@
 Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
 SPDX-License-Identifier: Apache-2.0
 */
-import { Aspects, RemovalPolicy, Stack } from 'aws-cdk-lib';
+import { Aspects, RemovalPolicy, Stack, App } from 'aws-cdk-lib';
 import { Template, Match } from 'aws-cdk-lib/assertions';
 import {
   CfnInstanceProfile,
@@ -369,6 +369,100 @@ describe('Permissions Boundary patch', () => {
           `${instanceProfilePrefix}*`
         ),
       });
+    });
+    test('role-uniqueness-across-regions', () => {
+      const app = new App({});
+
+      //Create a stack in 2 seperate regions
+      const stack_one = new Stack(app, 'StackOne', {
+        env: { region: 'us-east-1' },
+      });
+      const stack_two = new Stack(app, 'StackTwo', {
+        env: { region: 'us-west-2' },
+      });
+
+      //Create a role in each Stack
+      new Role(stack_one, 'TestRole', {
+        assumedBy: new ServicePrincipal('ec2.amazonaws.com'),
+      });
+      new Role(stack_two, 'TestRole', {
+        assumedBy: new ServicePrincipal('ec2.amazonaws.com'),
+      });
+
+      //Apply Permissions Boundary aspect to each stack
+      Aspects.of(stack_one).add(
+        new AddPermissionBoundary({
+          rolePrefix: 'Cust_',
+          permissionsBoundaryPolicyName: pbName,
+        })
+      );
+      Aspects.of(stack_two).add(
+        new AddPermissionBoundary({
+          rolePrefix: 'Cust_',
+          permissionsBoundaryPolicyName: pbName,
+        })
+      );
+
+      //Get roles from each region
+      const regionOneTemplate = Template.fromStack(stack_one);
+      const roleOne = regionOneTemplate.findResources('AWS::IAM::Role');
+      const regionTwoTemplate = Template.fromStack(stack_two);
+      const roleTwo = regionTwoTemplate.findResources('AWS::IAM::Role');
+      const roleNameOne = Object.values(roleOne)[0].Properties
+        .RoleName as string;
+      const roleNameTwo = Object.values(roleTwo)[0].Properties
+        .RoleName as string;
+
+      // Verify both roles start with the prefix
+      expect(roleNameOne.startsWith('Cust_')).toBe(true);
+      expect(roleNameTwo.startsWith('Cust_')).toBe(true);
+
+      // Verify the roles have unique names
+      expect(roleNameOne).not.toEqual(roleNameTwo);
+    });
+    test('region-not-set', () => {
+      const app = new App();
+
+      // Create a stack without setting the region
+      const stack_no_region = new Stack(app, 'StackNoRegion');
+
+      // Create roles in the stack
+      new Role(stack_no_region, 'TestRole', {
+        assumedBy: new ServicePrincipal('ec2.amazonaws.com'),
+      });
+      new Role(stack_no_region, 'TestRoleTwo', {
+        assumedBy: new ServicePrincipal('ec2.amazonaws.com'),
+      });
+
+      // Apply Permissions Boundary aspect
+      Aspects.of(stack_no_region).add(
+        new AddPermissionBoundary({
+          rolePrefix: 'Cust_',
+          permissionsBoundaryPolicyName: pbName,
+        })
+      );
+
+      // Get the template
+      const template = Template.fromStack(stack_no_region);
+      const roles = template.findResources('AWS::IAM::Role');
+
+      // Get the generated role names
+      const roleNames = Object.values(roles).map(
+        (role) => role.Properties.RoleName as string
+      );
+
+      // Verify we have two roles
+      expect(roleNames.length).toBe(2);
+
+      // Verify all roles start with prefix
+      roleNames.forEach((name) => {
+        expect(name.startsWith('Cust_')).toBe(true);
+        expect(name.length).toBeLessThanOrEqual(64);
+      });
+
+      // Verify the roles have unique names even without region
+      const uniqueNames = new Set(roleNames);
+      expect(uniqueNames.size).toBe(2);
     });
   });
 });
