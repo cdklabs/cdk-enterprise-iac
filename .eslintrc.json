@@ -54,6 +54,7 @@
         "devDependencies": [
           "**/test/**",
           "**/build-tools/**",
+          "./src/patches/resource-extractor/*.ts",
           ".projenrc.ts",
           "projenrc/**/*.ts"
         ],

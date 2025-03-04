@@ -63,9 +63,6 @@ const project = new CdklabsConstructLibrary({
   },
   release: true,
   packageManager: NodePackageManager.YARN_CLASSIC,
-  versionrcOptions: {
-    preset: 'conventionalcommits',
-  },
 });
 
 project.addFields({
@@ -83,6 +80,7 @@ project.eslint?.addRules({
     { singleQuote: true, semi: true, trailingComma: 'es5' },
   ],
 });
+project.eslint?.allowDevDeps('./src/patches/resource-extractor/*.ts');
 project.eslint?.addExtends('plugin:security/recommended-legacy');
 
 project.deps.addDependency(
