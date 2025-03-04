@@ -79,9 +79,6 @@
   "dependencies": {
     "aws-sdk": "2.1692.0"
   },
-  "bundledDependencies": [
-    "aws-sdk"
-  ],
   "keywords": [
     "cdk"
   ],

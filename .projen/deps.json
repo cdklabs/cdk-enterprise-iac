@@ -110,10 +110,6 @@
       "type": "build"
     },
     {
-      "name": "aws-sdk",
-      "type": "bundled"
-    },
-    {
       "name": "@aws-cdk/integ-runner",
       "version": "latest",
       "type": "devenv"

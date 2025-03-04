@@ -122,26 +122,24 @@ export class CfnStore {
     let stack: CloudFormation.Stack | undefined;
     try {
       const output = cp.spawnSync(
-        'node',
+        'aws',
         [
-          '-e',
-          `
-            const sdk = require('aws-sdk');
-            const cfn = new sdk.CloudFormation({
-              apiVersion: '2016-11-15',
-              region: '${region}'
-            });
-            cfn.describeStacks({StackName: '${stackName}'})
-                .promise()
-                .then((data) => {
-                  const j = JSON.stringify(data);
-                  console.log(j);
-                }
-            );
-          `,
+          'cloudformation',
+          'describe-stacks',
+          '--stack-name',
+          stackName,
+          '--region',
+          region,
+          '--output',
+          'json',
         ],
         { encoding: 'utf8' }
       );
+
+      if (output.status !== 0) {
+        return undefined;
+      }
+
       const response = JSON.parse(output.stdout);
       const stacks: CloudFormation.Stack[] = response.Stacks;
 
