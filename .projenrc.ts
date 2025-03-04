@@ -80,7 +80,6 @@ project.eslint?.addRules({
     { singleQuote: true, semi: true, trailingComma: 'es5' },
   ],
 });
-project.eslint?.allowDevDeps('./src/patches/resource-extractor/*.ts');
 project.eslint?.addExtends('plugin:security/recommended-legacy');
 
 project.deps.addDependency(
