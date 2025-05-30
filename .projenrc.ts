@@ -59,7 +59,7 @@ const project = new CdklabsConstructLibrary({
     mavenGroupId: 'io.github.cdklabs',
     javaPackage: 'io.github.cdklabs.cdkenterpriseiac',
     mavenArtifactId: 'cdkenterpriseiac',
-    mavenEndpoint: 'https://s01.oss.sonatype.org',
+    mavenServerId: 'central-ossrh',
   },
   release: true,
   packageManager: NodePackageManager.YARN_CLASSIC,
