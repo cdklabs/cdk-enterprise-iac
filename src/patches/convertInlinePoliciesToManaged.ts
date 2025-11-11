@@ -2,7 +2,7 @@
 Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
 SPDX-License-Identifier: Apache-2.0
 */
-import { Stack, IAspect, aws_iam as iam } from 'aws-cdk-lib';
+import { CfnResource, Stack, IAspect, aws_iam as iam } from 'aws-cdk-lib';
 import { Construct, IConstruct } from 'constructs';
 
 /**
@@ -23,17 +23,21 @@ export class ConvertInlinePoliciesToManaged implements IAspect {
   public visit(node: IConstruct): void {
     if (node instanceof iam.CfnPolicy) {
       const policy = node as iam.CfnPolicy;
-      const logicalId = Stack.of(policy).resolve(policy.logicalId);
-      const policyDocument = Stack.of(policy).resolve(policy.policyDocument);
+      const stack = Stack.of(policy);
+      const logicalId = stack.resolve(policy.logicalId);
+      const policyDocument = stack.resolve(policy.policyDocument);
       const parent = policy.node.scope as Construct;
+
+      const dependentResources = this.findDependentResources(policy, stack);
       parent.node.tryRemoveChild(policy.node.id);
 
       const resource = new iam.CfnManagedPolicy(parent, logicalId, {
         managedPolicyName: Stack.of(policy).resolve(policy.policyName),
         groups: policy.groups,
         roles: policy.roles,
-        policyDocument,
+        policyDocument: policyDocument,
       });
+
       resource.overrideLogicalId(logicalId);
 
       const overrides = (node as any).rawOverrides;
@@ -43,6 +47,45 @@ export class ConvertInlinePoliciesToManaged implements IAspect {
           overrides?.Properties?.PolicyName
         );
       }
+
+      // re-establish dependencies to the new managed policy
+      for (const dependent of dependentResources) {
+        dependent.addDependency(resource);
+      }
     }
+  }
+
+  /**
+   * Find all CfnResources that have a dependency on the given policy
+   */
+  private findDependentResources(
+    policy: iam.CfnPolicy,
+    stack: Stack
+  ): CfnResource[] {
+    const dependents: CfnResource[] = [];
+    const policyLogicalId = stack.resolve(policy.logicalId);
+
+    for (const child of stack.node.findAll()) {
+      if (child instanceof CfnResource && child !== policy) {
+        const deps = (child as any).dependsOn;
+        if (Array.isArray(deps)) {
+          const hasDependency = deps.some((dep: any) => {
+            if (dep === policy) {
+              return true;
+            }
+            if (typeof dep === 'object' && 'logicalId' in dep) {
+              return stack.resolve(dep.logicalId) === policyLogicalId;
+            }
+            return false;
+          });
+
+          if (hasDependency) {
+            dependents.push(child);
+          }
+        }
+      }
+    }
+
+    return dependents;
   }
 }
