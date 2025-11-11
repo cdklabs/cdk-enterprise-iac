@@ -35,7 +35,6 @@ export class ConvertInlinePoliciesToManaged implements IAspect {
         managedPolicyName: Stack.of(policy).resolve(policy.policyName),
         groups: policy.groups,
         roles: policy.roles,
-        users: policy.users,
         policyDocument: policyDocument,
       });
 
