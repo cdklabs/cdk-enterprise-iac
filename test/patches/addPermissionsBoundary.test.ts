@@ -208,6 +208,73 @@ describe('Permissions Boundary patch', () => {
         1
       );
     });
+    test('Role paths get added', () => {
+      const zone = new HostedZone(stack, 'TestHostedZone', {
+        zoneName: 'example.com',
+      });
+      // test case provided in feature request
+      new ARecord(stack, 'ARecord', {
+        zone,
+        target: RecordTarget.fromIpAddresses('1.2.3.4', '5.6.7.8'),
+        deleteExisting: true,
+      });
+      const rolePath = '/bananas/apples/';
+      Aspects.of(stack).add(
+        new AddPermissionBoundary({
+          permissionsBoundaryPolicyName: pbName,
+          rolePath,
+        })
+      );
+      const template = Template.fromStack(stack);
+      template.resourcePropertiesCountIs(
+        'AWS::IAM::Role',
+        {
+          Path: rolePath,
+        },
+        1
+      );
+    });
+    test('Role name is stable regardless of region token resolution', () => {
+      const rolePrefix = 'SERVICE-';
+
+      const createAndGetRoleName = (withRegion: boolean): string => {
+        const app = new App();
+        const local_stack = new Stack(app, 'TestStack', withRegion ? { env: { region: 'us-east-1' } } : undefined);
+
+        new Role(local_stack, 'TestRole', {
+          assumedBy: new ServicePrincipal('ec2.amazonaws.com'),
+        });
+
+        Aspects.of(local_stack).add(
+          new AddPermissionBoundary({
+            permissionsBoundaryPolicyName: 'test-pb',
+            rolePrefix,
+          })
+        );
+
+        const template = Template.fromStack(local_stack);
+        const roles = template.findResources('AWS::IAM::Role');
+        return Object.values(roles)[0].Properties.RoleName as string;
+      };
+
+      // token case
+      const noRegion1 = createAndGetRoleName(false);
+      const noRegion2 = createAndGetRoleName(false);
+      const noRegion3 = createAndGetRoleName(false);
+
+      console.log('No region:', noRegion1, noRegion2, noRegion3);
+      expect(noRegion1).toEqual(noRegion2);
+      expect(noRegion2).toEqual(noRegion3);
+
+      // explicit region case
+      const withRegion1 = createAndGetRoleName(true);
+      const withRegion2 = createAndGetRoleName(true);
+      const withRegion3 = createAndGetRoleName(true);
+
+      console.log('With region:', withRegion1, withRegion2, withRegion3);
+      expect(withRegion1).toEqual(withRegion2);
+      expect(withRegion2).toEqual(withRegion3);
+    });
   });
   describe('Policies', () => {
     const policyPrefix = 'POLICY_PREFIX_';

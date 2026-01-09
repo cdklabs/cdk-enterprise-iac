@@ -16,6 +16,10 @@ describe('Testing utils', () => {
     );
   });
   describe('computeUniqueHash', () => {
+    test('returns 8 characters by default', () => {
+      const hash = computeUniqueHash('TestStack/TestRole', 'us-east-1');
+      expect(hash.length).toBe(8);
+    });
     test('is deterministic with same inputs', () => {
       const nodePath = 'TestStack/TestRole';
       const region = 'us-east-1';
@@ -45,10 +49,18 @@ describe('Testing utils', () => {
 
       expect(hash1).not.toEqual(hash2);
     });
+    test('Region token causes different hash', () => {
+      const nodePath = 'TestStack/TestRole/Resource';
 
-    test('returns 8 characters by default', () => {
-      const hash = computeUniqueHash('TestStack/TestRole', 'us-east-1');
-      expect(hash.length).toBe(8);
+      // simulate: token vs resolved value
+      const hashWithToken = computeUniqueHash(nodePath, '\${Token[AWS::Region.1234]}');
+      const hashWithResolved = computeUniqueHash(nodePath, 'us-east-1');
+
+      console.log('Hash with token:', hashWithToken);
+      console.log('Hash with resolved:', hashWithResolved);
+
+      // These WILL be different - demonstrating the bug
+      expect(hashWithToken).not.toEqual(hashWithResolved);
     });
   });
 });
