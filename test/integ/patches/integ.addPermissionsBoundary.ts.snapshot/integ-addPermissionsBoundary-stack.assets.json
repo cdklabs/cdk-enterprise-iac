@@ -1,0 +1,20 @@
+{
+  "version": "34.0.0",
+  "files": {
+    "56c949dc0893d80ff0f4bf1eb0af0f739f0349a3ae9829f6cbdd7a3bfc69997d": {
+      "source": {
+        "path": "integ-addPermissionsBoundary-stack.template.json",
+        "packaging": "file"
+      },
+      "destinations": {
+        "current_account-us-east-1": {
+          "bucketName": "cdk-hnb659fds-assets-${AWS::AccountId}-us-east-1",
+          "objectKey": "56c949dc0893d80ff0f4bf1eb0af0f739f0349a3ae9829f6cbdd7a3bfc69997d.json",
+          "region": "us-east-1",
+          "assumeRoleArn": "arn:${AWS::Partition}:iam::${AWS::AccountId}:role/cdk-hnb659fds-file-publishing-role-${AWS::AccountId}-us-east-1"
+        }
+      }
+    }
+  },
+  "dockerImages": {}
+}

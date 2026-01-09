@@ -1,0 +1,275 @@
+{
+  "version": "tree-0.1",
+  "tree": {
+    "id": "App",
+    "path": "",
+    "children": {
+      "integ-addPermissionsBoundary-stack": {
+        "id": "integ-addPermissionsBoundary-stack",
+        "path": "integ-addPermissionsBoundary-stack",
+        "children": {
+          "PermissionBoundaryPolicy": {
+            "id": "PermissionBoundaryPolicy",
+            "path": "integ-addPermissionsBoundary-stack/PermissionBoundaryPolicy",
+            "children": {
+              "ImportedPermissionBoundaryPolicy": {
+                "id": "ImportedPermissionBoundaryPolicy",
+                "path": "integ-addPermissionsBoundary-stack/PermissionBoundaryPolicy/ImportedPermissionBoundaryPolicy",
+                "constructInfo": {
+                  "fqn": "aws-cdk-lib.Resource",
+                  "version": "2.103.1"
+                }
+              },
+              "Resource": {
+                "id": "Resource",
+                "path": "integ-addPermissionsBoundary-stack/PermissionBoundaryPolicy/Resource",
+                "attributes": {
+                  "aws:cdk:cloudformation:type": "AWS::IAM::ManagedPolicy",
+                  "aws:cdk:cloudformation:props": {
+                    "description": "",
+                    "managedPolicyName": "TestPermissionBoundary",
+                    "path": "/",
+                    "policyDocument": {
+                      "Statement": [
+                        {
+                          "Action": "*",
+                          "Effect": "Allow",
+                          "Resource": "*"
+                        }
+                      ],
+                      "Version": "2012-10-17"
+                    }
+                  }
+                },
+                "constructInfo": {
+                  "fqn": "aws-cdk-lib.aws_iam.CfnManagedPolicy",
+                  "version": "2.103.1"
+                }
+              }
+            },
+            "constructInfo": {
+              "fqn": "aws-cdk-lib.aws_iam.ManagedPolicy",
+              "version": "2.103.1"
+            }
+          },
+          "TextractServiceRole": {
+            "id": "TextractServiceRole",
+            "path": "integ-addPermissionsBoundary-stack/TextractServiceRole",
+            "children": {
+              "ImportTextractServiceRole": {
+                "id": "ImportTextractServiceRole",
+                "path": "integ-addPermissionsBoundary-stack/TextractServiceRole/ImportTextractServiceRole",
+                "constructInfo": {
+                  "fqn": "aws-cdk-lib.Resource",
+                  "version": "2.103.1"
+                }
+              },
+              "Resource": {
+                "id": "Resource",
+                "path": "integ-addPermissionsBoundary-stack/TextractServiceRole/Resource",
+                "attributes": {
+                  "aws:cdk:cloudformation:type": "AWS::IAM::Role",
+                  "aws:cdk:cloudformation:props": {
+                    "assumeRolePolicyDocument": {
+                      "Statement": [
+                        {
+                          "Action": "sts:AssumeRole",
+                          "Effect": "Allow",
+                          "Principal": {
+                            "Service": "textract.amazonaws.com"
+                          }
+                        }
+                      ],
+                      "Version": "2012-10-17"
+                    }
+                  }
+                },
+                "constructInfo": {
+                  "fqn": "aws-cdk-lib.aws_iam.CfnRole",
+                  "version": "2.103.1"
+                }
+              }
+            },
+            "constructInfo": {
+              "fqn": "aws-cdk-lib.aws_iam.Role",
+              "version": "2.103.1"
+            }
+          },
+          "ExplicitNamedRole": {
+            "id": "ExplicitNamedRole",
+            "path": "integ-addPermissionsBoundary-stack/ExplicitNamedRole",
+            "children": {
+              "ImportExplicitNamedRole": {
+                "id": "ImportExplicitNamedRole",
+                "path": "integ-addPermissionsBoundary-stack/ExplicitNamedRole/ImportExplicitNamedRole",
+                "constructInfo": {
+                  "fqn": "aws-cdk-lib.Resource",
+                  "version": "2.103.1"
+                }
+              },
+              "Resource": {
+                "id": "Resource",
+                "path": "integ-addPermissionsBoundary-stack/ExplicitNamedRole/Resource",
+                "attributes": {
+                  "aws:cdk:cloudformation:type": "AWS::IAM::Role",
+                  "aws:cdk:cloudformation:props": {
+                    "assumeRolePolicyDocument": {
+                      "Statement": [
+                        {
+                          "Action": "sts:AssumeRole",
+                          "Effect": "Allow",
+                          "Principal": {
+                            "Service": "lambda.amazonaws.com"
+                          }
+                        }
+                      ],
+                      "Version": "2012-10-17"
+                    },
+                    "roleName": "MyExplicitRole"
+                  }
+                },
+                "constructInfo": {
+                  "fqn": "aws-cdk-lib.aws_iam.CfnRole",
+                  "version": "2.103.1"
+                }
+              }
+            },
+            "constructInfo": {
+              "fqn": "aws-cdk-lib.aws_iam.Role",
+              "version": "2.103.1"
+            }
+          },
+          "VeryLongRoleNameThatExceeds64CharactersAndNeedsToBeTruncated": {
+            "id": "VeryLongRoleNameThatExceeds64CharactersAndNeedsToBeTruncated",
+            "path": "integ-addPermissionsBoundary-stack/VeryLongRoleNameThatExceeds64CharactersAndNeedsToBeTruncated",
+            "children": {
+              "ImportVeryLongRoleNameThatExceeds64CharactersAndNeedsToBeTruncated": {
+                "id": "ImportVeryLongRoleNameThatExceeds64CharactersAndNeedsToBeTruncated",
+                "path": "integ-addPermissionsBoundary-stack/VeryLongRoleNameThatExceeds64CharactersAndNeedsToBeTruncated/ImportVeryLongRoleNameThatExceeds64CharactersAndNeedsToBeTruncated",
+                "constructInfo": {
+                  "fqn": "aws-cdk-lib.Resource",
+                  "version": "2.103.1"
+                }
+              },
+              "Resource": {
+                "id": "Resource",
+                "path": "integ-addPermissionsBoundary-stack/VeryLongRoleNameThatExceeds64CharactersAndNeedsToBeTruncated/Resource",
+                "attributes": {
+                  "aws:cdk:cloudformation:type": "AWS::IAM::Role",
+                  "aws:cdk:cloudformation:props": {
+                    "assumeRolePolicyDocument": {
+                      "Statement": [
+                        {
+                          "Action": "sts:AssumeRole",
+                          "Effect": "Allow",
+                          "Principal": {
+                            "Service": "ec2.amazonaws.com"
+                          }
+                        }
+                      ],
+                      "Version": "2012-10-17"
+                    }
+                  }
+                },
+                "constructInfo": {
+                  "fqn": "aws-cdk-lib.aws_iam.CfnRole",
+                  "version": "2.103.1"
+                }
+              }
+            },
+            "constructInfo": {
+              "fqn": "aws-cdk-lib.aws_iam.Role",
+              "version": "2.103.1"
+            }
+          },
+          "BootstrapVersion": {
+            "id": "BootstrapVersion",
+            "path": "integ-addPermissionsBoundary-stack/BootstrapVersion",
+            "constructInfo": {
+              "fqn": "aws-cdk-lib.CfnParameter",
+              "version": "2.103.1"
+            }
+          },
+          "CheckBootstrapVersion": {
+            "id": "CheckBootstrapVersion",
+            "path": "integ-addPermissionsBoundary-stack/CheckBootstrapVersion",
+            "constructInfo": {
+              "fqn": "aws-cdk-lib.CfnRule",
+              "version": "2.103.1"
+            }
+          }
+        },
+        "constructInfo": {
+          "fqn": "aws-cdk-lib.Stack",
+          "version": "2.103.1"
+        }
+      },
+      "IntegTest": {
+        "id": "IntegTest",
+        "path": "IntegTest",
+        "children": {
+          "DefaultTest": {
+            "id": "DefaultTest",
+            "path": "IntegTest/DefaultTest",
+            "children": {
+              "Default": {
+                "id": "Default",
+                "path": "IntegTest/DefaultTest/Default",
+                "constructInfo": {
+                  "fqn": "constructs.Construct",
+                  "version": "10.0.5"
+                }
+              },
+              "DeployAssert": {
+                "id": "DeployAssert",
+                "path": "IntegTest/DefaultTest/DeployAssert",
+                "children": {
+                  "BootstrapVersion": {
+                    "id": "BootstrapVersion",
+                    "path": "IntegTest/DefaultTest/DeployAssert/BootstrapVersion",
+                    "constructInfo": {
+                      "fqn": "aws-cdk-lib.CfnParameter",
+                      "version": "2.103.1"
+                    }
+                  },
+                  "CheckBootstrapVersion": {
+                    "id": "CheckBootstrapVersion",
+                    "path": "IntegTest/DefaultTest/DeployAssert/CheckBootstrapVersion",
+                    "constructInfo": {
+                      "fqn": "aws-cdk-lib.CfnRule",
+                      "version": "2.103.1"
+                    }
+                  }
+                },
+                "constructInfo": {
+                  "fqn": "aws-cdk-lib.Stack",
+                  "version": "2.103.1"
+                }
+              }
+            },
+            "constructInfo": {
+              "fqn": "@aws-cdk/integ-tests-alpha.IntegTestCase",
+              "version": "2.103.1-alpha.0"
+            }
+          }
+        },
+        "constructInfo": {
+          "fqn": "@aws-cdk/integ-tests-alpha.IntegTest",
+          "version": "2.103.1-alpha.0"
+        }
+      },
+      "Tree": {
+        "id": "Tree",
+        "path": "Tree",
+        "constructInfo": {
+          "fqn": "constructs.Construct",
+          "version": "10.0.5"
+        }
+      }
+    },
+    "constructInfo": {
+      "fqn": "aws-cdk-lib.App",
+      "version": "2.103.1"
+    }
+  }
+}
