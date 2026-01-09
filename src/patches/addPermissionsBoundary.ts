@@ -2,7 +2,6 @@
 Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
 SPDX-License-Identifier: Apache-2.0
 */
-import { createHash } from 'crypto';
 import { CfnResource, IAspect, Stack, Token } from 'aws-cdk-lib';
 import {
   CfnInstanceProfile,
@@ -10,7 +9,7 @@ import {
   CfnPolicy,
 } from 'aws-cdk-lib/aws-iam';
 import { IConstruct } from 'constructs';
-import { getResourceId } from '../utils/utils';
+import { getResourceId, computeUniqueHash } from '../utils/utils';
 
 /**
  * Properties to pass to the AddPermissionBoundary
@@ -87,13 +86,7 @@ export class AddPermissionBoundary implements IAspect {
         length - uniqness_length - prefix.length
       );
       const region = Stack.of(node).region;
-      const hash = createHash('shake256');
-      hash.update(`${node.node.path}-${region}`);
-      let hash_value = hash.copy().digest('hex');
-      const charUniqness8 = hash_value.substring(
-        hash_value.length - 8,
-        hash_value.length
-      );
+      const charUniqness8 = computeUniqueHash(node.node.path, region);
       let newSuffix = prefix + suffix + charUniqness8;
       node.addPropertyOverride(cfnProp, `${newSuffix}`.substring(0, length));
     }
