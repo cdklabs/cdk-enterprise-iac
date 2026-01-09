@@ -59,7 +59,7 @@ describe('Testing utils', () => {
       console.log('Hash with token:', hashWithToken);
       console.log('Hash with resolved:', hashWithResolved);
 
-      // These WILL be different - demonstrating the bug
+      // should will be different, confirming the simulation
       expect(hashWithToken).not.toEqual(hashWithResolved);
     });
   });
