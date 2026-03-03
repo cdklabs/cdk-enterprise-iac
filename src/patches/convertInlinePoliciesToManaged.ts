@@ -36,6 +36,12 @@ export class ConvertInlinePoliciesToManaged implements IAspect {
       });
       resource.overrideLogicalId(logicalId);
 
+      // Preserve CloudFormation metadata from the original policy
+      const originalMetadata = policy.cfnOptions.metadata;
+      if (originalMetadata) {
+        resource.cfnOptions.metadata = originalMetadata;
+      }
+
       const overrides = (node as any).rawOverrides;
       if (overrides?.Properties?.PolicyName) {
         resource.addPropertyOverride(
