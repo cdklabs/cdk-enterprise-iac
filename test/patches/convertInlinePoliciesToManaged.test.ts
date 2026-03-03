@@ -173,4 +173,3 @@ describe('Updating Resource Types', () => {
     expect(metadata.CustomKey).toBe('CustomValue');
   });
 });
-
