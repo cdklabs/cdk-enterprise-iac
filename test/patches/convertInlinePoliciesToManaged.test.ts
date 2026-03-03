@@ -141,4 +141,36 @@ describe('Updating Resource Types', () => {
     appTemplate.resourceCountIs('AWS::S3::Bucket', 1);
     appTemplate.resourceCountIs('AWS::Lambda::Function', 1);
   });
+
+  test('Preserves CloudFormation metadata on converted policy', () => {
+    const role = new iam.Role(stack, 'TestRole', {
+      assumedBy: new iam.ServicePrincipal('lambda.amazonaws.com'),
+    });
+    const policy = new iam.Policy(stack, 'MyPolicy', {
+      roles: [role],
+    });
+    policy.addStatements(
+      new iam.PolicyStatement({
+        actions: ['s3:GetObject'],
+        resources: ['*'],
+      })
+    );
+    const cfnPolicy = policy.node.defaultChild as iam.CfnPolicy;
+    cfnPolicy.cfnOptions.metadata = {
+      'aws:cdk:path': 'some/path',
+      CustomKey: 'CustomValue',
+    };
+
+    Aspects.of(app).add(new ConvertInlinePoliciesToManaged());
+    app.synth();
+
+    const template = Template.fromStack(stack);
+    const managedPolicies = template.findResources('AWS::IAM::ManagedPolicy');
+    const policyKeys = Object.keys(managedPolicies);
+    expect(policyKeys.length).toBe(1);
+    const metadata = managedPolicies[policyKeys[0]].Metadata;
+    expect(metadata).toBeDefined();
+    expect(metadata.CustomKey).toBe('CustomValue');
+  });
 });
+
