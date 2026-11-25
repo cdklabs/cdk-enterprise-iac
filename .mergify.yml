@@ -3,7 +3,7 @@
 queue_rules:
   - name: default
     update_method: merge
-    conditions:
+    merge_conditions:
       - "#approved-reviews-by>=1"
       - -label~=(do-not-merge)
       - status-success=build
